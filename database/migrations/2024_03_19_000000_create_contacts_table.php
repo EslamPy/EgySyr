@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email');
             $table->text('message');
             $table->string('service_type')->default('contacts');
+            $table->enum('status', ['unread', 'read'])->default('unread');
             $table->timestamps();
         });
     }
