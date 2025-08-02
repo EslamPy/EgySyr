@@ -31,6 +31,12 @@ Route::middleware('auth')->group(function () {
         // Admin Dashboard
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
         
+        // Analytics Routes
+        Route::get('/analytics', [AdminController::class, 'analytics'])->name('admin.analytics');
+        Route::get('/api/dashboard-stats', [AdminController::class, 'getDashboardStats'])->name('admin.api.stats');
+        Route::get('/api/system-health', [AdminController::class, 'systemHealth'])->name('admin.api.health');
+        Route::get('/export/analytics', [AdminController::class, 'exportAnalytics'])->name('admin.export.analytics');
+        
         // Blog Management
         Route::prefix('blogs')->group(function () {
             Route::get('/', [AdminController::class, 'listBlogs'])->name('admin.blogs.index');
@@ -75,14 +81,29 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-// Main pages
-Route::get('/', [PageController::class, 'welcome'])->name('welcome');
-Route::get('/about', [PageController::class, 'about'])->name('about');
-Route::get('/blog', [PageController::class, 'blog'])->name('blog');
-Route::get('/blog/{id}', [PageController::class, 'blogDetails'])->name('blog.details');
+// Main pages with caching
+Route::middleware(['cache.response:3600'])->group(function () {
+    Route::get('/', [PageController::class, 'welcome'])->name('welcome');
+    Route::get('/about', [PageController::class, 'about'])->name('about');
+    Route::get('/blog', [PageController::class, 'blog'])->name('blog');
+    Route::get('/blog/{id}', [PageController::class, 'blogDetails'])->name('blog.details');
+    Route::get('/custom', [PageController::class, 'custom'])->name('custom');
+    Route::get('/services', [PageController::class, 'services'])->name('services');
+    Route::get('/services/application', [PageController::class, 'serviceApplication'])->name('services.application');
+    Route::get('/services/graphic', [PageController::class, 'serviceGraphic'])->name('services.graphic');
+    Route::get('/services/hosting', [PageController::class, 'serviceHosting'])->name('services.hosting');
+    Route::get('/services/marketing', [PageController::class, 'serviceMarketing'])->name('services.marketing');
+    Route::get('/services/protection-systems', [PageController::class, 'serviceProtectionSystems'])->name('services.protection');
+    Route::get('/services/system', [PageController::class, 'serviceSystem'])->name('services.system');
+    Route::get('/services/web', [PageController::class, 'serviceWeb'])->name('services.web');
+    Route::get('/data-security', [PageController::class, 'dataSecurity'])->name('data.security');
+    Route::get('/maintenance-policy', [PageController::class, 'maintenancePolicy'])->name('maintenance.policy');
+    Route::get('/policy', [PageController::class, 'policy'])->name('policy');
+});
+
+// Non-cached routes
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'storeContact'])->name('contact.store');
-Route::get('/custom', [PageController::class, 'custom'])->name('custom');
 
 // Blog search
 Route::get('/articles/search', [PageController::class, 'searchArticles'])->name('articles.search');
