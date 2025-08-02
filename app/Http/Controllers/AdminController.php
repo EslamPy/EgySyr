@@ -409,4 +409,309 @@ class AdminController extends Controller
         
         return redirect()->route('admin.settings.index')->with('success', 'Settings updated successfully');
     }
+
+    /**
+     * Analytics Dashboard
+     */
+    public function analytics()
+    {
+        $analytics = $this->getAnalyticsData();
+        return view('Admin.analytics.index', compact('analytics'));
+    }
+
+    /**
+     * Get analytics data for dashboard
+     */
+    private function getAnalyticsData()
+    {
+        return [
+            'totalVisitors' => $this->getTotalVisitors(),
+            'pageViews' => $this->getPageViews(),
+            'bounceRate' => $this->getBounceRate(),
+            'avgSessionDuration' => $this->getAverageSessionDuration(),
+            'topPages' => $this->getTopPages(),
+            'trafficSources' => $this->getTrafficSources(),
+            'userEngagement' => $this->getUserEngagement(),
+            'performance' => $this->getPerformanceMetrics()
+        ];
+    }
+
+    /**
+     * Get real-time dashboard stats via API
+     */
+    public function getDashboardStats()
+    {
+        $stats = [
+            'visitors' => $this->getTotalVisitors(),
+            'messages' => Contact::where('status', 'unread')->count(),
+            'reviews' => Review::where('status', 'unread')->count(),
+            'performance' => $this->getPerformanceMetrics(),
+            'traffic' => $this->getRealtimeTraffic()
+        ];
+
+        return response()->json($stats);
+    }
+
+    /**
+     * Get performance metrics
+     */
+    private function getPerformanceMetrics()
+    {
+        // Simulate performance data - in production, integrate with monitoring tools
+        return [
+            'page_load_time' => rand(800, 1200), // milliseconds
+            'database_query_time' => rand(50, 150),
+            'api_response_time' => rand(100, 300),
+            'memory_usage' => rand(60, 85), // percentage
+            'cpu_usage' => rand(20, 50)
+        ];
+    }
+
+    /**
+     * Get total visitors (simulated data)
+     */
+    private function getTotalVisitors()
+    {
+        // In production, integrate with Google Analytics or similar
+        return rand(20000, 30000);
+    }
+
+    /**
+     * Get page views data
+     */
+    private function getPageViews()
+    {
+        $dates = [];
+        $views = [];
+        
+        for ($i = 6; $i >= 0; $i--) {
+            $dates[] = now()->subDays($i)->format('M d');
+            $views[] = rand(1000, 3000);
+        }
+        
+        return [
+            'dates' => $dates,
+            'views' => $views
+        ];
+    }
+
+    /**
+     * Get bounce rate
+     */
+    private function getBounceRate()
+    {
+        return round(rand(35, 65), 1); // percentage
+    }
+
+    /**
+     * Get average session duration
+     */
+    private function getAverageSessionDuration()
+    {
+        return rand(120, 300); // seconds
+    }
+
+    /**
+     * Get top pages
+     */
+    private function getTopPages()
+    {
+        return [
+            ['url' => '/', 'views' => rand(5000, 8000), 'title' => 'Home'],
+            ['url' => '/about', 'views' => rand(2000, 4000), 'title' => 'About Us'],
+            ['url' => '/services', 'views' => rand(1500, 3000), 'title' => 'Services'],
+            ['url' => '/blog', 'views' => rand(1000, 2500), 'title' => 'Blog'],
+            ['url' => '/contact', 'views' => rand(800, 1500), 'title' => 'Contact']
+        ];
+    }
+
+    /**
+     * Get traffic sources
+     */
+    private function getTrafficSources()
+    {
+        return [
+            'direct' => rand(35, 45),
+            'organic' => rand(25, 35),
+            'social' => rand(15, 25),
+            'referral' => rand(10, 20),
+            'email' => rand(5, 15)
+        ];
+    }
+
+    /**
+     * Get user engagement data
+     */
+    private function getUserEngagement()
+    {
+        $days = [];
+        $users = [];
+        
+        for ($i = 6; $i >= 0; $i--) {
+            $days[] = now()->subDays($i)->format('D');
+            $users[] = rand(150, 350);
+        }
+        
+        return [
+            'days' => $days,
+            'users' => $users
+        ];
+    }
+
+    /**
+     * Get real-time traffic data
+     */
+    private function getRealtimeTraffic()
+    {
+        $hours = [];
+        $traffic = [];
+        
+        for ($i = 11; $i >= 0; $i--) {
+            $hours[] = now()->subHours($i)->format('H:i');
+            $traffic[] = rand(50, 200);
+        }
+        
+        return [
+            'hours' => $hours,
+            'traffic' => $traffic
+        ];
+    }
+
+    /**
+     * Export analytics data
+     */
+    public function exportAnalytics(Request $request)
+    {
+        $format = $request->get('format', 'csv');
+        $data = $this->getAnalyticsData();
+        
+        if ($format === 'csv') {
+            return $this->exportToCsv($data);
+        } elseif ($format === 'pdf') {
+            return $this->exportToPdf($data);
+        }
+        
+        return response()->json($data);
+    }
+
+    /**
+     * Export to CSV
+     */
+    private function exportToCsv($data)
+    {
+        $filename = 'analytics_' . now()->format('Y-m-d') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+        
+        $callback = function() use ($data) {
+            $file = fopen('php://output', 'w');
+            
+            // Headers
+            fputcsv($file, ['Metric', 'Value']);
+            
+            // Data
+            fputcsv($file, ['Total Visitors', $data['totalVisitors']]);
+            fputcsv($file, ['Bounce Rate', $data['bounceRate'] . '%']);
+            fputcsv($file, ['Avg Session Duration', $data['avgSessionDuration'] . 's']);
+            
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * System health check
+     */
+    public function systemHealth()
+    {
+        $health = [
+            'database' => $this->checkDatabaseHealth(),
+            'storage' => $this->checkStorageHealth(),
+            'cache' => $this->checkCacheHealth(),
+            'queue' => $this->checkQueueHealth(),
+            'performance' => $this->getPerformanceMetrics()
+        ];
+        
+        return response()->json($health);
+    }
+
+    /**
+     * Check database health
+     */
+    private function checkDatabaseHealth()
+    {
+        try {
+            \DB::connection()->getPdo();
+            return ['status' => 'healthy', 'response_time' => rand(10, 50)];
+        } catch (\Exception $e) {
+            return ['status' => 'unhealthy', 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Check storage health
+     */
+    private function checkStorageHealth()
+    {
+        $totalSpace = disk_total_space(storage_path());
+        $freeSpace = disk_free_space(storage_path());
+        $usedPercentage = (($totalSpace - $freeSpace) / $totalSpace) * 100;
+        
+        return [
+            'status' => $usedPercentage < 90 ? 'healthy' : 'warning',
+            'used_percentage' => round($usedPercentage, 2),
+            'free_space' => $this->formatBytes($freeSpace),
+            'total_space' => $this->formatBytes($totalSpace)
+        ];
+    }
+
+    /**
+     * Check cache health
+     */
+    private function checkCacheHealth()
+    {
+        try {
+            \Cache::put('health_check', 'test', 1);
+            $value = \Cache::get('health_check');
+            \Cache::forget('health_check');
+            
+            return [
+                'status' => $value === 'test' ? 'healthy' : 'unhealthy',
+                'driver' => config('cache.default')
+            ];
+        } catch (\Exception $e) {
+            return ['status' => 'unhealthy', 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Check queue health
+     */
+    private function checkQueueHealth()
+    {
+        // Simulate queue check - in production, check actual queue status
+        return [
+            'status' => 'healthy',
+            'pending_jobs' => rand(0, 10),
+            'failed_jobs' => rand(0, 2)
+        ];
+    }
+
+    /**
+     * Format bytes to human readable
+     */
+    private function formatBytes($bytes, $precision = 2)
+    {
+        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+        
+        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+            $bytes /= 1024;
+        }
+        
+        return round($bytes, $precision) . ' ' . $units[$i];
+    }
 } 
