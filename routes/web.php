@@ -75,6 +75,11 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+// Modern SPA Route
+Route::get('/spa', function () {
+    return view('spa');
+})->name('spa');
+
 // Main pages
 Route::get('/', [PageController::class, 'welcome'])->name('welcome');
 Route::get('/about', [PageController::class, 'about'])->name('about');
