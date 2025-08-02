@@ -1,14 +1,45 @@
+// Performance optimized JavaScript for EgySyr website
 
+// Lazy loading for images
+document.addEventListener('DOMContentLoaded', function() {
+    const images = document.querySelectorAll('img[data-src]');
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                imageObserver.unobserve(img);
+            }
+        });
+    });
+
+    images.forEach(img => imageObserver.observe(img));
+});
+
+// Debounce function for performance
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Optimized counter animation
 let nums = document.querySelectorAll(".num");
 let contersSection = document.querySelector(".conters");
-
 let started = false;
 
 function startCount(el) {
     let goal = parseInt(el.dataset.goal);
-    let symbol = el.dataset.symbol || ""; // جلب الرمز (لو مش موجود يبقى فارغ)
+    let symbol = el.dataset.symbol || "";
     let count = 0;
-    let speed = 1500 / goal; // سرعة العداد
+    let speed = 1500 / goal;
 
     let counter = setInterval(() => {
         count++;
@@ -16,47 +47,43 @@ function startCount(el) {
 
         if (count >= goal) {
             clearInterval(counter);
-            el.textContent = goal + symbol; // إضافة العلامة المحددة
+            el.textContent = goal + symbol;
         }
     }, speed);
 }
 
-window.addEventListener("scroll", function () {
+// Debounced scroll handler
+const debouncedScrollHandler = debounce(function() {
     if (window.scrollY >= contersSection.offsetTop - window.innerHeight + 200) {
         if (!started) {
             nums.forEach(num => startCount(num));
             started = true;
         }
     }
-});
+}, 100);
 
+window.addEventListener("scroll", debouncedScrollHandler);
 
-
+// Mobile menu functionality
 let menu = document.querySelector(".menu");
 let min_menu = document.querySelector(".min_menu");
-$(".i_menu").click(function(){
+
+if (menu && min_menu) {
+    $(".i_menu").click(function(){
         $(".menu").removeClass("hid");
         $(".menu").addClass("s");   
-        
-});
+    });
 
-
-
-$(".menu").click(function(){
+    $(".menu").click(function(){
         $(".menu").removeClass("s");
         $(".menu").addClass("hid");   
-});
+    });
+}
 
-// if(menu.style.display == "block"){
-//     min_menu.style.right = "0";
-//     alert("lsdflk")
-// }else{
-//     min_menu.style.right = "-100%";
-// }
-
-
-
+// Video background optimization (only for desktop)
+if (!/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
     const video = document.getElementById("myVideo");
+    if (video) {
         let reverse = false;
         let interval;
 
@@ -68,7 +95,7 @@ $(".menu").click(function(){
                     reverse = false;
                     video.play();
                 } else {
-                    video.currentTime -= 0.1; // تقليل الوقت لجعل الفيديو يرجع للخلف
+                    video.currentTime -= 0.1;
                 }
             }, 100);
         }
@@ -83,106 +110,94 @@ $(".menu").click(function(){
                 reverse = false;
             }
         });
+    }
 
+    // Custom cursor (only for desktop)
+    const cursor = document.querySelector('.cursor');
+    if (cursor) {
+        let mouseX = 0, mouseY = 0;
+        let currentX = 0, currentY = 0;
+        let isHovering = false;
 
-
-
-        // الكود ده بيتحقق إذا كان الجهاز "مش" موبايل أو تابلت
-        if (!/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-
-            const cursor = document.querySelector('.cursor');
-            let mouseX = 0, mouseY = 0;
-            let currentX = 0, currentY = 0;
-            let isHovering = false;
-        
-            document.addEventListener('mousemove', (e) => {
+        document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            cursor.style.width = '20px';
-            cursor.style.height = '20px';
-            });
-        
-            function animate() {
-            if (!isHovering) {
-                currentX += (mouseX - currentX) * 0.2;
-                currentY += (mouseY - currentY) * 0.2;
-                cursor.style.left = currentX + 'px';
-                cursor.style.top = currentY + 'px';
-            }
+        });
+
+        function animate() {
+            currentX += (mouseX - currentX) * 0.1;
+            currentY += (mouseY - currentY) * 0.1;
+            
+            cursor.style.left = currentX + 'px';
+            cursor.style.top = currentY + 'px';
+            
             requestAnimationFrame(animate);
-            }
-            animate();
-        
-            const hoverTargets = document.querySelectorAll('.hover-target');
-        
-            hoverTargets.forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                const rect = el.getBoundingClientRect();
-                isHovering = true;
-                cursor.classList.add('active');
-                cursor.style.width = rect.width + 20 + 'px';
-                cursor.style.height = rect.height + 20 + 'px';
-                cursor.style.left = rect.left + rect.width / 2 + 'px';
-                cursor.style.top = rect.top + rect.height / 2 + 'px';
-            });
-        
-            el.addEventListener('mouseleave', () => {
-                isHovering = false;
-                cursor.classList.remove('active');
-                cursor.style.width = '20px';
-                cursor.style.height = '20px';
-            });
-            });
-        
         }
-  
-        if (window.innerWidth <= 768 || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            cursor.style.width = '0px';
-            cursor.style.height = '0px';
-          }
+        animate();
 
-        // document.addEventListener("contextmenu", function(e) {
-        //     e.preventDefault(); // يمنع القائمة
-        // });
-
-        // document.addEventListener("keydown", function(e) {
-        //     if (
-        //         e.key === "F12" ||
-        //         (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) ||
-        //         (e.ctrlKey && e.key === "U")
-        //     ) {
-        //         e.preventDefault();
-        //     }
-        // });
-
-
-        AOS.init({
-            duration: 1000, // مدة الحركة 1 ثانية
-            // once: true, // الحركة تشتغل مرة واحدة بس
-        });
-        document.addEventListener("DOMContentLoaded", function() {
-            let carousel = document.querySelector(".carousel");
-            let cards = document.querySelectorAll(".card");
-    
-            cards.forEach(card => {
-                card.addEventListener("mouseenter", () => {
-                    carousel.style.animationPlayState = "paused";
-                });
-                card.addEventListener("mouseleave", () => {
-                    carousel.style.animationPlayState = "running";
-                });
+        // Hover effects
+        document.querySelectorAll('a, button, .card, .btn-primary').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('active');
+                isHovering = true;
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('active');
+                isHovering = false;
             });
         });
+    }
+}
 
-        var splide = new Splide( '.splide', {
-            type   : 'loop',
-            perPage: 2,
-            perMove: 1,
-            breakpoints: {
-                768: { // لما يكون عرض الشاشة 768px أو أقل (مقاس التابلت والموبايل)
-                perPage: 1, // يعرض عنصر واحد فقط
-                }
-            }
-        } );
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
 
-        splide.mount();
+// Intersection Observer for animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in');
+        }
+    });
+}, observerOptions);
+
+// Observe elements for animation
+document.querySelectorAll('.group, .stat-card, .chart-container, [data-aos]').forEach(el => {
+    observer.observe(el);
+});
+
+// Mobile menu toggle
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+
+if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+    });
+    
+    mobileMenu.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+        }
+    });
+}
+
+// Export for use in other modules
+window.debounce = debounce;
