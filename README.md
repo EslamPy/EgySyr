@@ -1,61 +1,165 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Website Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern web application built with Laravel and Vite, featuring a blog system, service pages, admin panel, and user authentication.
 
-## About Laravel
+## 🚀 Quick Start
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Prerequisites
+- PHP 8.1 or higher
+- Composer
+- Node.js 16+ and npm
+- MySQL/PostgreSQL database
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Installation
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd <project-name>
+   ```
 
-## Learning Laravel
+2. **Install PHP dependencies**
+   ```bash
+   composer install
+   ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. **Install Node.js dependencies**
+   ```bash
+   npm install
+   ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+4. **Environment setup**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+5. **Configure database**
+   - Update `.env` file with your database credentials
+   - Run migrations: `php artisan migrate`
+   - Seed the database: `php artisan db:seed`
 
-## Laravel Sponsors
+6. **Build assets**
+   ```bash
+   npm run build
+   ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+7. **Start development server**
+   ```bash
+   php artisan serve
+   ```
 
-### Premium Partners
+## 📁 Project Structure
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```
+├── app/
+│   ├── Http/Controllers/     # Application controllers
+│   ├── Models/              # Eloquent models
+│   └── Providers/           # Service providers
+├── resources/
+│   ├── views/               # Blade templates
+│   │   ├── Admin/          # Admin panel views
+│   │   ├── Layouts/        # Reusable layouts
+│   │   └── Services/       # Service-specific views
+│   ├── js/                 # JavaScript files
+│   └── css/                # Stylesheets
+├── routes/
+│   └── web.php             # Web routes
+├── public/                 # Public assets
+└── storage/                # File storage
+```
 
-## Contributing
+## 🏗️ Architecture Overview
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Controllers
+- **PageController**: Handles public pages (home, about, blog, contact, services)
+- **AdminController**: Manages admin panel functionality
+- **AuthController**: Handles user authentication
 
-## Code of Conduct
+### Models
+- **User**: User management and authentication
+- **Article**: Blog posts and content management
+- **Category**: Blog categories
+- **Review**: User reviews and testimonials
+- **Contact**: Contact form submissions
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Key Features
+- **Blog System**: Articles with categories and search functionality
+- **Service Pages**: Multiple service offerings with individual pages
+- **Admin Panel**: Content management for articles, reviews, and messages
+- **User Authentication**: Registration, login, and profile management
+- **Contact System**: Contact form with admin response capability
 
-## Security Vulnerabilities
+## 🛠️ Development Guidelines
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Code Organization
+- Keep controllers focused on single responsibilities
+- Use descriptive route names
+- Follow Laravel naming conventions
+- Organize views by feature/functionality
 
-## License
+### Frontend Development
+- CSS files are in `resources/css/`
+- JavaScript files are in `resources/js/`
+- Use Vite for asset compilation
+- Follow responsive design principles
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Database
+- Use migrations for schema changes
+- Create seeders for test data
+- Follow Laravel Eloquent conventions
+
+## 🔧 Available Commands
+
+```bash
+# Development
+php artisan serve          # Start development server
+npm run dev               # Watch and compile assets
+npm run build             # Build for production
+
+# Database
+php artisan migrate       # Run migrations
+php artisan migrate:fresh # Reset database
+php artisan db:seed       # Seed database
+
+# Cache
+php artisan cache:clear   # Clear application cache
+php artisan config:clear  # Clear config cache
+```
+
+## 📝 Contributing
+
+1. Follow the existing code style
+2. Write meaningful commit messages
+3. Test your changes thoroughly
+4. Update documentation as needed
+
+## 🚀 Deployment
+
+1. Set up production environment variables
+2. Run `npm run build` to compile assets
+3. Configure web server (Apache/Nginx)
+4. Set up database and run migrations
+5. Configure file permissions for storage
+
+## 📚 Documentation
+
+This project includes comprehensive documentation to help developers understand and contribute to the codebase:
+
+### Quick Start
+- **[Setup Guide](docs/SETUP.md)** - Complete installation instructions
+- **[Quick Reference](docs/QUICK_REFERENCE.md)** - Common commands and troubleshooting
+- **[Navigation Guide](docs/NAVIGATE.md)** - Find documentation based on your needs
+
+### Detailed Documentation
+- **[Architecture Documentation](docs/ARCHITECTURE.md)** - Technical overview and design decisions
+- **[Project Structure](docs/STRUCTURE.md)** - File organization and conventions
+- **[Development Guide](docs/DEVELOPMENT.md)** - Coding standards and best practices
+- **[API Documentation](docs/API.md)** - Routes, endpoints, and data models
+
+### Documentation Index
+- **[Documentation Index](docs/README.md)** - Complete overview of all documentation
+
+## 📞 Support
+
+For questions or issues, please refer to the project documentation or contact the development team.
