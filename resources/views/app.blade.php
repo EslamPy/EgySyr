@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/egyshyr-logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="EgySyr - We Engineer the Digital World. Custom web applications, mobile apps, cloud solutions, and AI integration." />
+    <meta name="keywords" content="web development, mobile apps, cloud solutions, AI, automation, UI/UX design, backend systems" />
+    <meta name="author" content="EgySyr Development Team" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="EgySyr - We Engineer the Digital World" />
+    <meta property="og:description" content="Transform your ideas into powerful digital experiences with our cutting-edge development services." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://egysyr.com" />
+    <meta property="og:image" content="/og-image.jpg" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="EgySyr - We Engineer the Digital World" />
+    <meta name="twitter:description" content="Transform your ideas into powerful digital experiences with our cutting-edge development services." />
+    <meta name="twitter:image" content="/twitter-image.jpg" />
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#00FFFF" />
+    
+    <!-- Preload Critical Assets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <title>EgySyr - We Engineer the Digital World</title>
+    
+    @vite(['resources/css/app.css', 'resources/react/main.tsx'])
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

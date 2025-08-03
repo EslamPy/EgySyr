@@ -5,6 +5,11 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 
+// React SPA Routes - these should be first to catch React routes
+Route::get('/app/{any?}', function () {
+    return view('app');
+})->where('any', '.*')->name('react.app');
+
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -80,8 +85,13 @@ Route::get('/spa', function () {
     return view('spa');
 })->name('spa');
 
-// Main pages
-Route::get('/', [PageController::class, 'welcome'])->name('welcome');
+// Main pages - React SPA as default
+Route::get('/', function () {
+    return view('app');
+})->name('home');
+
+// Legacy Laravel routes (keep for admin functionality)
+Route::get('/legacy', [PageController::class, 'welcome'])->name('welcome');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/blog', [PageController::class, 'blog'])->name('blog');
 Route::get('/blog/{id}', [PageController::class, 'blogDetails'])->name('blog.details');
