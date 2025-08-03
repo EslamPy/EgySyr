@@ -233,7 +233,7 @@ body {
 }
 
 /* Import scrollbar utilities */
-@import '../react/utils/scrollbar.css';
+@import './utils/scrollbar.css';
 
 /* Line clamp utilities */
 .line-clamp-3 {
