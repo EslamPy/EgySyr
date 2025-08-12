@@ -1,0 +1,7 @@
+export { default as AdminLogin } from './pages/Login'
+export { default as AdminRegister } from './pages/Register'
+export { default as AdminDashboard } from './pages/Dashboard'
+export { default as AdminFeedback } from './pages/Feedback'
+export { default as AdminCareers } from './pages/Careers'
+export { default as AdminMessages } from './pages/Messages'
+export { AdminLayout } from './components/AdminLayout' 
