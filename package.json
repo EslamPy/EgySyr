@@ -28,7 +28,12 @@
     "simple-icons": "^15.10.0",
     "tailwind-merge": "^2.2.0",
     "three": "^0.160.0",
-    "wouter": "^3.0.0"
+    "wouter": "^3.0.0",
+    "recharts": "^2.12.7",
+    "react-dropzone": "^14.2.3",
+    "react-hot-toast": "^2.4.1",
+    "date-fns": "^3.6.0",
+    "react-world-flags": "^1.6.0"
   },
   "devDependencies": {
     "@types/node": "^24.2.1",

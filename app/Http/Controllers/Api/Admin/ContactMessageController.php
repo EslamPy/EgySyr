@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\ContactMessage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ContactMessagesExport;
 
 class ContactMessageController extends Controller
 {
@@ -35,29 +37,12 @@ class ContactMessageController extends Controller
         return response()->json($messages);
     }
 
-    public function export(Request $request): StreamedResponse
+    public function export()
     {
-        $query = ContactMessage::query()->latest();
-
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="contact_messages.csv"',
-        ];
-
-        $callback = function () use ($query) {
-            $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['ID', 'Name', 'Email', 'Subject', 'Message', 'Created At']);
-            $query->chunk(500, function ($rows) use ($handle) {
-                foreach ($rows as $row) {
-                    fputcsv($handle, [
-                        $row->id, $row->name, $row->email, $row->subject, $row->message, $row->created_at,
-                    ]);
-                }
-            });
-            fclose($handle);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        return Excel::download(
+            new ContactMessagesExport(),
+            'contact_messages_' . date('Y-m-d') . '.xlsx'
+        );
     }
 
     public function destroy(int $id): JsonResponse

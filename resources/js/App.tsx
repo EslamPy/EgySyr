@@ -3,6 +3,7 @@ import { Router, Route, Switch, useLocation } from 'wouter'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSmoothScroll } from './hooks/useSmoothScroll.tsx'
 import { useCursor } from './hooks/useCursor.tsx'
+import { initSiteTracking, trackPageChange } from './utils/siteTracking'
 
 // Components
 import Navigation from './components/Navigation.tsx'
@@ -14,14 +15,14 @@ import ServicesPage from './pages/ServicesPage.tsx'
 import BlogPage from './pages/BlogPage.tsx'
 import AboutPage from './pages/AboutPage.tsx'
 import ContactPage from './pages/ContactPage.tsx'
-import { AdminLogin, AdminRegister, AdminDashboard, AdminFeedback, AdminCareers, AdminMessages } from './admin'
+import { AdminLogin, AdminRegister, AdminDashboard, AdminFeedback, AdminMessages, AdminJobs, AdminJobApplications, AdminUsers } from './admin'
 import CareersPage from './pages/CareersPage.tsx'
 import JobDetailPage from './pages/JobDetailPage'
 import FeedbackFormPage from './pages/FeedbackFormPage'
 import ThankYouPage from './pages/ThankYouPage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx'
 import TermsOfServicePage from './pages/TermsOfServicePage.tsx'
-import PostJobPage from './admin/pages/PostJob'
+
 
 // Global animations and effects
 import { initializeGSAP, initScrollAnimations } from './utils/animations.ts'
@@ -44,6 +45,9 @@ const App: React.FC = () => {
     const cursorCleanup = initCursor()
     initSmoothScroll()
     const scrollAnimationTimer = setTimeout(() => { initScrollAnimations() }, 300)
+
+    // Initialize site tracking
+    initSiteTracking()
     const fonts = [
       'Space Grotesk:wght@300;400;500;600;700',
       'Inter:wght@300;400;500;600;700',
@@ -89,10 +93,11 @@ const App: React.FC = () => {
               <Route path="/admin/login" component={AdminLogin} />
               <Route path="/admin/register" component={AdminRegister} />
               <Route path="/admin/dashboard" component={AdminDashboard} />
-              <Route path="/admin/feedback" component={AdminFeedback} />
-              <Route path="/admin/careers" component={AdminCareers} />
               <Route path="/admin/messages" component={AdminMessages} />
-              <Route path="/admin/jobs/new" component={PostJobPage} />
+              <Route path="/admin/feedback" component={AdminFeedback} />
+              <Route path="/admin/jobs" component={AdminJobs} />
+              <Route path="/admin/job-applications" component={AdminJobApplications} />
+              <Route path="/admin/users" component={AdminUsers} />
               <Route path="/privacy" component={PrivacyPolicyPage} />
               <Route path="/terms" component={TermsOfServicePage} />
               <Route>

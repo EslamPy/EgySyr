@@ -1,9 +1,10 @@
 import React from 'react'
 import { AdminLayout } from '../components/AdminLayout'
-import { Users, Eye, Globe, Clock, Mail, Briefcase, User, TrendingUp } from 'lucide-react'
+import { Users, Eye, Globe, Clock, Mail, Briefcase, User, TrendingUp, RefreshCw } from 'lucide-react'
 import { Stars } from '../components/Stars'
 import { getCurrentUser } from '../utils/auth'
 import { BubbleWorldMap } from '../components/BubbleWorldMap'
+import { useDashboardData } from '../../hooks/useDashboardData'
 
 const mock = {
   stats: {
@@ -124,11 +125,37 @@ const SectionCard: React.FC<{ title: string; description?: string; action?: Reac
 
 const Dashboard: React.FC = () => {
   const user = getCurrentUser()
-  const totalVisits = mock.stats.visits7d.reduce((sum, v) => sum + v, 0)
-  const countries = mock.stats.countriesBreakdown
+  const { stats, worldMapData, loading, error, refreshData } = useDashboardData()
+
+  // Use real data if available, fallback to mock data
+  const siteVisits = stats?.site_visits || {
+    today: 0,
+    unique_today: 0,
+    this_week: 0,
+    this_month: 0,
+    avg_session: 0,
+    top_countries: []
+  }
+
+  const countries = worldMapData.length > 0
+    ? worldMapData.map(item => ({
+        code: item.country_code,
+        name: item.country,
+        visits: item.visits
+      }))
+    : mock.stats.countriesBreakdown
+
   const maxCountryVisits = Math.max(...countries.map(c => c.visits))
   const totalByCountries = countries.reduce((s, c) => s + c.visits, 0)
   const countriesSorted = [...countries].sort((a, b) => b.visits - a.visits)
+
+  const formatSessionTime = (minutes: number) => {
+    if (minutes < 1) return '< 1m'
+    if (minutes < 60) return `${Math.round(minutes)}m`
+    const hours = Math.floor(minutes / 60)
+    const mins = Math.round(minutes % 60)
+    return `${hours}h ${mins}m`
+  }
 
   return (
     <AdminLayout>
@@ -158,10 +185,26 @@ const Dashboard: React.FC = () => {
 
         {/* KPIs */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPI icon={<Eye className="w-4 h-4 text-neon-purple" />} label="Visits Today" value={mock.stats.visitsToday} />
-          <KPI icon={<Users className="w-4 h-4 text-neon-cyan" />} label="Unique Visitors" value={mock.stats.uniqueVisitors} />
-          <KPI icon={<Clock className="w-4 h-4 text-neon-pink" />} label="Avg. Session" value={mock.stats.avgSession} />
-          <KPI icon={<Globe className="w-4 h-4 text-electric-blue" />} label="Countries" value={mock.stats.countries} />
+          <KPI
+            icon={<Eye className="w-4 h-4 text-neon-purple" />}
+            label="Visits Today"
+            value={loading ? '...' : siteVisits.today.toLocaleString()}
+          />
+          <KPI
+            icon={<Users className="w-4 h-4 text-neon-cyan" />}
+            label="Unique Visitors"
+            value={loading ? '...' : siteVisits.unique_today.toLocaleString()}
+          />
+          <KPI
+            icon={<Clock className="w-4 h-4 text-neon-pink" />}
+            label="Avg. Session"
+            value={loading ? '...' : formatSessionTime(siteVisits.avg_session)}
+          />
+          <KPI
+            icon={<Globe className="w-4 h-4 text-electric-blue" />}
+            label="Countries"
+            value={loading ? '...' : countries.length}
+          />
         </div>
 
         {/* Global Map */}
@@ -172,10 +215,19 @@ const Dashboard: React.FC = () => {
           title="Audience Overview"
           description="Top countries and unique visitors"
           action={
-            <div className="hidden md:flex items-center gap-2 text-xs">
-              <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-300">7d</span>
-              <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white cursor-pointer">30d</span>
-              <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white cursor-pointer">90d</span>
+            <div className="flex items-center gap-2 text-xs">
+              <button
+                onClick={refreshData}
+                className="p-2 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white transition-colors"
+                disabled={loading}
+              >
+                <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
+              </button>
+              <div className="hidden md:flex items-center gap-2">
+                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-300">7d</span>
+                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white cursor-pointer">30d</span>
+                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white cursor-pointer">90d</span>
+              </div>
             </div>
           }
         >
@@ -215,22 +267,28 @@ const Dashboard: React.FC = () => {
             {/* Unique visitors panel (right 2 cols) */}
             <div className="lg:col-span-2">
               <div className="p-4 rounded-xl bg-black/30 border border-white/10 h-full flex flex-col items-center justify-center gap-4">
-                <DonutChart total={totalVisits} unique={mock.stats.uniqueVisitors} />
+                <DonutChart total={siteVisits.this_week} unique={siteVisits.unique_today} />
                 <div className="grid grid-cols-3 gap-3 w-full">
                   <div className="rounded-lg bg-white/5 border border-white/10 p-3 text-center">
                     <div className="text-xs text-gray-400 mb-1">Unique</div>
-                    <div className="text-lg font-bold">{mock.stats.uniqueVisitors.toLocaleString()}</div>
+                    <div className="text-lg font-bold">{loading ? '...' : siteVisits.unique_today.toLocaleString()}</div>
                   </div>
                   <div className="rounded-lg bg-white/5 border border-white/10 p-3 text-center">
                     <div className="text-xs text-gray-400 mb-1">Total (7d)</div>
-                    <div className="text-lg font-bold">{totalVisits.toLocaleString()}</div>
+                    <div className="text-lg font-bold">{loading ? '...' : siteVisits.this_week.toLocaleString()}</div>
                   </div>
                   <div className="rounded-lg bg-white/5 border border-white/10 p-3 text-center">
                     <div className="text-xs text-gray-400 mb-1">Countries</div>
-                    <div className="text-lg font-bold">{mock.stats.countries}</div>
+                    <div className="text-lg font-bold">{loading ? '...' : countries.length}</div>
                   </div>
                 </div>
-                <div className="text-xs text-gray-500">Traffic quality improving • +4% WoW</div>
+                <div className="text-xs text-gray-500">
+                  {error ? (
+                    <span className="text-red-400">Failed to load data</span>
+                  ) : (
+                    'Real-time analytics data'
+                  )}
+                </div>
               </div>
             </div>
           </div>

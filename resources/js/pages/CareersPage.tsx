@@ -1,76 +1,72 @@
-import React, { useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Clock, Users, ArrowRight, Star, Award, Coffee, Heart, Globe, Briefcase, GraduationCap } from 'lucide-react'
+import { MapPin, Clock, Users, ArrowRight, Star, Award, Coffee, Heart, Globe, Briefcase, GraduationCap, DollarSign, Calendar, Building } from 'lucide-react'
 import PageTransition from '../components/PageTransition.tsx'
 import Footer from '../components/Footer.tsx'
-import { slugify, getAllJobs } from '../utils/jobs'
 import { Link } from 'wouter'
 
-export const defaultJobOpenings = [
-  {
-    title: 'Senior Full Stack Developer',
-    department: 'Engineering',
-    location: 'Remote / New York',
-    type: 'Full-time',
-    experience: '5+ years',
-    description: 'Join our engineering team to build cutting-edge web applications using React, Node.js, and modern technologies.',
-    skills: ['React', 'Node.js', 'TypeScript', 'AWS', 'PostgreSQL'],
-    salary: '$120k - $180k'
-  },
-  {
-    title: 'UI/UX Designer',
-    department: 'Design',
-    location: 'Remote / San Francisco',
-    type: 'Full-time',
-    experience: '3+ years',
-    description: 'Create beautiful, intuitive user experiences that delight our clients and drive business results.',
-    skills: ['Figma', 'Adobe Creative Suite', 'Prototyping', 'User Research', 'Design Systems'],
-    salary: '$90k - $140k'
-  },
-  {
-    title: 'DevOps Engineer',
-    department: 'Infrastructure',
-    location: 'Remote / Austin',
-    type: 'Full-time',
-    experience: '4+ years',
-    description: 'Build and maintain scalable infrastructure, automate deployments, and ensure system reliability.',
-    skills: ['AWS', 'Docker', 'Kubernetes', 'Terraform', 'CI/CD'],
-    salary: '$110k - $160k'
-  },
-  {
-    title: 'Product Manager',
-    department: 'Product',
-    location: 'Remote / London',
-    type: 'Full-time',
-    experience: '4+ years',
-    description: 'Drive product strategy and execution, working closely with engineering and design teams.',
-    skills: ['Product Strategy', 'Analytics', 'Agile', 'User Research', 'Roadmapping'],
-    salary: '$100k - $150k'
-  },
-  {
-    title: 'Marketing Specialist',
-    department: 'Marketing',
-    location: 'Remote / Toronto',
-    type: 'Full-time',
-    experience: '2+ years',
-    description: 'Develop and execute marketing campaigns to grow our brand and attract new clients.',
-    skills: ['Digital Marketing', 'Content Creation', 'SEO', 'Social Media', 'Analytics'],
-    salary: '$60k - $90k'
-  },
-  {
-    title: 'Sales Executive',
-    department: 'Sales',
-    location: 'Remote / Dubai',
-    type: 'Full-time',
-    experience: '3+ years',
-    description: 'Build relationships with potential clients and drive revenue growth through consultative selling.',
-    skills: ['B2B Sales', 'CRM', 'Negotiation', 'Relationship Building', 'Presentation'],
-    salary: '$80k - $120k + Commission'
+interface Job {
+  id: number
+  title: string
+  slug: string
+  description: string
+  requirements: string
+  location: string
+  type: 'full-time' | 'part-time' | 'contract' | 'internship'
+  department?: string
+  salary_min?: number
+  salary_max?: number
+  salary_currency: string
+  application_deadline?: string
+  created_at: string
+}
+
+const formatSalary = (job: Job) => {
+  if (!job.salary_min && !job.salary_max) return null
+
+  const currency = job.salary_currency || 'USD'
+  if (job.salary_min && job.salary_max) {
+    return `${currency} ${job.salary_min.toLocaleString()} - ${job.salary_max.toLocaleString()}`
   }
-]
+  if (job.salary_min) {
+    return `${currency} ${job.salary_min.toLocaleString()}+`
+  }
+  return `${currency} ${job.salary_max?.toLocaleString()}`
+}
+
+const getTypeColor = (type: string) => {
+  switch (type) {
+    case 'full-time': return 'bg-green-500/20 text-green-400 border-green-500/30'
+    case 'part-time': return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+    case 'contract': return 'bg-orange-500/20 text-orange-400 border-orange-500/30'
+    case 'internship': return 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+    default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+  }
+}
 
 const CareersPage: React.FC = () => {
-  const jobOpenings = useMemo(() => getAllJobs(defaultJobOpenings), [])
+  const [jobs, setJobs] = useState<Job[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch('/api/jobs')
+        if (!response.ok) throw new Error('Failed to fetch jobs')
+
+        const data = await response.json()
+        setJobs(data)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load jobs')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchJobs()
+  }, [])
+
   const values = [
     {
       title: 'Innovation First',
@@ -348,7 +344,29 @@ const CareersPage: React.FC = () => {
             </motion.div>
 
             <div className="space-y-6">
-              {jobOpenings.map((job, index) => (
+              {loading ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin w-8 h-8 border-2 border-neon-purple border-t-transparent rounded-full mx-auto mb-4"></div>
+                  <p className="text-gray-400">Loading job opportunities...</p>
+                </div>
+              ) : error ? (
+                <div className="text-center py-12">
+                  <p className="text-red-400 mb-4">{error}</p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="px-6 py-2 bg-neon-purple hover:bg-neon-purple/80 text-white rounded-lg transition-colors"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              ) : jobs.length === 0 ? (
+                <div className="text-center py-12">
+                  <Briefcase className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+                  <h3 className="text-xl font-semibold text-white mb-2">No Open Positions</h3>
+                  <p className="text-gray-400">We don't have any open positions at the moment, but we're always looking for talented individuals. Feel free to reach out!</p>
+                </div>
+              ) : (
+                jobs.map((job, index) => (
                 <motion.div key={job.slug ?? index} className="group relative" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: index * 0.1 }} viewport={{ once: true }} whileHover={{ y: -4 }}>
                   <div className="relative p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-500 overflow-hidden">
                     <motion.div className="absolute inset-0 bg-gradient-to-r from-neon-purple/5 via-neon-pink/5 to-neon-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -370,22 +388,21 @@ const CareersPage: React.FC = () => {
 
                         <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
                           <div className="flex items-center gap-2"><MapPin className="w-4 h-4" />{job.location}</div>
-                          <div className="flex items-center gap-2"><Clock className="w-4 h-4" />{job.type}</div>
-                          <div className="flex items-center gap-2"><Star className="w-4 h-4" />{job.experience}</div>
+                          <div className="flex items-center gap-2"><Clock className="w-4 h-4" />{job.type.replace('-', ' ')}</div>
+                          {job.department && (
+                            <div className="flex items-center gap-2"><Building className="w-4 h-4" />{job.department}</div>
+                          )}
+                          {job.application_deadline && (
+                            <div className="flex items-center gap-2"><Calendar className="w-4 h-4" />Apply by {new Date(job.application_deadline).toLocaleDateString()}</div>
+                          )}
                         </div>
 
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {job.skills.map((skill, skillIndex) => (
-                            <span key={skillIndex} className="px-3 py-1 bg-white/5 text-gray-400 text-sm rounded-full border border-white/10 group-hover:bg-white/10 group-hover:text-gray-300 transition-all duration-300">
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-
-                        <div className="text-neon-cyan font-semibold">{job.salary}</div>
+                        {formatSalary(job) && (
+                          <div className="text-neon-cyan font-semibold mb-4">{formatSalary(job)}</div>
+                        )}
                       </div>
 
-                      <Link href={`/careers/${job.slug ?? slugify(job.title)}`}>
+                      <Link href={`/careers/${job.slug}`}>
                         <a className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink text-white font-semibold no-underline shadow-lg hover:shadow-neon-purple/25 transition-transform duration-200 hover:scale-[1.02] focus:outline-none">
                           <span className="flex items-center gap-2">Apply Now<ArrowRight className="w-4 h-4 transition-transform" /></span>
                         </a>
@@ -393,7 +410,8 @@ const CareersPage: React.FC = () => {
                     </div>
                   </div>
                 </motion.div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </section>
