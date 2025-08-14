@@ -5,6 +5,7 @@ import {
   Briefcase, MapPin, Clock, DollarSign, Calendar, Users,
   RefreshCw, Filter, X, Building
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 
 interface Job {
@@ -135,18 +136,18 @@ const JobsManagement: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Jobs Management</h1>
+            <h1 className="text-3xl font-bold">Jobs Management</h1>
             <p className="text-gray-400 mt-1">
               {pagination ? `${pagination.total} total jobs` : 'Loading...'}
             </p>
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 text-white rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-neon-purple hover:bg-neon-purple/80 text-white rounded-xl transition-colors shadow-lg shadow-neon-purple/10"
           >
             <Plus className="w-4 h-4" />
             Create Job
@@ -154,55 +155,58 @@ const JobsManagement: React.FC = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="flex items-center gap-2">
-            {(['all', 'active', 'inactive'] as const).map((filter) => (
-              <button
-                key={filter}
-                onClick={() => {
-                  setActiveFilter(filter)
-                  setCurrentPage(1)
-                }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeFilter === filter
-                    ? 'bg-neon-purple text-white'
-                    : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                {filter.charAt(0).toUpperCase() + filter.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search jobs..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
-              />
+        <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex items-center gap-2">
+              {(['all', 'active', 'inactive'] as const).map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => {
+                    setActiveFilter(filter)
+                    setCurrentPage(1)
+                  }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    activeFilter === filter
+                      ? 'bg-neon-purple text-white'
+                      : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                </button>
+              ))}
             </div>
-            <button
-              onClick={() => fetchJobs(currentPage)}
-              className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            </button>
+
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:flex-none">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Search jobs by title, department, or location..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full sm:w-80 pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
+                />
+              </div>
+              <button
+                onClick={() => fetchJobs(currentPage)}
+                className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
+                title="Refresh"
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Jobs List */}
         <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center">
+            <div className="p-12 text-center">
               <RefreshCw className="w-8 h-8 animate-spin mx-auto text-gray-400 mb-4" />
               <p className="text-gray-400">Loading jobs...</p>
             </div>
           ) : jobs.length === 0 ? (
-            <div className="p-8 text-center">
+            <div className="p-12 text-center">
               <Briefcase className="w-12 h-12 mx-auto text-gray-400 mb-4" />
               <p className="text-gray-400">
                 {searchTerm ? 'No jobs found matching your search' : 'No jobs created yet'}
@@ -211,11 +215,11 @@ const JobsManagement: React.FC = () => {
           ) : (
             <div className="divide-y divide-white/10">
               {jobs.map((job) => (
-                <div key={job.id} className="p-6 hover:bg-white/5 transition-colors">
+                <motion.div key={job.id} className="p-6 hover:bg-white/5 transition-colors" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold text-white text-lg">{job.title}</h3>
+                        <h3 className="font-semibold text-white text-xl">{job.title}</h3>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(job.type)}`}>
                           {job.type.replace('-', ' ').toUpperCase()}
                         </span>
@@ -226,7 +230,7 @@ const JobsManagement: React.FC = () => {
                         )}
                       </div>
 
-                      <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-3">
                         {job.department && (
                           <div className="flex items-center gap-1">
                             <Building className="w-4 h-4" />
@@ -251,7 +255,7 @@ const JobsManagement: React.FC = () => {
 
                       <p className="text-gray-300 line-clamp-2 mb-3">{job.description}</p>
 
-                      <div className="flex items-center gap-4 text-sm text-gray-400">
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
                         <span>Created by {job.creator.name}</span>
                         <span>{new Date(job.created_at).toLocaleDateString()}</span>
                         {job.applications_count !== undefined && (
@@ -301,7 +305,7 @@ const JobsManagement: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
@@ -462,16 +466,16 @@ const JobFormModal: React.FC<{
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-deep-charcoal border border-white/10 rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-deep-charcoal border border-white/10 rounded-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-semibold">{job ? 'Edit Job' : 'Create New Job'}</h3>
-          <button onClick={onClose} className="p-1 text-gray-400 hover:text-white transition-colors">
+          <h3 className="text-2xl font-semibold">{job ? 'Edit Job' : 'Create New Job'}</h3>
+          <button onClick={onClose} className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-300 mb-2">Job Title *</label>
@@ -480,7 +484,7 @@ const JobFormModal: React.FC<{
                 required
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
                 placeholder="e.g. Senior Frontend Developer"
               />
             </div>
@@ -492,7 +496,7 @@ const JobFormModal: React.FC<{
                 required
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
                 placeholder="e.g. New York, NY / Remote"
               />
             </div>
@@ -503,7 +507,7 @@ const JobFormModal: React.FC<{
                 required
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-purple"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-purple"
               >
                 <option value="full-time">Full-time</option>
                 <option value="part-time">Part-time</option>
@@ -518,7 +522,7 @@ const JobFormModal: React.FC<{
                 type="text"
                 value={formData.department}
                 onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
                 placeholder="e.g. Engineering, Marketing"
               />
             </div>
@@ -529,28 +533,28 @@ const JobFormModal: React.FC<{
                 type="date"
                 value={formData.application_deadline}
                 onChange={(e) => setFormData({ ...formData, application_deadline: e.target.value })}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-purple"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-purple"
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 md:col-span-2">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Min Salary</label>
                 <input
                   type="number"
                   value={formData.salary_min}
                   onChange={(e) => setFormData({ ...formData, salary_min: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
                   placeholder="50000"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Max Salary</label>
+                <label className="block text sm font-medium text-gray-300 mb-2">Max Salary</label>
                 <input
                   type="number"
                   value={formData.salary_max}
                   onChange={(e) => setFormData({ ...formData, salary_max: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
                   placeholder="80000"
                 />
               </div>
@@ -559,7 +563,7 @@ const JobFormModal: React.FC<{
                 <select
                   value={formData.salary_currency}
                   onChange={(e) => setFormData({ ...formData, salary_currency: e.target.value })}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-purple"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-purple"
                 >
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -574,10 +578,10 @@ const JobFormModal: React.FC<{
             <label className="block text-sm font-medium text-gray-300 mb-2">Job Description *</label>
             <textarea
               required
-              rows={6}
+              rows={8}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple resize-none"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple resize-none"
               placeholder="Describe the role, responsibilities, and what the candidate will be doing..."
             />
           </div>
@@ -586,10 +590,10 @@ const JobFormModal: React.FC<{
             <label className="block text-sm font-medium text-gray-300 mb-2">Requirements *</label>
             <textarea
               required
-              rows={6}
+              rows={8}
               value={formData.requirements}
               onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple resize-none"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple resize-none"
               placeholder="List the required skills, experience, education, etc..."
             />
           </div>
@@ -611,13 +615,13 @@ const JobFormModal: React.FC<{
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 bg-white/5 border border-white/10 text-gray-300 rounded-lg hover:bg-white/10 transition-colors"
+              className="flex-1 px-5 py-3 bg-white/5 border border-white/10 text-gray-300 rounded-lg hover:bg-white/10 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 text-white rounded-lg transition-colors"
+              className="flex-1 px-5 py-3 bg-neon-purple hover:bg-neon-purple/80 text-white rounded-lg transition-colors shadow-lg shadow-neon-purple/10"
             >
               {job ? 'Update Job' : 'Create Job'}
             </button>

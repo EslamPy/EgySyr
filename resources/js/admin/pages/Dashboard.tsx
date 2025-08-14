@@ -9,6 +9,8 @@ import { getCurrentUser } from '../utils/auth'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { BubbleWorldMap } from '../components/BubbleWorldMap'
+import AnimatedCounter from '../../components/AnimatedCounter'
+import Flag from 'react-world-flags'
 
 interface DashboardStats {
   site_visits: {
@@ -321,6 +323,7 @@ const DashboardStatsCard: React.FC<{
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
       className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-colors"
     >
       <div className="flex items-center justify-between mb-4">
@@ -330,8 +333,8 @@ const DashboardStatsCard: React.FC<{
         <TrendingUp className="w-4 h-4 text-gray-400" />
       </div>
       <div>
-        <h3 className="text-2xl font-bold text-white mb-1">
-          {value.toLocaleString()}
+        <h3 className="text-3xl font-bold text-white mb-1">
+          <AnimatedCounter target={value} />
         </h3>
         <p className="text-gray-400 text-sm">
           {title}
@@ -396,22 +399,22 @@ const DashboardWorldMap: React.FC<{ data: WorldMapData[] }> = ({ data }) => {
       {/* Top Countries List */}
       <div className="space-y-2">
         <h4 className="text-sm font-medium text-gray-400 mb-3">Top Countries</h4>
-        {data.slice(0, 5).map((country, index) => (
+        {data.slice(0, 8).map((country) => (
           <div key={country.country_code} className="flex items-center justify-between py-2">
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 rounded bg-white/10 flex items-center justify-center text-xs font-medium">
-                {country.country_code}
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-6 h-6 rounded overflow-hidden bg-white/10 flex items-center justify-center">
+                <Flag code={country.country_code} width={22} />
               </div>
-              <span className="text-sm text-white">{country.country}</span>
+              <span className="text-sm text-white truncate">{country.country}</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-20 h-2 bg-white/10 rounded-full overflow-hidden">
+              <div className="w-28 h-2 bg-white/10 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-neon-purple rounded-full"
                   style={{ width: `${(country.visits / maxVisits) * 100}%` }}
                 />
               </div>
-              <span className="text-sm text-gray-400 w-12 text-right">
+              <span className="text-sm text-gray-300 w-14 text-right">
                 {country.visits}
               </span>
             </div>
