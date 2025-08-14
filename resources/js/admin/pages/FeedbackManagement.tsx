@@ -46,7 +46,7 @@ const FeedbackManagement: React.FC = () => {
       if (activeTab !== 'all') params.append('status', activeTab)
       if (searchTerm) params.append('search', searchTerm)
 
-      const response = await fetch(`/api/admin/feedback?${params}`)
+      const response = await fetch(`/api/admin/feedback?${params}`, { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       const data = await response.json()
       setFeedback(data.data || [])
     } catch (error) {
@@ -56,7 +56,7 @@ const FeedbackManagement: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/admin/feedback/stats')
+      const response = await fetch('/api/admin/feedback/stats', { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       const data = await response.json()
       setStats(data)
     } catch (error) {
@@ -78,9 +78,11 @@ const FeedbackManagement: React.FC = () => {
     company_name?: string
   }) => {
     try {
+      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
       const response = await fetch('/api/admin/feedback/generate-link', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'include',
         body: JSON.stringify(formData),
       })
 
@@ -103,8 +105,11 @@ const FeedbackManagement: React.FC = () => {
 
   const approveFeedback = async (id: number) => {
     try {
+      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
       const response = await fetch(`/api/admin/feedback/${id}/approve`, {
         method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'include',
       })
 
       if (!response.ok) throw new Error('Failed to approve')
@@ -119,9 +124,11 @@ const FeedbackManagement: React.FC = () => {
 
   const denyFeedback = async (id: number, notes?: string) => {
     try {
+      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
       const response = await fetch(`/api/admin/feedback/${id}/deny`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'include',
         body: JSON.stringify({ admin_notes: notes }),
       })
 
@@ -139,8 +146,11 @@ const FeedbackManagement: React.FC = () => {
     if (!confirm('Are you sure you want to delete this feedback?')) return
 
     try {
+      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
       const response = await fetch(`/api/admin/feedback/${id}`, {
         method: 'DELETE',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        credentials: 'include',
       })
 
       if (!response.ok) throw new Error('Failed to delete')

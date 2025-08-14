@@ -8,6 +8,7 @@ import {
 import { getCurrentUser } from '../utils/auth'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
+import { BubbleWorldMap } from '../components/BubbleWorldMap'
 
 interface DashboardStats {
   site_visits: {
@@ -386,12 +387,10 @@ const DashboardWorldMap: React.FC<{ data: WorldMapData[] }> = ({ data }) => {
 
   return (
     <div className="space-y-4">
-      <div className="text-center py-8">
-        <Globe className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-        <p className="text-gray-400">Interactive world map visualization</p>
-        <p className="text-sm text-gray-500 mt-2">
-          Showing visitor data from {data.length} countries
-        </p>
+      <div>
+        <BubbleWorldMap
+          data={data.map(d => ({ code: d.country_code, name: d.country, visits: d.visits }))}
+        />
       </div>
 
       {/* Top Countries List */}

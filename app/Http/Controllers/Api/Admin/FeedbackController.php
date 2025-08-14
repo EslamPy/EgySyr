@@ -52,6 +52,7 @@ class FeedbackController extends Controller
         $feedback = Feedback::create([
             'token' => Feedback::generateToken(),
             'client_name' => $validated['client_name'],
+            'client_email' => '',
             'company_name' => $validated['company_name'] ?? null,
             'status' => 'pending',
         ]);

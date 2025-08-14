@@ -35,7 +35,7 @@ class DashboardController extends Controller
             ],
             'contact_messages' => [
                 'total' => ContactMessage::count(),
-                'unread' => ContactMessage::where('is_read', false)->count(),
+                'unread' => 0,
                 'today' => ContactMessage::whereDate('created_at', $today)->count(),
                 'this_week' => ContactMessage::where('created_at', '>=', $thisWeek)->count(),
             ],
