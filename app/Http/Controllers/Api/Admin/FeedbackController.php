@@ -54,6 +54,7 @@ class FeedbackController extends Controller
             'client_name' => $validated['client_name'],
             'client_email' => '',
             'company_name' => $validated['company_name'] ?? null,
+            'feedback_text' => '',
             'status' => 'pending',
         ]);
 

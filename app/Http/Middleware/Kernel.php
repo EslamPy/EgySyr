@@ -37,5 +37,6 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'approved' => \App\Http\Middleware\ApproveStatusGate::class,
+        'admin.auth' => \App\Http\Middleware\AdminAuth::class,
     ];
 } 
