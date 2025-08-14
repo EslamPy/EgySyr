@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\Admin\ContactMessageController;
 use App\Http\Controllers\Api\DashboardController;
@@ -11,6 +12,20 @@ use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\Admin\JobController as AdminJobController;
 use App\Http\Controllers\Api\Admin\JobApplicationController;
 use App\Http\Controllers\Api\Admin\UserController;
+use App\Http\Controllers\Api\Admin\ProfileController;
+use App\Models\Job;
+use Illuminate\Http\Request;
+
+// Authentication endpoints (using web middleware for session support)
+Route::middleware('web')->prefix('auth')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::middleware('auth')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/me', [AuthController::class, 'me']);
+        Route::post('/refresh', [AuthController::class, 'refresh']);
+    });
+});
 
 // Public endpoints
 Route::post('/contact', [ContactController::class, 'store']);
@@ -26,12 +41,61 @@ Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/{slug}', [JobController::class, 'show']);
 Route::post('/jobs/{slug}/apply', [JobController::class, 'apply']);
 
-// Admin endpoints (protected with auth middleware)
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+// Jobs API
+Route::get('/jobs', function () {
+    return Job::orderByDesc('published_at')->orderByDesc('created_at')->get();
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/admin/jobs', function (Request $request) {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'department' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'type' => 'nullable|string|max:255',
+            'experience' => 'nullable|string|max:255',
+            'salary' => 'nullable|string|max:255',
+            'skills' => 'array',
+            'description' => 'nullable|string',
+            'published_at' => 'nullable|date',
+        ]);
+        $job = Job::create($data);
+        return response()->json($job, 201);
+    });
+
+    Route::put('/admin/jobs/{job}', function (Request $request, Job $job) {
+        $data = $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'department' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'type' => 'nullable|string|max:255',
+            'experience' => 'nullable|string|max:255',
+            'salary' => 'nullable|string|max:255',
+            'skills' => 'array',
+            'description' => 'nullable|string',
+            'published_at' => 'nullable|date',
+        ]);
+        $job->update($data);
+        return response()->json($job);
+    });
+
+    Route::delete('/admin/jobs/{job}', function (Job $job) {
+        $job->delete();
+        return response()->json(['deleted' => true]);
+    });
+});
+
+// Admin endpoints (protected with admin auth middleware, using web middleware for sessions)
+Route::middleware(['web', 'admin.auth'])->prefix('admin')->group(function () {
     // Dashboard stats
-    Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
-    Route::get('/dashboard/visits-chart', [DashboardController::class, 'visitsChart']);
-    Route::get('/dashboard/world-map', [DashboardController::class, 'worldMapData']);
+    Route::get('/dashboard/overview', [DashboardController::class, 'overview']);
+    Route::get('/dashboard/recent-activity', [DashboardController::class, 'recentActivity']);
+    Route::get('/dashboard/world-map', [DashboardController::class, 'worldMap']);
+    Route::get('/dashboard/analytics', [DashboardController::class, 'analytics']);
+
+    // Analytics
+    Route::get('/analytics', [DashboardController::class, 'analytics']);
+    Route::get('/analytics/export', [DashboardController::class, 'exportAnalytics']);
 
     // Contact messages
     Route::get('/messages', [ContactMessageController::class, 'index']);
@@ -58,10 +122,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/job-applications/{id}/download-cv', [JobApplicationController::class, 'downloadCv']);
     Route::get('/job-applications/export', [JobApplicationController::class, 'export']);
     Route::get('/job-applications/stats', [JobApplicationController::class, 'stats']);
+
+    // Profile management (available to all authenticated admins)
+    Route::post('/profile/update', [ProfileController::class, 'update']);
+    Route::post('/profile/change-password', [ProfileController::class, 'changePassword']);
+    Route::get('/profile/preferences', [ProfileController::class, 'getPreferences']);
+    Route::post('/profile/preferences', [ProfileController::class, 'updatePreferences']);
 });
 
 // Owner-only endpoints
-Route::middleware(['auth', 'role:owner'])->prefix('admin')->group(function () {
+Route::middleware(['web', 'auth', 'role:owner'])->prefix('admin')->group(function () {
     // User management
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/{id}', [UserController::class, 'show']);

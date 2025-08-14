@@ -75,7 +75,6 @@ const FeedbackManagement: React.FC = () => {
 
   const generateFeedbackLink = async (formData: {
     client_name: string
-    client_email: string
     company_name?: string
   }) => {
     try {
@@ -257,7 +256,7 @@ const FeedbackManagement: React.FC = () => {
               onClick={() => { fetchFeedback(); fetchStats(); }}
               className="p-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`${loading ? 'animate-spin' : ''} w-4 h-4`} />
             </button>
           </div>
         </div>
@@ -291,10 +290,6 @@ const FeedbackManagement: React.FC = () => {
                             <span className="text-sm text-gray-400">{item.company_name}</span>
                           </div>
                         )}
-                        <div className="flex items-center gap-2">
-                          <Mail className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm text-gray-400">{item.client_email}</span>
-                        </div>
                       </div>
 
                       {item.feedback_text && (
@@ -423,11 +418,10 @@ const FeedbackManagement: React.FC = () => {
 // Generate Link Modal Component
 const GenerateLinkModal: React.FC<{
   onClose: () => void
-  onSubmit: (data: { client_name: string; client_email: string; company_name?: string }) => void
+  onSubmit: (data: { client_name: string; company_name?: string }) => void
 }> = ({ onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
     client_name: '',
-    client_email: '',
     company_name: '',
   })
 
@@ -435,7 +429,6 @@ const GenerateLinkModal: React.FC<{
     e.preventDefault()
     onSubmit({
       client_name: formData.client_name,
-      client_email: formData.client_email,
       company_name: formData.company_name || undefined,
     })
   }
@@ -457,20 +450,6 @@ const GenerateLinkModal: React.FC<{
               onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
               className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
               placeholder="Enter client name"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Client Email *
-            </label>
-            <input
-              type="email"
-              required
-              value={formData.client_email}
-              onChange={(e) => setFormData({ ...formData, client_email: e.target.value })}
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple"
-              placeholder="Enter client email"
             />
           </div>
 
@@ -554,10 +533,6 @@ const FeedbackDetailsModal: React.FC<{
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-1">Client Name</label>
               <p className="text-white">{feedback.client_name}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
-              <p className="text-white">{feedback.client_email}</p>
             </div>
             {feedback.company_name && (
               <div className="md:col-span-2">

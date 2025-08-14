@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
+
 
 class User extends Authenticatable
 {
@@ -18,13 +20,17 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'first_name',
+        'last_name',
         'name',
+        'username',
         'email',
         'password',
         'role',
         'profile_image_path',
         'status',
         'denial_reason',
+        'last_login_at',
     ];
 
     /**
@@ -46,6 +52,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -69,6 +76,32 @@ class User extends Authenticatable
     public function reviewedApplications()
     {
         return $this->hasMany(JobApplication::class, 'reviewed_by');
+    }
+
+    // Mutators
+    public function setFirstNameAttribute($value)
+    {
+        $this->attributes['first_name'] = $value;
+        $this->updateNameAttribute();
+    }
+
+    public function setLastNameAttribute($value)
+    {
+        $this->attributes['last_name'] = $value;
+        $this->updateNameAttribute();
+    }
+
+    private function updateNameAttribute()
+    {
+        $firstName = $this->attributes['first_name'] ?? '';
+        $lastName = $this->attributes['last_name'] ?? '';
+        $this->attributes['name'] = trim($firstName . ' ' . $lastName);
+    }
+
+    // Accessors
+    public function getAvatarDataUrlAttribute(): ?string
+    {
+        return $this->getProfileImageUrlAttribute();
     }
 
     // Status methods
@@ -110,6 +143,6 @@ class User extends Authenticatable
             return null;
         }
 
-        return asset('storage/' . $this->profile_image_path);
+        return Storage::url($this->profile_image_path);
     }
 }

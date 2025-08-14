@@ -55,7 +55,7 @@ const JobsManagement: React.FC = () => {
         params.append('active', activeFilter === 'active' ? 'true' : 'false')
       }
 
-      const response = await fetch(`/api/admin/jobs?${params}`)
+      const response = await fetch(`/api/admin/jobs?${params}`, { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       if (!response.ok) throw new Error('Failed to fetch jobs')
 
       const data: PaginatedResponse = await response.json()
@@ -362,9 +362,11 @@ const JobsManagement: React.FC = () => {
           onClose={() => setShowCreateModal(false)}
           onSubmit={async (jobData) => {
             try {
+              await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
               const response = await fetch('/api/admin/jobs', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'include',
                 body: JSON.stringify(jobData),
               })
 
@@ -387,9 +389,11 @@ const JobsManagement: React.FC = () => {
           onClose={() => setEditingJob(null)}
           onSubmit={async (jobData) => {
             try {
+              await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
               const response = await fetch(`/api/admin/jobs/${editingJob.id}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'include',
                 body: JSON.stringify(jobData),
               })
 

@@ -64,8 +64,11 @@ const ContactMessages: React.FC = () => {
     if (!confirm('Are you sure you want to delete this message?')) return
 
     try {
+      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
       const response = await fetch(`/api/admin/messages/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
       })
 
       if (!response.ok) throw new Error('Failed to delete message')
@@ -79,7 +82,8 @@ const ContactMessages: React.FC = () => {
 
   const exportMessages = async () => {
     try {
-      const response = await fetch('/api/admin/messages/export')
+      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
+      const response = await fetch('/api/admin/messages/export', { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       if (!response.ok) throw new Error('Failed to export messages')
 
       const blob = await response.blob()

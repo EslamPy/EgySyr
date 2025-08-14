@@ -1,374 +1,426 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
-import { Users, Eye, Globe, Clock, Mail, Briefcase, User, TrendingUp, RefreshCw } from 'lucide-react'
-import { Stars } from '../components/Stars'
+import { 
+  Users, Eye, Globe, Clock, Mail, Briefcase, User, TrendingUp, RefreshCw,
+  Star, MessageSquare, FileText, UserCheck, Calendar, ArrowUp, ArrowDown,
+  Activity, BarChart3, PieChart, MapPin, AlertCircle
+} from 'lucide-react'
 import { getCurrentUser } from '../utils/auth'
-import { BubbleWorldMap } from '../components/BubbleWorldMap'
-import { useDashboardData } from '../../hooks/useDashboardData'
+import { motion } from 'framer-motion'
+import toast from 'react-hot-toast'
 
-const mock = {
-  stats: {
-    visitsToday: 324,
-    visits7d: [120, 180, 150, 220, 300, 260, 324],
-    uniqueVisitors: 278,
-    avgSession: '3m 24s',
-    countries: 23,
-    // Added: top countries breakdown (example data)
-    countriesBreakdown: [
-      { code: 'EG', name: 'Egypt', visits: 540 },
-      { code: 'SA', name: 'Saudi Arabia', visits: 320 },
-      { code: 'AE', name: 'United Arab Emirates', visits: 210 },
-      { code: 'US', name: 'United States', visits: 150 },
-      { code: 'DE', name: 'Germany', visits: 90 },
-    ],
-  },
-  ratings: [
-    { id: 1, name: 'Sarah Johnson', rating: 5, comment: 'Amazing work and support!', date: '2025-08-12' },
-    { id: 2, name: 'Michael Chen', rating: 4, comment: 'Great results, quick delivery.', date: '2025-08-11' },
-    { id: 3, name: 'Emily Rodriguez', rating: 5, comment: 'Exceeded expectations.', date: '2025-08-10' },
-  ],
-  careers: [
-    { id: 'C-1024', name: 'Omar Ali', role: 'Full Stack Developer', status: 'New', date: '2025-08-12' },
-    { id: 'C-1023', name: 'Fatima Ahmed', role: 'UI/UX Designer', status: 'Reviewed', date: '2025-08-11' },
-    { id: 'C-1022', name: 'Youssef Samir', role: 'DevOps Engineer', status: 'Interview', date: '2025-08-09' },
-  ],
-  messages: [
-    { id: 'M-209', name: 'Ahmed Hassan', email: 'ahmed@example.com', subject: 'Project Inquiry', date: '2025-08-12' },
-    { id: 'M-208', name: 'Layla Noor', email: 'layla@example.com', subject: 'Partnership', date: '2025-08-11' },
-    { id: 'M-207', name: 'Khaled Zaki', email: 'khaled@example.com', subject: 'Support', date: '2025-08-10' },
-  ],
+interface DashboardStats {
+  site_visits: {
+    total: number
+    today: number
+    this_week: number
+    this_month: number
+    unique_today?: number
+    avg_session_seconds_today?: number
+  }
+  contact_messages: {
+    total: number
+    unread: number
+    today: number
+    this_week: number
+  }
+  feedback: {
+    total: number
+    pending: number
+    approved: number
+    today: number
+  }
+  job_applications: {
+    total: number
+    pending: number
+    reviewed: number
+    today: number
+  }
+  users: {
+    total: number
+    pending_approval: number
+    approved: number
+    admins: number
+  }
 }
 
-const AreaChart: React.FC<{ data: number[] }> = ({ data }) => {
-  const max = Math.max(...data)
-  const points = data.map((v, i) => `${(i / (data.length - 1)) * 100},${100 - (v / max) * 100}`).join(' ')
-  const gradientId = 'gradVisits'
-  return (
-    <svg viewBox="0 0 100 100" className="w-full h-36">
-      <defs>
-        <linearGradient id={gradientId} x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.6" />
-          <stop offset="100%" stopColor="#06B6D4" stopOpacity="0.1" />
-        </linearGradient>
-      </defs>
-      <polyline fill={`url(#${gradientId})`} stroke="#8B5CF6" strokeWidth="0.6" points={`0,100 ${points} 100,100`} />
-    </svg>
-  )
+interface RecentActivity {
+  type: string
+  title: string
+  description: string
+  created_at: string
+  url: string
 }
 
-// Donut chart showing Unique vs Total visits
-const DonutChart: React.FC<{ total: number; unique: number }> = ({ total, unique }) => {
-  const size = 160
-  const stroke = 16
-  const radius = (size - stroke) / 2
-  const circumference = 2 * Math.PI * radius
-  const uniquePct = total > 0 ? Math.min(100, Math.max(0, Math.round((unique / total) * 100))) : 0
-  const uniqueLen = (uniquePct / 100) * circumference
-  return (
-    <div className="relative w-[160px] h-[160px]">
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        <defs>
-          <linearGradient id="donutGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#8B5CF6" />
-            <stop offset="100%" stopColor="#06B6D4" />
-          </linearGradient>
-        </defs>
-        <circle cx={size / 2} cy={size / 2} r={radius} stroke="#1f2937" strokeWidth={stroke} fill="none" />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="url(#donutGrad)"
-          strokeWidth={stroke}
-          fill="none"
-          strokeDasharray={`${uniqueLen} ${circumference - uniqueLen}`}
-          strokeLinecap="round"
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-3xl font-extrabold">{uniquePct}%</div>
-          <div className="text-xs text-gray-400">Unique</div>
-        </div>
-      </div>
-    </div>
-  )
+interface WorldMapData {
+  country: string
+  country_code: string
+  visits: number
+  unique_visitors: number
 }
-
-function codeToFlagEmoji(code: string): string {
-  if (!code || code.length !== 2) return ''
-  const base = 127397
-  const chars = code.toUpperCase().split('').map(c => String.fromCodePoint(base + c.charCodeAt(0)))
-  return chars.join('')
-}
-
-const KPI: React.FC<{ icon: React.ReactNode; label: string; value: string | number }> = ({ icon, label, value }) => (
-  <div className="bg-gradient-to-br from-deep-charcoal to-jet-black border border-white/10 rounded-2xl p-5 shadow-[0_10px_30px_rgba(0,0,0,0.25)]">
-    <div className="flex items-center gap-3 text-gray-300 mb-2">{icon}<span className="text-sm">{label}</span></div>
-    <div className="text-2xl font-bold">{value}</div>
-  </div>
-)
-
-const SectionCard: React.FC<{ title: string; description?: string; action?: React.ReactNode; children: React.ReactNode }> = ({ title, description, action, children }) => (
-  <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-    <div className="flex items-center justify-between mb-4">
-      <div>
-        <div className="text-sm text-gray-400">{description}</div>
-        <div className="text-xl font-semibold">{title}</div>
-      </div>
-      {action}
-    </div>
-    {children}
-  </div>
-)
 
 const Dashboard: React.FC = () => {
   const user = getCurrentUser()
-  const { stats, worldMapData, loading, error, refreshData } = useDashboardData()
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([])
+  const [worldMapData, setWorldMapData] = useState<WorldMapData[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // Use real data if available, fallback to mock data
-  const siteVisits = stats?.site_visits || {
-    today: 0,
-    unique_today: 0,
-    this_week: 0,
-    this_month: 0,
-    avg_session: 0,
-    top_countries: []
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      // Get CSRF token first
+      await fetch('/sanctum/csrf-cookie', {
+        credentials: 'include',
+      })
+
+      // Fetch dashboard overview stats
+      const [statsResponse, activityResponse, mapResponse] = await Promise.all([
+        fetch('/api/admin/dashboard/overview', {
+          credentials: 'include',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+          },
+        }),
+        fetch('/api/admin/dashboard/recent-activity', {
+          credentials: 'include',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+          },
+        }),
+        fetch('/api/admin/dashboard/world-map', {
+          credentials: 'include',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+          },
+        }),
+      ])
+
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json()
+        setStats(statsData)
+      }
+
+      if (activityResponse.ok) {
+        const activityData = await activityResponse.json()
+        setRecentActivity(activityData)
+      }
+
+      if (mapResponse.ok) {
+        const mapData = await mapResponse.json()
+        setWorldMapData(mapData)
+      }
+
+    } catch (err) {
+      console.error('Failed to fetch dashboard data:', err)
+      setError('Failed to load dashboard data')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const countries = worldMapData.length > 0
-    ? worldMapData.map(item => ({
-        code: item.country_code,
-        name: item.country,
-        visits: item.visits
-      }))
-    : mock.stats.countriesBreakdown
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
 
-  const maxCountryVisits = Math.max(...countries.map(c => c.visits))
-  const totalByCountries = countries.reduce((s, c) => s + c.visits, 0)
-  const countriesSorted = [...countries].sort((a, b) => b.visits - a.visits)
-
-  const formatSessionTime = (minutes: number) => {
-    if (minutes < 1) return '< 1m'
-    if (minutes < 60) return `${Math.round(minutes)}m`
-    const hours = Math.floor(minutes / 60)
-    const mins = Math.round(minutes % 60)
-    return `${hours}h ${mins}m`
+  const refreshData = () => {
+    fetchDashboardData()
+    toast.success('Dashboard data refreshed!')
   }
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-4 text-neon-purple" />
+            <p className="text-gray-400">Loading dashboard...</p>
+          </div>
+        </div>
+      </AdminLayout>
+    )
+  }
+
+  if (error) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-400" />
+            <p className="text-red-400 mb-4">{error}</p>
+            <button
+              onClick={refreshData}
+              className="px-4 py-2 bg-neon-purple hover:bg-neon-purple/80 text-white rounded-lg transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </AdminLayout>
+    )
+  }
+
+  const username = user?.username || user?.name || 'Admin'
 
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* User Profile Card */}
-        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-neon-purple/10 to-neon-cyan/10 p-5">
+        {/* Header */}
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/10 overflow-hidden">
-                {user?.avatarDataUrl ? (
-                  <img src={user.avatarDataUrl} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <User className="w-6 h-6 text-gray-300" />
-                  </div>
-                )}
-              </div>
+            <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/10 flex items-center justify-center">
+              {user?.profile_image_url || user?.profile_image_path ? (
+                <img
+                  src={user.profile_image_url || `/storage/${user.profile_image_path}`}
+                  alt={username}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User className="w-6 h-6 text-gray-400" />
+              )}
             </div>
-            <div className="min-w-0">
-              <div className="text-sm text-gray-400">Welcome back</div>
-              <div className="text-xl font-semibold truncate">{user?.email ?? 'Guest'}</div>
-              <div className="text-xs text-gray-500">Here is your analytics overview</div>
+            <div>
+              <h1 className="text-3xl font-bold">Welcome back, {username}! 👋</h1>
+              <p className="text-gray-400 mt-1">Here's what's happening with your platform today.</p>
             </div>
           </div>
-          <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-neon-purple/20 blur-3xl" />
+          <button
+            onClick={refreshData}
+            className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Refresh
+          </button>
         </div>
 
-        {/* KPIs */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPI
-            icon={<Eye className="w-4 h-4 text-neon-purple" />}
-            label="Visits Today"
-            value={loading ? '...' : siteVisits.today.toLocaleString()}
-          />
-          <KPI
-            icon={<Users className="w-4 h-4 text-neon-cyan" />}
-            label="Unique Visitors"
-            value={loading ? '...' : siteVisits.unique_today.toLocaleString()}
-          />
-          <KPI
-            icon={<Clock className="w-4 h-4 text-neon-pink" />}
-            label="Avg. Session"
-            value={loading ? '...' : formatSessionTime(siteVisits.avg_session)}
-          />
-          <KPI
-            icon={<Globe className="w-4 h-4 text-electric-blue" />}
-            label="Countries"
-            value={loading ? '...' : countries.length}
-          />
-        </div>
-
-        {/* Global Map */}
-        <BubbleWorldMap data={countries} />
-
-        {/* Audience Overview: Countries + Unique Visitors */}
-        <SectionCard
-          title="Audience Overview"
-          description="Top countries and unique visitors"
-          action={
-            <div className="flex items-center gap-2 text-xs">
-              <button
-                onClick={refreshData}
-                className="p-2 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white transition-colors"
-                disabled={loading}
-              >
-                <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
-              </button>
-              <div className="hidden md:flex items-center gap-2">
-                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-300">7d</span>
-                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white cursor-pointer">30d</span>
-                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white cursor-pointer">90d</span>
-              </div>
+        {/* Site Visits Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6 lg:col-span-1">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Site Visits</h2>
+              <Eye className="w-5 h-5 text-gray-400" />
             </div>
-          }
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            {/* Countries list (left 3 cols) */}
-            <div className="lg:col-span-3">
-              <div className="flex items-center justify-between mb-2">
-                <div className="text-sm text-gray-400">Top Countries</div>
-                <div className="text-xs text-gray-500 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> Last 7 days</div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="text-gray-400">Total</div>
+                <div className="text-2xl font-bold">{stats?.site_visits.total.toLocaleString()}</div>
               </div>
-              <div className="space-y-3">
-                {countriesSorted.map((c, idx) => {
-                  const pct = Math.round((c.visits / maxCountryVisits) * 100)
-                  const share = Math.round((c.visits / (totalByCountries || 1)) * 100)
-                  return (
-                    <div key={c.code} className="p-3 rounded-xl bg-black/30 border border-white/10 hover:border-neon-purple/30 transition-colors">
-                      <div className="flex items-center justify-between gap-4 mb-2">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-white/10 text-gray-300">#{idx + 1}</span>
-                          <span className="text-lg">{codeToFlagEmoji(c.code)}</span>
-                          <span className="font-medium truncate">{c.name}</span>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm font-semibold">{c.visits.toLocaleString()}</div>
-                          <div className="text-xs text-gray-400">{share}% share</div>
-                        </div>
-                      </div>
-                      <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-                        <div className="h-full bg-neon-gradient" style={{ width: `${pct}%` }} />
-                      </div>
-                    </div>
-                  )
-                })}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                  <div className="text-xs text-gray-400">Today</div>
+                  <div className="text-lg font-semibold">{stats?.site_visits.today.toLocaleString()}</div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                  <div className="text-xs text-gray-400">Unique Today</div>
+                  <div className="text-lg font-semibold">{stats?.site_visits.unique_today?.toLocaleString() || 0}</div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                  <div className="text-xs text-gray-400">This Week</div>
+                  <div className="text-lg font-semibold">{stats?.site_visits.this_week.toLocaleString()}</div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                  <div className="text-xs text-gray-400">This Month</div>
+                  <div className="text-lg font-semibold">{stats?.site_visits.this_month.toLocaleString()}</div>
+                </div>
               </div>
-            </div>
-
-            {/* Unique visitors panel (right 2 cols) */}
-            <div className="lg:col-span-2">
-              <div className="p-4 rounded-xl bg-black/30 border border-white/10 h-full flex flex-col items-center justify-center gap-4">
-                <DonutChart total={siteVisits.this_week} unique={siteVisits.unique_today} />
-                <div className="grid grid-cols-3 gap-3 w-full">
-                  <div className="rounded-lg bg-white/5 border border-white/10 p-3 text-center">
-                    <div className="text-xs text-gray-400 mb-1">Unique</div>
-                    <div className="text-lg font-bold">{loading ? '...' : siteVisits.unique_today.toLocaleString()}</div>
-                  </div>
-                  <div className="rounded-lg bg-white/5 border border-white/10 p-3 text-center">
-                    <div className="text-xs text-gray-400 mb-1">Total (7d)</div>
-                    <div className="text-lg font-bold">{loading ? '...' : siteVisits.this_week.toLocaleString()}</div>
-                  </div>
-                  <div className="rounded-lg bg-white/5 border border-white/10 p-3 text-center">
-                    <div className="text-xs text-gray-400 mb-1">Countries</div>
-                    <div className="text-lg font-bold">{loading ? '...' : countries.length}</div>
-                  </div>
-                </div>
-                <div className="text-xs text-gray-500">
-                  {error ? (
-                    <span className="text-red-400">Failed to load data</span>
-                  ) : (
-                    'Real-time analytics data'
-                  )}
-                </div>
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <Clock className="w-4 h-4" />
+                Avg. Session Today: {Math.round((stats?.site_visits.avg_session_seconds_today || 0) / 60)} min
               </div>
             </div>
           </div>
-        </SectionCard>
 
-        {/* Two-column: Ratings and Careers */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <SectionCard title="Recent Client Ratings" description="Latest feedback" action={<a href="/admin/feedback" className="text-sm text-neon-cyan">View all</a>}>
-            <div className="space-y-3">
-              {mock.ratings.map(r => (
-                <div key={r.id} className="flex items-start justify-between gap-3 p-3 rounded-xl bg-black/30 border border-white/10">
-                  <div className="flex items-start gap-3">
-                    <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-sm">
-                      <User className="w-4 h-4 text-gray-300" />
-                    </div>
-                    <div>
-                      <div className="font-medium">{r.name}</div>
-                      <div className="text-sm text-gray-400">{r.comment}</div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <Stars value={r.rating} />
-                    <div className="text-xs text-gray-500">{r.date}</div>
-                  </div>
-                </div>
-              ))}
+          {/* World Map Section */}
+          <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Global Visitors</h2>
+              <Globe className="w-5 h-5 text-gray-400" />
             </div>
-          </SectionCard>
-
-          <SectionCard title="Careers Applications" description="Latest applicants" action={<a href="/admin/careers" className="text-sm text-neon-cyan">View all</a>}>
-            <div className="divide-y divide-white/10">
-              {mock.careers.map(c => (
-                <div key={c.id} className="flex items-center justify-between py-3">
-                  <div className="flex items-center gap-3">
-                    <Briefcase className="w-4 h-4 text-neon-purple" />
-                    <div>
-                      <div className="font-medium">{c.name}</div>
-                      <div className="text-xs text-gray-400">{c.role}</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className={`text-xs px-2 py-1 rounded-full border ${c.status === 'New' ? 'border-neon-cyan text-neon-cyan' : c.status === 'Interview' ? 'border-neon-pink text-neon-pink' : 'border-white/20 text-gray-300'}`}>{c.status}</span>
-                    <div className="text-xs text-gray-500 mt-1">{c.date}</div>
-                  </div>
-                </div>
-              ))}
+            <DashboardWorldMap data={worldMapData} />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+              <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                <div className="text-xs text-gray-400">Top Countries</div>
+                <div className="text-lg font-semibold">{worldMapData.length}</div>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                <div className="text-xs text-gray-400">Visits Today</div>
+                <div className="text-lg font-semibold">{stats?.site_visits.today.toLocaleString()}</div>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                <div className="text-xs text-gray-400">Unique Visitors</div>
+                <div className="text-lg font-semibold">{stats?.site_visits.unique_today?.toLocaleString() || 0}</div>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                <div className="text-xs text-gray-400">Avg. Session</div>
+                <div className="text-lg font-semibold">{Math.round((stats?.site_visits.avg_session_seconds_today || 0) / 60)} min</div>
+              </div>
             </div>
-          </SectionCard>
+          </div>
         </div>
 
-        {/* Contact Messages */}
-        <SectionCard title="Contact Messages" description="Latest form submissions" action={<a href="/admin/messages" className="text-sm text-neon-cyan">View all</a>}>
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead>
-                <tr className="text-left text-gray-400">
-                  <th className="py-2 pr-4">ID</th>
-                  <th className="py-2 pr-4">Name</th>
-                  <th className="py-2 pr-4">Email</th>
-                  <th className="py-2 pr-4">Subject</th>
-                  <th className="py-2 pr-4">Date</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10">
-                {mock.messages.map(m => (
-                  <tr key={m.id}>
-                    <td className="py-2 pr-4 text-gray-400">{m.id}</td>
-                    <td className="py-2 pr-4">{m.name}</td>
-                    <td className="py-2 pr-4 text-gray-300 flex items-center gap-2"><Mail className="w-3 h-3" />{m.email}</td>
-                    <td className="py-2 pr-4">{m.subject}</td>
-                    <td className="py-2 pr-4 text-gray-500">{m.date}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </SectionCard>
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <DashboardQuickActionCard
+            title="Pending Users"
+            count={stats?.users.pending_approval || 0}
+            href="/admin/users"
+            icon={<UserCheck className="w-5 h-5" />}
+            color="orange"
+          />
+          <DashboardQuickActionCard
+            title="Unread Messages"
+            count={stats?.contact_messages.unread || 0}
+            href="/admin/messages"
+            icon={<MessageSquare className="w-5 h-5" />}
+            color="blue"
+          />
+          <DashboardQuickActionCard
+            title="Pending Feedback"
+            count={stats?.feedback.pending || 0}
+            href="/admin/feedback"
+            icon={<Star className="w-5 h-5" />}
+            color="yellow"
+          />
+          <DashboardQuickActionCard
+            title="New Applications"
+            count={stats?.job_applications.pending || 0}
+            href="/admin/job-applications"
+            icon={<FileText className="w-5 h-5" />}
+            color="green"
+          />
+        </div>
       </div>
     </AdminLayout>
   )
 }
 
-export default Dashboard 
+// Stats Card Component
+const DashboardStatsCard: React.FC<{
+  title: string
+  value: number
+  change: number
+  changeLabel: string
+  icon: React.ReactNode
+  color: 'blue' | 'green' | 'purple' | 'yellow'
+}> = ({ title, value, change, changeLabel, icon, color }) => {
+  const colorClasses = {
+    blue: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+    green: 'text-green-400 bg-green-500/10 border-green-500/20',
+    purple: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+    yellow: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-colors"
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className={`p-3 rounded-lg ${colorClasses[color]}`}>
+          {icon}
+        </div>
+        <TrendingUp className="w-4 h-4 text-gray-400" />
+      </div>
+      <div>
+        <h3 className="text-2xl font-bold text-white mb-1">
+          {value.toLocaleString()}
+        </h3>
+        <p className="text-gray-400 text-sm">
+          {title}
+        </p>
+        <p className="text-xs text-gray-500 mt-2">
+          +{change} {changeLabel}
+        </p>
+      </div>
+    </motion.div>
+  )
+}
+
+// Quick Action Card Component
+const DashboardQuickActionCard: React.FC<{
+  title: string
+  count: number
+  href: string
+  icon: React.ReactNode
+  color: 'blue' | 'green' | 'purple' | 'yellow' | 'orange'
+}> = ({ title, count, href, icon, color }) => {
+  const colorClasses = {
+    blue: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+    green: 'text-green-400 bg-green-500/10 border-green-500/20',
+    purple: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+    yellow: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
+    orange: 'text-orange-400 bg-orange-500/10 border-orange-500/20',
+  }
+
+  return (
+    <motion.a
+      href={href}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ scale: 1.02 }}
+      className="block bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all"
+    >
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-gray-400">{title}</p>
+          <p className="text-2xl font-bold text-white">{count}</p>
+        </div>
+        <div className={`p-2 rounded-lg ${colorClasses[color]}`}>
+          {icon}
+        </div>
+      </div>
+    </motion.a>
+  )
+}
+
+// Modern World Map Component
+const DashboardWorldMap: React.FC<{ data: WorldMapData[] }> = ({ data }) => {
+  const maxVisits = Math.max(...data.map(d => d.visits), 1)
+
+  return (
+    <div className="space-y-4">
+      <div className="text-center py-8">
+        <Globe className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+        <p className="text-gray-400">Interactive world map visualization</p>
+        <p className="text-sm text-gray-500 mt-2">
+          Showing visitor data from {data.length} countries
+        </p>
+      </div>
+
+      {/* Top Countries List */}
+      <div className="space-y-2">
+        <h4 className="text-sm font-medium text-gray-400 mb-3">Top Countries</h4>
+        {data.slice(0, 5).map((country, index) => (
+          <div key={country.country_code} className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded bg-white/10 flex items-center justify-center text-xs font-medium">
+                {country.country_code}
+              </div>
+              <span className="text-sm text-white">{country.country}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-20 h-2 bg-white/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-neon-purple rounded-full"
+                  style={{ width: `${(country.visits / maxVisits) * 100}%` }}
+                />
+              </div>
+              <span className="text-sm text-gray-400 w-12 text-right">
+                {country.visits}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default Dashboard

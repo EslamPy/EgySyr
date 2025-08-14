@@ -180,6 +180,7 @@ const FeedbackFormPage: React.FC = () => {
           </div>
         </div>
       </PageTransition>
+    )
   }
 
   // Main feedback form

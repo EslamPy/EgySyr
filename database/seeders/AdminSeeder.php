@@ -18,7 +18,10 @@ class AdminSeeder extends Seeder
         $owner = User::updateOrCreate(
             ['email' => 'eslamdev@outlook.de'],
             [
-                'name' => 'Owner',
+                'first_name' => 'Eslam',
+                'last_name' => 'Developer',
+                'name' => 'Eslam Developer',
+                'username' => 'eslamdev',
                 'email' => 'eslamdev@outlook.de',
                 'password' => Hash::make('admin123'),
                 'role' => 'owner',

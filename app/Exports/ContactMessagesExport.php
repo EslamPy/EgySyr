@@ -37,7 +37,7 @@ class ContactMessagesExport implements FromCollection, WithHeadings, WithMapping
             $message->email,
             $message->subject,
             $message->message,
-            $message->created_at->format('Y-m-d H:i:s'),
+            $message->created_at->format('Y-m-d H:i:s'), // Format the date as YYYY-MM-DD HH:MM:SS
         ];
     }
 

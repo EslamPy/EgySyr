@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -9,6 +8,22 @@ use Illuminate\Http\Request;
 Route::get('/', function () {
     return view('app');
 })->name('home');
+
+// Public admin routes (login, register)
+Route::get('/admin/login', function () {
+    return view('app');
+})->name('admin.login');
+
+Route::get('/admin/register', function () {
+    return view('app');
+})->name('admin.register');
+
+// Protected admin routes
+Route::middleware(['admin.auth'])->group(function () {
+    Route::get('/admin/{any?}', function () {
+        return view('app');
+    })->where('any', '^(?!login$|register$).*$')->name('admin.dashboard');
+});
 
 // Example: protect dashboard route
 Route::middleware(['auth', 'approved'])->group(function () {
@@ -24,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
         return response()->json($users);
     });
 
-    Route::post('/admin/users/{user}/approve', function (Request $request, User $user) {
+    Route::post('/admin/users/{user}/approve', function (User $user) {
         $user->update(['status' => 'approved', 'denial_reason' => null]);
         return response()->json(['approved' => true]);
     });
@@ -39,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
-// Catch-all route to support client-side routing (exclude known backend prefixes)
+// Catch-all route to support client-side routing (exclude only API and auth backend routes)
 Route::get('/{any}', function () {
     return view('app');
-})->where('any', '^(?!api\/|login$|register$|password\/|logout$|settings\/|admin\/).*$');
+})->where('any', '^(?!api\/|login$|register$|password\/|logout$|settings\/).*$');

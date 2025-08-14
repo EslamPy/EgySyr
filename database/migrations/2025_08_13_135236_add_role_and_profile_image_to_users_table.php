@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Update existing role column to use enum
-            $table->enum('role', ['owner', 'admin', 'user'])->default('admin')->change();
+            // Add role column if it doesn't exist
+            if (!Schema::hasColumn('users', 'role')) {
+                $table->enum('role', ['owner', 'admin', 'user'])->default('admin')->after('password');
+            } else {
+                // Update existing role column to use enum
+                $table->enum('role', ['owner', 'admin', 'user'])->default('admin')->change();
+            }
 
             // Add profile_image column if it doesn't exist (we'll use the existing profile_image_path)
             if (!Schema::hasColumn('users', 'profile_image')) {
@@ -28,8 +33,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Revert role column back to string
-            $table->string('role')->default('user')->change();
+            // Drop role column if it exists
+            if (Schema::hasColumn('users', 'role')) {
+                $table->dropColumn('role');
+            }
 
             // Only drop profile_image if we added it
             if (Schema::hasColumn('users', 'profile_image')) {

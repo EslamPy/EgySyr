@@ -17,8 +17,10 @@ class SiteTracker {
   }
 
   private init() {
-    // Track initial page load
-    this.trackPageView()
+    // Track initial page load asynchronously to not block app startup
+    setTimeout(() => {
+      this.trackPageView()
+    }, 1000) // Delay initial tracking by 1 second
 
     // Track page changes (for SPA navigation)
     window.addEventListener('popstate', () => {
@@ -42,27 +44,38 @@ class SiteTracker {
 
   private async trackPageView() {
     if (this.isTracking) return
-    
+
     this.isTracking = true
-    
+
     try {
       const trackingData: TrackingData = {
         page_url: window.location.href,
         referrer: document.referrer || undefined,
       }
 
+      // Use a timeout to prevent blocking the app
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000) // 5 second timeout
+
+      // Get CSRF token
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+
       await fetch('/api/track-visit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
+          ...(csrfToken && { 'X-CSRF-TOKEN': csrfToken }),
         },
         body: JSON.stringify(trackingData),
+        signal: controller.signal,
       })
 
+      clearTimeout(timeoutId)
       this.lastPageUrl = window.location.href
       this.sessionStart = Date.now()
     } catch (error) {
+      // Silently fail - don't block the app
       console.warn('Failed to track page view:', error)
     } finally {
       this.isTracking = false

@@ -4,6 +4,7 @@ use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\PermissionMiddleware;
+use App\Http\Middleware\AdminAuth;
 use Illuminate\Foundation\Application;
 
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        // Use custom CSRF middleware
+        $middleware->validateCsrfTokens(except: [
+            'api/auth/*',
+        ]);
+
         $middleware->web(append: [
             HandleAppearance::class,
             HandleInertiaRequests::class,
@@ -28,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
+            'admin.auth' => AdminAuth::class,
         ]);
     })
     ->withExceptions(function () {

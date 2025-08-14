@@ -16,7 +16,7 @@ export const AdminSidebar: React.FC = () => {
         <Link href="/admin/dashboard" className={linkClass('/admin/dashboard')}>
           <LayoutDashboard className="w-4 h-4" /> Dashboard
         </Link>
-        <Link href="/admin/site-visits" className={linkClass('/admin/site-visits')}>
+        <Link href="/admin/analytics" className={linkClass('/admin/analytics')}>
           <Eye className="w-4 h-4" /> Site Analytics
         </Link>
 

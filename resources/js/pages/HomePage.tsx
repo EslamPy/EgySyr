@@ -92,6 +92,8 @@ const PremiumScene: React.FC = () => {
 }
 
 const HomePage: React.FC = () => {
+  console.log('HomePage component rendering...')
+
   const heroRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -165,6 +167,7 @@ const HomePage: React.FC = () => {
             className="absolute inset-0 z-0"
             style={{ y, opacity }}
           >
+            
             <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
               <PremiumScene />
               <OrbitControls
@@ -176,6 +179,7 @@ const HomePage: React.FC = () => {
                 dampingFactor={0.05}
               />
             </Canvas>
+           
           </motion.div>
 
           {/* Enhanced Particle System */}

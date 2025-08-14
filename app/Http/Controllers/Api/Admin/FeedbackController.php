@@ -46,14 +46,12 @@ class FeedbackController extends Controller
     {
         $validated = $request->validate([
             'client_name' => 'required|string|max:255',
-            'client_email' => 'required|email|max:255',
             'company_name' => 'nullable|string|max:255',
         ]);
 
         $feedback = Feedback::create([
             'token' => Feedback::generateToken(),
             'client_name' => $validated['client_name'],
-            'client_email' => $validated['client_email'],
             'company_name' => $validated['company_name'] ?? null,
             'status' => 'pending',
         ]);
@@ -66,7 +64,6 @@ class FeedbackController extends Controller
             'token' => $feedback->token,
             'url' => $feedbackUrl,
             'client_name' => $feedback->client_name,
-            'client_email' => $feedback->client_email,
         ], 201);
     }
 

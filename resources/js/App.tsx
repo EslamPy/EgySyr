@@ -15,7 +15,8 @@ import ServicesPage from './pages/ServicesPage.tsx'
 import BlogPage from './pages/BlogPage.tsx'
 import AboutPage from './pages/AboutPage.tsx'
 import ContactPage from './pages/ContactPage.tsx'
-import { AdminLogin, AdminRegister, AdminDashboard, AdminFeedback, AdminMessages, AdminJobs, AdminJobApplications, AdminUsers } from './admin'
+import { AdminLogin, AdminRegister, AdminDashboard, AdminFeedback, AdminMessages, AdminJobs, AdminJobApplications, AdminUsers, AdminAnalytics, AdminSettings } from './admin'
+import AuthGuard from './admin/components/AuthGuard'
 import CareersPage from './pages/CareersPage.tsx'
 import JobDetailPage from './pages/JobDetailPage'
 import FeedbackFormPage from './pages/FeedbackFormPage'
@@ -28,26 +29,31 @@ import TermsOfServicePage from './pages/TermsOfServicePage.tsx'
 import { initializeGSAP, initScrollAnimations } from './utils/animations.ts'
 
 const App: React.FC = () => {
+  console.log('App component rendering...')
+
   const { initSmoothScroll, scrollTo, lenis } = useSmoothScroll()
   const { initCursor } = useCursor()
   const [location] = useLocation()
   const showGlobalNav = !location.startsWith('/admin')
 
+  console.log('Current location:', location)
+
   useEffect(() => {
-    initializeGSAP()
+    // Simplified initialization for debugging
     document.documentElement.classList.add('dark')
     document.body.style.backgroundColor = '#0A0A0A'
-    if (typeof window !== 'undefined') {
-      ;(document.body.style as any).webkitFontSmoothing = 'antialiased'
-      ;(document.body.style as any).mozOsxFontSmoothing = 'grayscale'
-      document.body.style.textRendering = 'optimizeSpeed'
-    }
-    const cursorCleanup = initCursor()
-    initSmoothScroll()
-    const scrollAnimationTimer = setTimeout(() => { initScrollAnimations() }, 300)
 
-    // Initialize site tracking
-    initSiteTracking()
+    // Initialize complex features after a delay to prevent blocking
+    setTimeout(() => {
+      try {
+        initializeGSAP()
+        const cursorCleanup = initCursor()
+        initSmoothScroll()
+        setTimeout(() => { initScrollAnimations() }, 300)
+      } catch (error) {
+        console.error('Error initializing features:', error)
+      }
+    }, 100)
     const fonts = [
       'Space Grotesk:wght@300;400;500;600;700',
       'Inter:wght@300;400;500;600;700',
@@ -59,8 +65,10 @@ const App: React.FC = () => {
       link.rel = 'stylesheet'
       document.head.appendChild(link)
     })
-    return () => { clearTimeout(scrollAnimationTimer); if (cursorCleanup) cursorCleanup() }
+    // No cleanup needed for now - variables are scoped locally
   }, [initSmoothScroll, initCursor])
+
+  console.log('App component about to render JSX...')
 
   return (
     <div className="min-h-screen bg-jet-black text-white font-space overflow-hidden">
@@ -92,12 +100,30 @@ const App: React.FC = () => {
               <Route path="/thank-you" component={ThankYouPage} />
               <Route path="/admin/login" component={AdminLogin} />
               <Route path="/admin/register" component={AdminRegister} />
-              <Route path="/admin/dashboard" component={AdminDashboard} />
-              <Route path="/admin/messages" component={AdminMessages} />
-              <Route path="/admin/feedback" component={AdminFeedback} />
-              <Route path="/admin/jobs" component={AdminJobs} />
-              <Route path="/admin/job-applications" component={AdminJobApplications} />
-              <Route path="/admin/users" component={AdminUsers} />
+              <Route path="/admin/dashboard">
+                <AuthGuard><AdminDashboard /></AuthGuard>
+              </Route>
+              <Route path="/admin/messages">
+                <AuthGuard><AdminMessages /></AuthGuard>
+              </Route>
+              <Route path="/admin/feedback">
+                <AuthGuard><AdminFeedback /></AuthGuard>
+              </Route>
+              <Route path="/admin/jobs">
+                <AuthGuard><AdminJobs /></AuthGuard>
+              </Route>
+              <Route path="/admin/job-applications">
+                <AuthGuard><AdminJobApplications /></AuthGuard>
+              </Route>
+              <Route path="/admin/users">
+                <AuthGuard><AdminUsers /></AuthGuard>
+              </Route>
+              <Route path="/admin/analytics">
+                <AuthGuard><AdminAnalytics /></AuthGuard>
+              </Route>
+              <Route path="/admin/settings">
+                <AuthGuard><AdminSettings /></AuthGuard>
+              </Route>
               <Route path="/privacy" component={PrivacyPolicyPage} />
               <Route path="/terms" component={TermsOfServicePage} />
               <Route>

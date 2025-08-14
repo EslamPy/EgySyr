@@ -63,7 +63,7 @@ const UserManagement: React.FC = () => {
       if (searchTerm) params.append('search', searchTerm)
       if (statusFilter !== 'all') params.append('status', statusFilter)
 
-      const response = await fetch(`/api/admin/users?${params}`)
+      const response = await fetch(`/api/admin/users?${params}`, { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
       if (!response.ok) throw new Error('Failed to fetch users')
 
       const data: PaginatedResponse = await response.json()
