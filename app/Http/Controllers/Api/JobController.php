@@ -65,6 +65,7 @@ class JobController extends Controller
             'cv' => 'required|file|mimes:pdf,doc,docx|max:5120', // 5MB max
             'linkedin_url' => 'nullable|url|max:255',
             'portfolio_url' => 'nullable|url|max:255',
+            'github_url' => 'nullable|url|max:255',
             'years_experience' => 'nullable|integer|min:0|max:50',
             'additional_info' => 'nullable|string|max:1000',
         ]);
@@ -89,12 +90,13 @@ class JobController extends Controller
             'last_name' => $validated['last_name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
-            'cover_letter' => $validated['cover_letter'],
+            'cover_letter' => $validated['cover_letter'] ?? null,
             'cv_path' => $cvPath,
-            'linkedin_url' => $validated['linkedin_url'],
-            'portfolio_url' => $validated['portfolio_url'],
-            'years_experience' => $validated['years_experience'],
-            'additional_info' => $validated['additional_info'],
+            'linkedin_url' => $validated['linkedin_url'] ?? null,
+            'portfolio_url' => $validated['portfolio_url'] ?? null,
+            'github_url' => $validated['github_url'] ?? null,
+            'years_experience' => $validated['years_experience'] ?? null,
+            'additional_info' => $validated['additional_info'] ?? null,
             'status' => 'pending',
         ]);
 

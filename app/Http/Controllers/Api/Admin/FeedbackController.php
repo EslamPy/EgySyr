@@ -15,12 +15,24 @@ class FeedbackController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Feedback::with('reviewer:id,name')
-            ->whereNotNull('submitted_at');
+        $query = Feedback::with('reviewer:id,name');
 
-        // Filter by status
+        // Filter by status - but handle unsubmitted links differently
         if ($status = $request->get('status')) {
-            $query->where('status', $status);
+            if ($status === 'pending') {
+                // For pending, show both unsubmitted links and submitted pending feedback
+                $query->where(function ($q) {
+                    $q->whereNull('submitted_at')
+                      ->orWhere(function ($subQ) {
+                          $subQ->whereNotNull('submitted_at')
+                               ->where('status', 'pending');
+                      });
+                });
+            } else {
+                // For approved/denied, only show submitted feedback
+                $query->where('status', $status)
+                      ->whereNotNull('submitted_at');
+            }
         }
 
         // Search functionality
@@ -33,7 +45,7 @@ class FeedbackController extends Controller
             });
         }
 
-        $feedback = $query->orderBy('submitted_at', 'desc')
+        $feedback = $query->orderByRaw('COALESCE(submitted_at, created_at) DESC')
             ->paginate(20);
 
         return response()->json($feedback);
@@ -132,7 +144,13 @@ class FeedbackController extends Controller
     {
         $stats = [
             'total' => Feedback::whereNotNull('submitted_at')->count(),
-            'pending' => Feedback::pending()->whereNotNull('submitted_at')->count(),
+            'pending' => Feedback::where(function ($q) {
+                $q->whereNull('submitted_at')
+                  ->orWhere(function ($subQ) {
+                      $subQ->whereNotNull('submitted_at')
+                           ->where('status', 'pending');
+                  });
+            })->count(),
             'approved' => Feedback::approved()->count(),
             'denied' => Feedback::where('status', 'denied')->count(),
             'links_generated' => Feedback::count(),

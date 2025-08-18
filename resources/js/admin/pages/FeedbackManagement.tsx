@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
-import { 
-  Plus, Search, Filter, Download, Eye, Check, X, Trash2, 
+import {
+  Plus, Search, Filter, Download, Eye, Check, X, Trash2,
   Star, Calendar, User, Mail, Building, MessageSquare,
   Copy, CheckCircle, ExternalLink, RefreshCw
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+
+// Utility function to get CSRF token
+const getCSRFToken = (): string | null => {
+  const metaTag = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
+  return metaTag ? metaTag.content : null
+}
 
 interface FeedbackItem {
   id: number
@@ -78,37 +84,58 @@ const FeedbackManagement: React.FC = () => {
     company_name?: string
   }) => {
     try {
-      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
       const response = await fetch('/api/admin/feedback/generate-link', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
         credentials: 'include',
         body: JSON.stringify(formData),
       })
 
-      if (!response.ok) throw new Error('Failed to generate link')
-
       const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || data.error || 'Failed to generate link')
+      }
+
       toast.success('Feedback link generated successfully!')
-      
+
       // Copy to clipboard
-      navigator.clipboard.writeText(data.url)
+      const feedbackUrl = `${window.location.origin}/feedback/${data.token}`
+      await navigator.clipboard.writeText(feedbackUrl)
       toast.success('Link copied to clipboard!')
-      
+
       setShowGenerateModal(false)
       fetchFeedback()
       fetchStats()
     } catch (error) {
-      toast.error('Failed to generate feedback link')
+      console.error('Generate link error:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to generate feedback link')
     }
   }
 
   const approveFeedback = async (id: number) => {
     try {
-      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
       const response = await fetch(`/api/admin/feedback/${id}/approve`, {
         method: 'POST',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': csrfToken
+        },
         credentials: 'include',
       })
 
@@ -124,10 +151,18 @@ const FeedbackManagement: React.FC = () => {
 
   const denyFeedback = async (id: number, notes?: string) => {
     try {
-      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
       const response = await fetch(`/api/admin/feedback/${id}/deny`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': csrfToken
+        },
         credentials: 'include',
         body: JSON.stringify({ admin_notes: notes }),
       })
@@ -146,10 +181,17 @@ const FeedbackManagement: React.FC = () => {
     if (!confirm('Are you sure you want to delete this feedback?')) return
 
     try {
-      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
       const response = await fetch(`/api/admin/feedback/${id}`, {
         method: 'DELETE',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': csrfToken
+        },
         credentials: 'include',
       })
 

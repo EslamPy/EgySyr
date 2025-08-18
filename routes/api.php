@@ -13,8 +13,6 @@ use App\Http\Controllers\Api\Admin\JobController as AdminJobController;
 use App\Http\Controllers\Api\Admin\JobApplicationController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Admin\ProfileController;
-use App\Models\Job;
-use Illuminate\Http\Request;
 
 // Authentication endpoints (using web middleware for session support)
 Route::middleware('web')->prefix('auth')->group(function () {
@@ -41,48 +39,8 @@ Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/{slug}', [JobController::class, 'show']);
 Route::post('/jobs/{slug}/apply', [JobController::class, 'apply']);
 
-// Jobs API
-Route::get('/jobs', function () {
-    return Job::orderByDesc('published_at')->orderByDesc('created_at')->get();
-});
-
 Route::middleware('auth')->group(function () {
-    Route::post('/admin/jobs', function (Request $request) {
-        $data = $request->validate([
-            'title' => 'required|string|max:255',
-            'department' => 'nullable|string|max:255',
-            'location' => 'nullable|string|max:255',
-            'type' => 'nullable|string|max:255',
-            'experience' => 'nullable|string|max:255',
-            'salary' => 'nullable|string|max:255',
-            'skills' => 'array',
-            'description' => 'nullable|string',
-            'published_at' => 'nullable|date',
-        ]);
-        $job = Job::create($data);
-        return response()->json($job, 201);
-    });
-
-    Route::put('/admin/jobs/{job}', function (Request $request, Job $job) {
-        $data = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'department' => 'nullable|string|max:255',
-            'location' => 'nullable|string|max:255',
-            'type' => 'nullable|string|max:255',
-            'experience' => 'nullable|string|max:255',
-            'salary' => 'nullable|string|max:255',
-            'skills' => 'array',
-            'description' => 'nullable|string',
-            'published_at' => 'nullable|date',
-        ]);
-        $job->update($data);
-        return response()->json($job);
-    });
-
-    Route::delete('/admin/jobs/{job}', function (Job $job) {
-        $job->delete();
-        return response()->json(['deleted' => true]);
-    });
+    // Removed conflicting inline job routes - using resource controller instead
 });
 
 // Admin endpoints (protected with admin auth middleware, using web middleware for sessions)
@@ -116,12 +74,12 @@ Route::middleware(['web', 'admin.auth'])->prefix('admin')->group(function () {
 
     // Job applications
     Route::get('/job-applications', [JobApplicationController::class, 'index']);
+    Route::get('/job-applications/export', [JobApplicationController::class, 'export']);
+    Route::get('/job-applications/stats', [JobApplicationController::class, 'stats']);
     Route::get('/job-applications/{id}', [JobApplicationController::class, 'show']);
     Route::patch('/job-applications/{id}/status', [JobApplicationController::class, 'updateStatus']);
     Route::delete('/job-applications/{id}', [JobApplicationController::class, 'destroy']);
     Route::get('/job-applications/{id}/download-cv', [JobApplicationController::class, 'downloadCv']);
-    Route::get('/job-applications/export', [JobApplicationController::class, 'export']);
-    Route::get('/job-applications/stats', [JobApplicationController::class, 'stats']);
 
     // Profile management (available to all authenticated admins)
     Route::post('/profile/update', [ProfileController::class, 'update']);

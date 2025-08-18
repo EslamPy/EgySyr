@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
-import { 
-  User, Mail, Lock, Camera, Save, Eye, EyeOff, 
+import {
+  User, Mail, Lock, Camera, Save, Eye, EyeOff,
   Shield, Bell, Globe, Palette, RefreshCw, Check,
-  AlertCircle, Upload, X
+  AlertCircle, Upload, X, LogOut
 } from 'lucide-react'
-import { getCurrentUser } from '../utils/auth'
+import { getCurrentUser, setCurrentUser, logout } from '../utils/auth'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
+
+// Utility function to get CSRF token
+const getCSRFToken = (): string | null => {
+  const metaTag = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
+  return metaTag ? metaTag.content : null
+}
 
 interface UserProfile {
   id: number
@@ -23,7 +29,7 @@ interface UserProfile {
 
 const Settings: React.FC = () => {
   const currentUser = getCurrentUser()
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'preferences'>('profile')
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'preferences' | 'account'>('profile')
   const [loading, setLoading] = useState(false)
   const [profile, setProfile] = useState<UserProfile | null>(null)
 
@@ -58,6 +64,20 @@ const Settings: React.FC = () => {
 
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  const handleLogout = async () => {
+    if (window.confirm('Are you sure you want to logout? You will be redirected to the main website.')) {
+      try {
+        await logout()
+        toast.success('Logged out successfully!')
+        // Redirect to main website
+        window.location.href = '/'
+      } catch (error) {
+        console.error('Logout error:', error)
+        toast.error('Failed to logout. Please try again.')
+      }
+    }
+  }
+
   useEffect(() => {
     fetchProfile()
   }, [])
@@ -65,11 +85,6 @@ const Settings: React.FC = () => {
   const fetchProfile = async () => {
     try {
       setLoading(true)
-      
-      // Get CSRF token first
-      await fetch('/sanctum/csrf-cookie', {
-        credentials: 'include',
-      })
 
       const response = await fetch('/api/auth/me', {
         credentials: 'include',
@@ -130,16 +145,16 @@ const Settings: React.FC = () => {
     setErrors({})
 
     try {
-      // Get CSRF token first
-      await fetch('/sanctum/csrf-cookie', {
-        credentials: 'include',
-      })
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
 
       const formData = new FormData()
       formData.append('name', profileForm.name)
       formData.append('username', profileForm.username)
       formData.append('email', profileForm.email)
-      
+
       if (profileImage) {
         formData.append('profile_image', profileImage)
       }
@@ -149,6 +164,8 @@ const Settings: React.FC = () => {
         credentials: 'include',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
         },
         body: formData,
       })
@@ -157,6 +174,14 @@ const Settings: React.FC = () => {
 
       if (response.ok) {
         toast.success('Profile updated successfully!')
+
+        // Update localStorage with new user data
+        if (data.user) {
+          setCurrentUser(data.user)
+          // Dispatch custom event to notify other components of user update
+          window.dispatchEvent(new CustomEvent('userProfileUpdated', { detail: data.user }))
+        }
+
         fetchProfile() // Refresh profile data
         setProfileImage(null)
       } else {
@@ -187,10 +212,10 @@ const Settings: React.FC = () => {
     }
 
     try {
-      // Get CSRF token first
-      await fetch('/sanctum/csrf-cookie', {
-        credentials: 'include',
-      })
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
 
       const response = await fetch('/api/admin/profile/change-password', {
         method: 'POST',
@@ -198,6 +223,8 @@ const Settings: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
         },
         body: JSON.stringify({
           current_password: securityForm.current_password,
@@ -234,6 +261,7 @@ const Settings: React.FC = () => {
     { id: 'profile', label: 'Profile', icon: <User className="w-4 h-4" /> },
     { id: 'security', label: 'Security', icon: <Shield className="w-4 h-4" /> },
     { id: 'preferences', label: 'Preferences', icon: <Bell className="w-4 h-4" /> },
+    { id: 'account', label: 'Account', icon: <LogOut className="w-4 h-4" /> },
   ]
 
   if (loading && !profile) {
@@ -311,6 +339,13 @@ const Settings: React.FC = () => {
             <PreferencesTab
               preferences={preferences}
               setPreferences={setPreferences}
+              loading={loading}
+            />
+          )}
+
+          {activeTab === 'account' && (
+            <AccountTab
+              onLogout={handleLogout}
               loading={loading}
             />
           )}
@@ -601,10 +636,10 @@ const PreferencesTab: React.FC<{
 }> = ({ preferences, setPreferences, loading }) => {
   const savePreferences = async () => {
     try {
-      // Get CSRF token first
-      await fetch('/sanctum/csrf-cookie', {
-        credentials: 'include',
-      })
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
 
       const response = await fetch('/api/admin/profile/preferences', {
         method: 'POST',
@@ -612,6 +647,8 @@ const PreferencesTab: React.FC<{
         headers: {
           'Content-Type': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
         },
         body: JSON.stringify(preferences),
       })
@@ -721,6 +758,68 @@ const PreferencesTab: React.FC<{
           )}
           {loading ? 'Saving...' : 'Save Preferences'}
         </button>
+      </div>
+    </motion.div>
+  )
+}
+
+// Account Tab Component
+const AccountTab: React.FC<{
+  onLogout: () => void
+  loading: boolean
+}> = ({ onLogout, loading }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6"
+    >
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h2 className="text-xl font-semibold mb-6">Account Management</h2>
+
+        <div className="space-y-6">
+          {/* Logout Section */}
+          <div className="border border-red-500/20 rounded-lg p-6 bg-red-500/5">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <LogOut className="w-6 h-6 text-red-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-medium text-white mb-2">Logout</h3>
+                <p className="text-gray-400 text-sm mb-4">
+                  Sign out of your admin account and return to the main website. You'll need to log in again to access the admin panel.
+                </p>
+                <button
+                  onClick={onLogout}
+                  disabled={loading}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-600/50 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium"
+                >
+                  <LogOut className="w-4 h-4" />
+                  {loading ? 'Logging out...' : 'Logout'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Account Actions */}
+          <div className="border border-white/10 rounded-lg p-6">
+            <h3 className="text-lg font-medium text-white mb-4">Account Information</h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Account Type:</span>
+                <span className="text-white">Administrator</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Session Status:</span>
+                <span className="text-green-400">Active</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Last Login:</span>
+                <span className="text-white">Today</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </motion.div>
   )

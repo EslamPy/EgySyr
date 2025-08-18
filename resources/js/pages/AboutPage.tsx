@@ -45,14 +45,14 @@ const AboutPage: React.FC = () => {
     {
       name: 'Ahmed Ezz',
       role: 'CEO & Founder',
-      image: 'public/images/Ahmed.png', 
+      image: 'images/Ahmed.png', 
       bio: 'Visionary leader with 10+ years in software development and business strategy.',
       social: { linkedin: '#', twitter: '#', github: '#' }
     },
     {
       name: 'Naiem',
       role: 'CTO',
-      image: 'public/images/Naiem.png',
+      image: 'images/Naiem.png',
       bio: 'Technology expert specializing in scalable architectures and emerging technologies.',
       social: { linkedin: '#', twitter: '#', github: '#' }
     },

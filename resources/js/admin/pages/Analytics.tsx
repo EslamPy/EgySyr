@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
+import { BubbleWorldMap } from '../components/BubbleWorldMap'
 import {
   BarChart3, PieChart, TrendingUp, Users, Eye, Globe,
   Calendar, RefreshCw, Download, Filter, ArrowUp, ArrowDown,
-  Monitor, Smartphone, Tablet
+  Monitor, Smartphone, Tablet, MapPin
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
+
+interface WorldMapData {
+  country: string
+  country_code: string
+  visits: number
+  unique_visitors: number
+}
 
 interface AnalyticsData {
   visits_over_time: Array<{
@@ -34,6 +42,7 @@ interface AnalyticsData {
 
 const Analytics: React.FC = () => {
   const [data, setData] = useState<AnalyticsData | null>(null)
+  const [worldMapData, setWorldMapData] = useState<WorldMapData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [period, setPeriod] = useState('30') // days
@@ -61,6 +70,20 @@ const Analytics: React.FC = () => {
         setData(analyticsData)
       } else {
         setError('Failed to load analytics data')
+      }
+
+      // Fetch world map data
+      const worldMapResponse = await fetch('/api/admin/dashboard/world-map', {
+        credentials: 'include',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+        },
+      })
+
+      if (worldMapResponse.ok) {
+        const worldMapData = await worldMapResponse.json()
+        setWorldMapData(worldMapData)
       }
 
     } catch (err) {
@@ -202,6 +225,69 @@ const Analytics: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-gray-400" />
           </div>
           <VisitsChart data={data?.visits_over_time || []} />
+        </div>
+
+        {/* World Map Analytics */}
+        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-semibold">Global Visitor Analytics</h2>
+              <p className="text-gray-400 text-sm mt-1">
+                Hover over countries to see visitor counts and statistics
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-gray-400" />
+              <span className="text-sm text-gray-400">
+                {worldMapData.length} countries reached
+              </span>
+            </div>
+          </div>
+
+          {worldMapData.length > 0 ? (
+            <div className="space-y-6">
+              <BubbleWorldMap
+                data={worldMapData.map(d => ({
+                  code: d.country_code,
+                  name: d.country,
+                  visits: d.visits
+                }))}
+              />
+
+              {/* World Map Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                  <div className="text-xs text-gray-400 mb-1">Total Countries</div>
+                  <div className="text-2xl font-bold text-white">{worldMapData.length}</div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                  <div className="text-xs text-gray-400 mb-1">Total Visits</div>
+                  <div className="text-2xl font-bold text-white">
+                    {worldMapData.reduce((sum, country) => sum + country.visits, 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                  <div className="text-xs text-gray-400 mb-1">Unique Visitors</div>
+                  <div className="text-2xl font-bold text-white">
+                    {worldMapData.reduce((sum, country) => sum + country.unique_visitors, 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                  <div className="text-xs text-gray-400 mb-1">Top Country</div>
+                  <div className="text-lg font-bold text-white">
+                    {worldMapData.length > 0 ? worldMapData[0].country : 'N/A'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="h-64 flex items-center justify-center">
+              <div className="text-center">
+                <Globe className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                <p className="text-gray-400">No geographic data available</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Stats Grid */}

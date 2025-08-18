@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
-import { 
+import {
   Search, UserCheck, UserX, Trash2, Eye, Settings,
   Shield, User, Mail, Calendar, Crown, RefreshCw,
   CheckCircle, XCircle, Clock, AlertTriangle, X
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+
+// Utility function to get CSRF token
+const getCSRFToken = (): string | null => {
+  const metaTag = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
+  return metaTag ? metaTag.content : null
+}
 
 interface User {
   id: number
@@ -87,8 +93,19 @@ const UserManagement: React.FC = () => {
 
   const approveUser = async (id: number) => {
     try {
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
       const response = await fetch(`/api/admin/users/${id}/approve`, {
         method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        credentials: 'include',
       })
 
       if (!response.ok) throw new Error('Failed to approve user')
@@ -102,9 +119,20 @@ const UserManagement: React.FC = () => {
 
   const denyUser = async (id: number, reason: string) => {
     try {
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
       const response = await fetch(`/api/admin/users/${id}/deny`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        credentials: 'include',
         body: JSON.stringify({ denial_reason: reason }),
       })
 
@@ -121,8 +149,19 @@ const UserManagement: React.FC = () => {
     if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) return
 
     try {
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
       const response = await fetch(`/api/admin/users/${id}`, {
         method: 'DELETE',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        credentials: 'include',
       })
 
       if (!response.ok) throw new Error('Failed to delete user')
@@ -136,9 +175,20 @@ const UserManagement: React.FC = () => {
 
   const updatePermissions = async (userId: number, permissions: Record<string, any>) => {
     try {
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
       const response = await fetch(`/api/admin/users/${userId}/permissions`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        credentials: 'include',
         body: JSON.stringify({ permissions }),
       })
 

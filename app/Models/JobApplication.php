@@ -20,6 +20,7 @@ class JobApplication extends Model
         'cv_path',
         'linkedin_url',
         'portfolio_url',
+        'github_url',
         'years_experience',
         'additional_info',
         'status',

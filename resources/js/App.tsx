@@ -19,6 +19,7 @@ import { AdminLogin, AdminRegister, AdminDashboard, AdminFeedback, AdminMessages
 import AuthGuard from './admin/components/AuthGuard'
 import CareersPage from './pages/CareersPage.tsx'
 import JobDetailPage from './pages/JobDetailPage'
+import JobApplicationPage from './pages/JobApplicationPage'
 import FeedbackFormPage from './pages/FeedbackFormPage'
 import ThankYouPage from './pages/ThankYouPage'
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage.tsx'
@@ -95,6 +96,7 @@ const App: React.FC = () => {
               <Route path="/about" component={AboutPage} />
               <Route path="/contact" component={ContactPage} />
               <Route path="/careers" component={CareersPage} />
+              <Route path="/careers/:slug/apply" component={JobApplicationPage} />
               <Route path="/careers/:slug" component={JobDetailPage} />
               <Route path="/feedback/:token" component={FeedbackFormPage} />
               <Route path="/thank-you" component={ThankYouPage} />

@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react'
-import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps'
+import React, { useMemo, useState } from 'react'
+import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps'
 
 export type CountryDatum = {
   code: string
@@ -42,6 +42,9 @@ function lerp(a: number, b: number, t: number) { return a + (b - a) * t }
 const topoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 
 export const BubbleWorldMap: React.FC<BubbleWorldMapProps> = ({ data }) => {
+  const [hoveredCountry, setHoveredCountry] = useState<CountryDatum | null>(null)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+
   const visits = data.map(d => d.visits)
   const max = Math.max(...visits, 1)
   const min = Math.min(...visits, 0)
@@ -103,7 +106,23 @@ export const BubbleWorldMap: React.FC<BubbleWorldMapProps> = ({ data }) => {
 
           {markers.map(m => (
             <Marker key={m.code} coordinates={m.coord}>
-              <g transform={`translate(0,0)`} style={{ cursor: 'pointer' }}>
+              <g
+                transform={`translate(0,0)`}
+                style={{ cursor: 'pointer' }}
+                onMouseEnter={(e) => {
+                  const countryData = data.find(d => d.code === m.code);
+                  if (countryData) {
+                    setHoveredCountry(countryData);
+                    setMousePosition({ x: e.clientX, y: e.clientY });
+                  }
+                }}
+                onMouseMove={(e) => {
+                  setMousePosition({ x: e.clientX, y: e.clientY });
+                }}
+                onMouseLeave={() => {
+                  setHoveredCountry(null);
+                }}
+              >
                 <title>{`${codeToFlagEmoji(m.code)} ${m.name}: ${m.visits.toLocaleString()} visits`}</title>
                 {/* single refined bubble */}
                 <circle
@@ -134,6 +153,29 @@ export const BubbleWorldMap: React.FC<BubbleWorldMapProps> = ({ data }) => {
         <div className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-full bg-neon-purple" /> Higher traffic</div>
         <div className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-full bg-neon-cyan" /> Medium</div>
       </div>
+
+      {/* Tooltip */}
+      {hoveredCountry && (
+        <div
+          className="fixed z-50 bg-black/90 border border-white/20 rounded-lg p-3 shadow-xl pointer-events-none"
+          style={{
+            left: mousePosition.x + 10,
+            top: mousePosition.y - 10,
+            transform: 'translateY(-100%)'
+          }}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-lg">{codeToFlagEmoji(hoveredCountry.code)}</span>
+            <span className="font-medium text-white">{hoveredCountry.name}</span>
+          </div>
+          <div className="text-sm text-gray-300">
+            <div className="flex justify-between gap-4">
+              <span>Visits:</span>
+              <span className="font-medium text-neon-purple">{hoveredCountry.visits.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
-} 
+}

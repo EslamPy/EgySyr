@@ -23,7 +23,7 @@ class AdminAuth
                     'redirect' => '/admin/login'
                 ], 401);
             }
-            
+
             // For web requests, redirect to login
             return redirect('/admin/login');
         }

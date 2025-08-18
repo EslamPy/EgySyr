@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('cv_path'); // path to uploaded CV
             $table->string('linkedin_url')->nullable();
             $table->string('portfolio_url')->nullable();
+            $table->string('github_url')->nullable();
             $table->integer('years_experience')->nullable();
             $table->text('additional_info')->nullable();
             $table->enum('status', ['pending', 'reviewed', 'shortlisted', 'rejected'])->default('pending');
@@ -29,7 +30,6 @@ return new class extends Migration
             $table->timestamp('reviewed_at')->nullable();
             $table->foreignId('reviewed_by')->nullable()->constrained('users');
             $table->timestamps();
-
             $table->index(['job_id', 'status']);
             $table->index('email');
         });

@@ -128,17 +128,28 @@ export function getAuthHeaders(): Record<string, string> {
   }
 }
 
+// Utility function to get CSRF token
+function getCSRFToken(): string | null {
+  const metaTag = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
+  return metaTag ? metaTag.content : null
+}
+
 // Logout function
 export async function logout(): Promise<void> {
   try {
-    // Get CSRF token first
-    await fetch('/sanctum/csrf-cookie', {
-      credentials: 'include',
-    })
+    const csrfToken = getCSRFToken()
+    if (!csrfToken) {
+      throw new Error('CSRF token not found')
+    }
 
     await fetch('/api/auth/logout', {
       method: 'POST',
-      headers: getAuthHeaders(),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': csrfToken
+      },
       credentials: 'include',
     })
   } catch (error) {

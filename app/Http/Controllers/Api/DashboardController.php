@@ -38,6 +38,10 @@ class DashboardController extends Controller
                 'unread' => 0,
                 'today' => ContactMessage::whereDate('created_at', $today)->count(),
                 'this_week' => ContactMessage::where('created_at', '>=', $thisWeek)->count(),
+                'recent' => ContactMessage::select('id', 'name', 'email', 'subject', 'message', 'created_at')
+                    ->orderBy('created_at', 'desc')
+                    ->limit(5)
+                    ->get(),
             ],
             'feedback' => [
                 'total' => Feedback::count(),
@@ -50,6 +54,11 @@ class DashboardController extends Controller
                 'pending' => JobApplication::where('status', 'pending')->count(),
                 'reviewed' => JobApplication::where('status', 'reviewed')->count(),
                 'today' => JobApplication::whereDate('created_at', $today)->count(),
+                'recent' => JobApplication::with('job:id,title')
+                    ->select('id', 'job_id', 'first_name', 'last_name', 'email', 'status', 'created_at')
+                    ->orderBy('created_at', 'desc')
+                    ->limit(5)
+                    ->get(),
             ],
             'users' => [
                 'total' => User::count(),
@@ -57,6 +66,29 @@ class DashboardController extends Controller
                 'approved' => User::where('status', 'approved')->count(),
                 'admins' => User::where('role', 'admin')->where('status', 'approved')->count(),
             ],
+            'top_pages' => SiteVisit::select('page_url as page', DB::raw('count(*) as visits'))
+                ->whereNotNull('page_url')
+                ->where('created_at', '>=', Carbon::now()->subDays(7))
+                ->groupBy('page_url')
+                ->orderBy('visits', 'desc')
+                ->limit(5)
+                ->get(),
+            'browser_stats' => SiteVisit::select(
+                DB::raw('CASE
+                    WHEN user_agent LIKE "%Chrome%" THEN "Chrome"
+                    WHEN user_agent LIKE "%Firefox%" THEN "Firefox"
+                    WHEN user_agent LIKE "%Safari%" AND user_agent NOT LIKE "%Chrome%" THEN "Safari"
+                    WHEN user_agent LIKE "%Edge%" THEN "Edge"
+                    ELSE "Other"
+                END as browser'),
+                DB::raw('count(*) as visits')
+            )
+                ->whereNotNull('user_agent')
+                ->where('created_at', '>=', Carbon::now()->subDays(7))
+                ->groupBy('browser')
+                ->orderBy('visits', 'desc')
+                ->limit(5)
+                ->get(),
         ];
 
         return response()->json($stats);

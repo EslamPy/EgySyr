@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
-import { 
+import {
   Search, Download, Trash2, Eye, User, Mail, Calendar,
   Briefcase, FileText, ExternalLink, RefreshCw, Filter,
   CheckCircle, XCircle, Clock, Star, Phone, Globe, X
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+
+// Utility function to get CSRF token
+const getCSRFToken = (): string | null => {
+  const metaTag = document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
+  return metaTag ? metaTag.content : null
+}
 
 interface JobApplication {
   id: number
@@ -69,7 +75,13 @@ const JobApplications: React.FC = () => {
       if (searchTerm) params.append('search', searchTerm)
       if (statusFilter !== 'all') params.append('status', statusFilter)
 
-      const response = await fetch(`/api/admin/job-applications?${params}`)
+      const response = await fetch(`/api/admin/job-applications?${params}`, {
+        credentials: 'include',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json'
+        }
+      })
       if (!response.ok) throw new Error('Failed to fetch applications')
 
       const data: PaginatedResponse = await response.json()
@@ -89,7 +101,13 @@ const JobApplications: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/admin/job-applications/stats')
+      const response = await fetch('/api/admin/job-applications/stats', {
+        credentials: 'include',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json'
+        }
+      })
       if (!response.ok) throw new Error('Failed to fetch stats')
       
       const data = await response.json()
@@ -109,9 +127,20 @@ const JobApplications: React.FC = () => {
 
   const updateApplicationStatus = async (id: number, status: string, notes?: string) => {
     try {
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
       const response = await fetch(`/api/admin/job-applications/${id}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        credentials: 'include',
         body: JSON.stringify({ status, admin_notes: notes }),
       })
 
@@ -129,8 +158,19 @@ const JobApplications: React.FC = () => {
     if (!confirm('Are you sure you want to delete this application?')) return
 
     try {
+      const csrfToken = getCSRFToken()
+      if (!csrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
       const response = await fetch(`/api/admin/job-applications/${id}`, {
         method: 'DELETE',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+        },
+        credentials: 'include',
       })
 
       if (!response.ok) throw new Error('Failed to delete application')
@@ -145,7 +185,12 @@ const JobApplications: React.FC = () => {
 
   const downloadCV = async (id: number, applicantName: string) => {
     try {
-      const response = await fetch(`/api/admin/job-applications/${id}/download-cv`)
+      const response = await fetch(`/api/admin/job-applications/${id}/download-cv`, {
+        credentials: 'include',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
       if (!response.ok) throw new Error('Failed to download CV')
 
       const blob = await response.blob()
@@ -167,7 +212,12 @@ const JobApplications: React.FC = () => {
       const params = new URLSearchParams()
       if (statusFilter !== 'all') params.append('status', statusFilter)
 
-      const response = await fetch(`/api/admin/job-applications/export?${params}`)
+      const response = await fetch(`/api/admin/job-applications/export?${params}`, {
+        credentials: 'include',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
       if (!response.ok) throw new Error('Failed to export applications')
 
       const blob = await response.blob()
