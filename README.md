@@ -41,6 +41,10 @@ A comprehensive, modern business website built with Laravel, React, TypeScript, 
 - **Queue System** for background jobs
 - **Caching** for performance optimization
 - **Testing** with Pest PHP
+- **Session-based Authentication** for admin panel
+- **Database-driven** content management
+- **CSRF Protection** and security middleware
+- **Excel Export** functionality for data reports
 
 ## 🛠️ Technology Stack
 
@@ -114,7 +118,7 @@ EgySyr/
 └── public/                   # Public assets
 ```
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 - PHP 8.2 or higher

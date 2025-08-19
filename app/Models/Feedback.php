@@ -18,6 +18,7 @@ class Feedback extends Model
         'client_name',
         'client_email',
         'company_name',
+        'avatar',
         'feedback_text',
         'rating',
         'status',

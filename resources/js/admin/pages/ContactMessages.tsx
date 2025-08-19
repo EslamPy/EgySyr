@@ -46,7 +46,10 @@ const ContactMessages: React.FC = () => {
       if (dateFilter !== 'all') params.append('date', dateFilter)
       if (readFilter !== 'all') params.append('read', readFilter)
 
-      const response = await fetch(`/api/admin/messages?${params}`)
+      const response = await fetch(`/api/admin/messages?${params}`, {
+        credentials: 'include',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
       if (!response.ok) throw new Error('Failed to fetch messages')
 
       const data: PaginatedResponse = await response.json()
@@ -72,11 +75,21 @@ const ContactMessages: React.FC = () => {
     if (!confirm('Are you sure you want to delete this message?')) return
 
     try {
-      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+      const xsrfCookie = document.cookie.split('; ').find(c => c.startsWith('XSRF-TOKEN='))?.split('=')[1]
+      const xsrfToken = xsrfCookie ? decodeURIComponent(xsrfCookie) : undefined
+      if (!csrfToken && !xsrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
       const response = await fetch(`/api/admin/messages/${id}`, {
         method: 'DELETE',
         credentials: 'include',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}),
+          ...(xsrfToken ? { 'X-XSRF-TOKEN': xsrfToken } : {}),
+        },
       })
 
       if (!response.ok) throw new Error('Failed to delete message')
@@ -90,8 +103,21 @@ const ContactMessages: React.FC = () => {
 
   const exportMessages = async () => {
     try {
-      await fetch('/sanctum/csrf-cookie', { credentials: 'include' })
-      const response = await fetch('/api/admin/messages/export', { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+      const xsrfCookie = document.cookie.split('; ').find(c => c.startsWith('XSRF-TOKEN='))?.split('=')[1]
+      const xsrfToken = xsrfCookie ? decodeURIComponent(xsrfCookie) : undefined
+      if (!csrfToken && !xsrfToken) {
+        throw new Error('CSRF token not found')
+      }
+
+      const response = await fetch('/api/admin/messages/export', {
+        credentials: 'include',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}),
+          ...(xsrfToken ? { 'X-XSRF-TOKEN': xsrfToken } : {}),
+        }
+      })
       if (!response.ok) throw new Error('Failed to export messages')
 
       const blob = await response.blob()

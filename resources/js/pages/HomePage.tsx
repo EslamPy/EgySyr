@@ -7,6 +7,7 @@ import Footer from '../components/Footer.tsx'
 import { Canvas } from '@react-three/fiber'
 import { Environment, Float, OrbitControls, Box, Torus, Sphere, MeshDistortMaterial } from '@react-three/drei'
 import { animationUtils } from '../utils/animations.ts'
+import { useApprovedFeedback } from '../hooks/useApprovedFeedback.tsx'
 
 // Premium 3D Scene Component
 const PremiumScene: React.FC = () => {
@@ -98,6 +99,7 @@ const HomePage: React.FC = () => {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll()
+  const { feedback, loading: feedbackLoading, error: feedbackError } = useApprovedFeedback()
 
   const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
@@ -670,35 +672,77 @@ const HomePage: React.FC = () => {
 
             {/* Revolutionary Testimonials Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  name: 'Sarah Johnson',
-                  role: 'CEO, TechStart Inc.',
-                  content: 'EgySyr transformed our outdated website into a modern, high-converting platform. Our online sales increased by 300% within 3 months. The team\'s attention to detail and innovative approach exceeded all our expectations.',
-                  rating: 5,
-                  avatar: '/images/naiem.webp',
-                  company: 'TechStart Inc.',
-                  gradient: 'from-neon-purple to-neon-pink'
-                },
-                {
-                  name: 'Michael Chen',
-                  role: 'Marketing Director, GrowthCo',
-                  content: 'The mobile app they developed for us exceeded all expectations. User engagement is through the roof and our customer satisfaction scores are at an all-time high. Truly revolutionary work!',
-                  rating: 5,
-                  avatar: '/images/ezz (2).webp',
-                  company: 'GrowthCo',
-                  gradient: 'from-neon-pink to-neon-cyan'
-                },
-                {
-                  name: 'Emily Rodriguez',
-                  role: 'Founder, Creative Studio',
-                  content: 'Working with EgySyr was a game-changer. They didn\'t just build a website; they created a digital experience that perfectly represents our brand and drives real business results.',
-                  rating: 5,
-                  avatar: '/images/icon.webp',
-                  company: 'Creative Studio',
-                  gradient: 'from-neon-cyan to-electric-blue'
-                }
-              ].map((testimonial, index) => (
+              {feedbackLoading ? (
+                // Loading state
+                Array.from({ length: 3 }).map((_, index) => (
+                  <motion.div
+                    key={`loading-${index}`}
+                    className="group relative"
+                    initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{
+                      duration: 0.8,
+                      delay: index * 0.2,
+                      type: "spring",
+                      stiffness: 100
+                    }}
+                    viewport={{ once: true }}
+                  >
+                    <div className="relative p-8 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden">
+                      <div className="animate-pulse">
+                        <div className="flex items-center mb-6 space-x-1">
+                          {[...Array(5)].map((_, i) => (
+                            <div key={i} className="w-5 h-5 bg-gray-600 rounded"></div>
+                          ))}
+                        </div>
+                        <div className="space-y-3">
+                          <div className="h-4 bg-gray-600 rounded"></div>
+                          <div className="h-4 bg-gray-600 rounded w-5/6"></div>
+                          <div className="h-4 bg-gray-600 rounded w-4/6"></div>
+                        </div>
+                        <div className="flex items-center space-x-4 mt-8">
+                          <div className="w-16 h-16 bg-gray-600 rounded-2xl"></div>
+                          <div className="space-y-2">
+                            <div className="h-4 bg-gray-600 rounded w-24"></div>
+                            <div className="h-3 bg-gray-600 rounded w-32"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
+              ) : feedbackError ? (
+                // Error state
+                <div className="col-span-full text-center py-12">
+                  <div className="text-gray-400 text-lg">
+                    Unable to load client testimonials at the moment.
+                  </div>
+                </div>
+              ) : feedback.length === 0 ? (
+                // No feedback state
+                <div className="col-span-full text-center py-12">
+                  <div className="text-gray-400 text-lg">
+                    No client testimonials available yet.
+                  </div>
+                </div>
+              ) : (
+                // Dynamic feedback display
+                feedback.map((item, index) => {
+                  // Generate gradient based on index
+                  const gradients = [
+                    'from-neon-purple to-neon-pink',
+                    'from-neon-pink to-neon-cyan',
+                    'from-neon-cyan to-electric-blue',
+                    'from-electric-blue to-neon-purple',
+                    'from-neon-purple to-neon-cyan',
+                    'from-neon-pink to-electric-blue'
+                  ]
+                  const gradient = gradients[index % gradients.length]
+                  
+                  // Use the avatar from feedback data or fallback to default
+                  const avatar = item.avatar || '/images/icon.png'
+                  
+                  return (
                 <motion.div
                   key={index}
                   className="group relative"
@@ -716,12 +760,12 @@ const HomePage: React.FC = () => {
                   <div className="relative p-8 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-700 overflow-hidden">
                     {/* Animated Background Gradient */}
                     <motion.div
-                      className={`absolute inset-0 bg-gradient-to-br ${testimonial.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-700`}
+                      className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-700`}
                       animate={{
                         background: [
-                          `linear-gradient(135deg, ${testimonial.gradient.split(' ')[1]}, ${testimonial.gradient.split(' ')[3]})`,
-                          `linear-gradient(225deg, ${testimonial.gradient.split(' ')[3]}, ${testimonial.gradient.split(' ')[1]})`,
-                          `linear-gradient(135deg, ${testimonial.gradient.split(' ')[1]}, ${testimonial.gradient.split(' ')[3]})`
+                          `linear-gradient(135deg, ${gradient.split(' ')[1]}, ${gradient.split(' ')[3]})`,
+                          `linear-gradient(225deg, ${gradient.split(' ')[3]}, ${gradient.split(' ')[1]})`,
+                          `linear-gradient(135deg, ${gradient.split(' ')[1]}, ${gradient.split(' ')[3]})`
                         ]
                       }}
                       transition={{ duration: 8, repeat: Infinity }}
@@ -740,7 +784,7 @@ const HomePage: React.FC = () => {
 
                     {/* Animated Rating Stars */}
                     <div className="flex items-center mb-6 space-x-1">
-                      {[...Array(testimonial.rating)].map((_, i) => (
+                      {[...Array(item.rating)].map((_, i) => (
                         <motion.div
                           key={i}
                           initial={{ opacity: 0, scale: 0 }}
@@ -767,7 +811,7 @@ const HomePage: React.FC = () => {
                       transition={{ duration: 1, delay: index * 0.2 + 0.3 }}
                       viewport={{ once: true }}
                     >
-                      "{testimonial.content}"
+                      "{item.feedback_text}"
                     </motion.blockquote>
 
                     {/* Enhanced Client Info */}
@@ -783,11 +827,11 @@ const HomePage: React.FC = () => {
                         whileHover={{ scale: 1.1 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
-                        <div className={`w-16 h-16 rounded-2xl overflow-hidden border-2 border-gradient-to-r ${testimonial.gradient} p-0.5`}>
-                          <div className="w-full h-full rounded-2xl overflow-hidden">
+                        <div className={`w-16 h-16 rounded-2xl overflow-hidden border-2 border-gradient-to-r ${gradient} p-0.5`}>
+                          <div className="w-full h-full rounded-2xl rounded-2xl overflow-hidden">
                             <img
-                              src={testimonial.avatar}
-                              alt={testimonial.name}
+                              src={avatar}
+                              alt={item.client_name}
                               className="w-full h-full object-cover"
                             />
                           </div>
@@ -795,7 +839,7 @@ const HomePage: React.FC = () => {
 
                         {/* Animated Ring */}
                         <motion.div
-                          className={`absolute inset-0 rounded-2xl border-2 border-gradient-to-r ${testimonial.gradient} opacity-0 group-hover:opacity-100`}
+                          className={`absolute inset-0 rounded-2xl border-2 border-gradient-to-r ${gradient} opacity-0 group-hover:opacity-100`}
                           animate={{ rotate: [0, 360] }}
                           transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                         />
@@ -806,13 +850,13 @@ const HomePage: React.FC = () => {
                           className="font-bold text-white text-lg group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-neon-pink group-hover:to-neon-cyan group-hover:bg-clip-text transition-all duration-300"
                           whileHover={{ scale: 1.05 }}
                         >
-                          {testimonial.name}
+                          {item.client_name}
                         </motion.h4>
                         <p className="text-gray-400 text-sm font-medium group-hover:text-gray-300 transition-colors duration-300">
-                          {testimonial.role}
+                          {item.company_name || 'Client'}
                         </p>
-                        <p className={`text-xs font-semibold bg-gradient-to-r ${testimonial.gradient} bg-clip-text text-transparent`}>
-                          {testimonial.company}
+                        <p className={`text-xs font-semibold bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}>
+                          {item.company_name || 'Client'}
                         </p>
                       </div>
                     </motion.div>
@@ -822,7 +866,7 @@ const HomePage: React.FC = () => {
                       {Array.from({ length: 6 }).map((_, i) => (
                         <motion.div
                           key={i}
-                          className={`absolute w-1 h-1 bg-gradient-to-r ${testimonial.gradient} rounded-full opacity-0 group-hover:opacity-60`}
+                          className={`absolute w-1 h-1 bg-gradient-to-r ${gradient} rounded-full opacity-0 group-hover:opacity-60`}
                           style={{
                             left: `${Math.random() * 100}%`,
                             top: `${Math.random() * 100}%`,
@@ -845,7 +889,7 @@ const HomePage: React.FC = () => {
 
                     {/* Bottom Glow Line */}
                     <motion.div
-                      className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r ${testimonial.gradient} rounded-full transition-all duration-700 group-hover:w-full`}
+                      className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r ${gradient} rounded-full transition-all duration-700 group-hover:w-full`}
                       initial={{ width: 0 }}
                       whileInView={{ width: '30%' }}
                       transition={{ duration: 1, delay: index * 0.2 + 0.8 }}
@@ -853,7 +897,9 @@ const HomePage: React.FC = () => {
                     />
                   </div>
                 </motion.div>
-              ))}
+                  )
+                })
+              )}
             </div>
           </div>
         </section>

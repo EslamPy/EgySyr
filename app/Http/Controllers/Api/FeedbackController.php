@@ -73,11 +73,17 @@ class FeedbackController extends Controller
     {
         $feedback = Feedback::approved()
             ->whereNotNull('submitted_at')
-            ->select(['client_name', 'company_name', 'feedback_text', 'rating', 'submitted_at'])
+            ->select(['client_name', 'company_name', 'avatar', 'feedback_text', 'rating', 'submitted_at'])
             ->orderBy('submitted_at', 'desc')
             ->limit(20)
             ->get();
 
-        return response()->json($feedback);
+        // Add default avatar to each feedback item if none exists
+        $feedbackWithAvatars = $feedback->map(function ($item) {
+            $item->avatar = $item->avatar ?: '/images/icon.png'; // Use database avatar or default
+            return $item;
+        });
+
+        return response()->json($feedbackWithAvatars);
     }
 }

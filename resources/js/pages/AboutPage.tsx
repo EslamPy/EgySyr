@@ -109,7 +109,7 @@ const AboutPage: React.FC = () => {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      <div className="min-h-screen bg-jet-black text-white">
         {/* Hero Section */}
         <section className="relative pt-32 pb-20 overflow-hidden">
           {/* 3D Background */}
@@ -141,13 +141,13 @@ const AboutPage: React.FC = () => {
           </div>
 
           {/* Background Elements */}
-          <div className="absolute inset-0 z-0 bg-gradient-to-br from-blue-50 via-white to-purple-50" />
-          <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)]" />
-          <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%)]" />
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-jet-black via-deep-charcoal/30 to-jet-black" />
+          <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.12),transparent_50%)]" />
+          <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_70%_80%,rgba(6,182,212,0.12),transparent_50%)]" />
           
           {/* Floating Elements */}
-          <div className="absolute top-20 left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl animate-pulse animation-delay-2000" />
+          <div className="absolute top-20 left-10 w-32 h-32 bg-neon-purple/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 right-10 w-40 h-40 bg-neon-cyan/10 rounded-full blur-3xl animate-pulse animation-delay-2000" />
 
           <div className="relative z-10 max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -156,17 +156,17 @@ const AboutPage: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                <div className="inline-flex items-center px-6 py-3 bg-blue-50 text-blue-700 rounded-full text-sm font-medium mb-8">
+                <div className="inline-flex items-center px-6 py-3 bg-white/10 text-white border border-white/20 rounded-full text-sm font-medium mb-8 backdrop-blur-sm">
                   <Users className="w-4 h-4 mr-2" />
                   About Us
                 </div>
                 
-                <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
                   We Build
-                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Digital Dreams</span>
+                  <span className="bg-gradient-to-r from-neon-purple to-neon-cyan bg-clip-text text-transparent"> Digital Dreams</span>
                 </h1>
                 
-                <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                <p className="text-xl text-gray-300 mb-8 leading-relaxed">
                   EgySyr is a forward-thinking technology company dedicated to transforming businesses through innovative digital solutions. 
                   We combine creativity, technical expertise, and business acumen to deliver exceptional results.
                 </p>
@@ -174,14 +174,14 @@ const AboutPage: React.FC = () => {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
-                    className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full hover:shadow-xl transition-all duration-300"
+                    className="px-8 py-4 bg-gradient-to-r from-neon-purple to-neon-cyan text-white font-semibold rounded-full hover:shadow-xl transition-all duration-300"
                   >
                     Our Story
                   </motion.button>
                   
                   <motion.button
                     whileHover={{ scale: 1.05 }}
-                    className="px-8 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-full hover:border-blue-600 hover:text-blue-600 transition-all duration-300 flex items-center"
+                    className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-full hover:border-neon-purple hover:bg-white/10 transition-all duration-300 flex items-center"
                   >
                     <Play className="w-4 h-4 mr-2" />
                     Watch Video
@@ -207,13 +207,13 @@ const AboutPage: React.FC = () => {
                   variants={fadeInUp}
                   className="text-center group"
                 >
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-16 h-16 bg-gradient-to-r from-neon-purple to-neon-cyan rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                     <stat.icon className="w-8 h-8 text-white" />
                   </div>
-                  <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                  <div className="text-3xl md:text-4xl font-bold text-white mb-2">
                     {stat.number}
                   </div>
-                  <p className="text-gray-600 font-medium">{stat.label}</p>
+                  <p className="text-gray-300 font-medium">{stat.label}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -221,7 +221,7 @@ const AboutPage: React.FC = () => {
         </section>
 
         {/* Values Section */}
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-white/5 border-t border-white/10">
           <div className="max-w-7xl mx-auto px-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -230,10 +230,10 @@ const AboutPage: React.FC = () => {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
                 Our Core Values
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
                 The principles that guide everything we do and shape our company culture.
               </p>
             </motion.div>
@@ -249,14 +249,14 @@ const AboutPage: React.FC = () => {
                 <motion.div
                   key={value.title}
                   variants={fadeInUp}
-                  className="group bg-gray-50 rounded-3xl p-8 hover:bg-white hover:shadow-xl transition-all duration-300 border border-gray-100"
+                  className="group bg-white/5 rounded-3xl p-8 hover:bg-white/10 hover:shadow-xl transition-all duration-300 border border-white/10 backdrop-blur-sm"
                 >
                   <div className={`w-16 h-16 bg-gradient-to-r ${value.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                     <value.icon className="w-8 h-8 text-white" />
                   </div>
                   
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">{value.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{value.description}</p>
+                  <h3 className="text-2xl font-bold text-white mb-4">{value.title}</h3>
+                  <p className="text-gray-300 leading-relaxed">{value.description}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -279,9 +279,9 @@ const AboutPage: React.FC = () => {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-blue-50 text-blue-700 mb-5">Our Team</span>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Leadership & Creators</h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">A small team of world‑class creators, engineers, and strategists building delightful digital experiences.</p>
+              <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold bg-white/10 text-white border border-white/20 mb-5 backdrop-blur-sm">Our Team</span>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Leadership & Creators</h2>
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto">A small team of world‑class creators, engineers, and strategists building delightful digital experiences.</p>
             </motion.div>
 
             {/* Featured: Leadership (CEO, CTO) */}
@@ -406,7 +406,7 @@ const AboutPage: React.FC = () => {
         </section>
 
         {/* Timeline Section */}
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-white/5 border-t border-white/10">
           <div className="max-w-6xl mx-auto px-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -415,10 +415,10 @@ const AboutPage: React.FC = () => {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
                 Our Journey
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
                 From humble beginnings to becoming a trusted technology partner.
               </p>
             </motion.div>
@@ -447,10 +447,10 @@ const AboutPage: React.FC = () => {
                     
                     {/* Content */}
                     <div className={`w-5/12 ${timeline.indexOf(item) % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                      <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-                        <div className="text-2xl font-bold text-blue-600 mb-2">{item.year}</div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                        <p className="text-gray-600">{item.description}</p>
+                      <div className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/10">
+                        <div className="text-2xl font-bold text-neon-purple mb-2">{item.year}</div>
+                        <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+                        <p className="text-gray-300">{item.description}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -461,7 +461,7 @@ const AboutPage: React.FC = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 relative overflow-hidden">
+        <section className="py-20 bg-gradient-to-r from-neon-purple to-electric-blue relative overflow-hidden">
           {/* Background Elements */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(255,255,255,0.1),transparent_50%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
@@ -477,21 +477,21 @@ const AboutPage: React.FC = () => {
                 Ready to Work Together?
               </h2>
               
-              <p className="text-xl text-blue-100 mb-8 leading-relaxed">
+              <p className="text-xl text-white/90 mb-8 leading-relaxed">
                 Let's discuss your project and explore how we can help bring your vision to life.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
-                  className="px-8 py-4 bg-white text-blue-600 font-semibold rounded-full hover:shadow-xl transition-all duration-300"
+                  className="px-8 py-4 bg-white text-neon-purple font-semibold rounded-full hover:shadow-xl transition-all duration-300"
                 >
                   Start Your Project
                 </motion.button>
                 
                 <motion.button
                   whileHover={{ scale: 1.05 }}
-                  className="px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-blue-600 transition-all duration-300"
+                  className="px-4 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-neon-purple transition-all duration-300"
                 >
                   Get in Touch
                 </motion.button>
