@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle, Smartphone, Monitor, Server, Camera, Palette, TrendingUp, Sparkles, Brain, Rocket } from 'lucide-react'
 import PageTransition from '../components/PageTransition.tsx'
 import Footer from '../components/Footer.tsx'
+import { Link } from 'wouter'
 
 const ServicesPage: React.FC = () => {
   const services = [
@@ -155,31 +156,16 @@ const ServicesPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* CTAs */}
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <button className="group px-8 py-4 bg-gradient-to-r from-neon-purple via-neon-cyan to-neon-pink text-white font-semibold rounded-2xl shadow-2xl hover:shadow-neon-purple/40 transition-all">
-                    <span className="flex items-center">
-                      Get a Quote
-                      <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  </button>
-                  <button className="group px-8 py-4 border-2 border-white/20 text-white font-semibold rounded-2xl hover:bg-white/10 transition-all backdrop-blur-sm">
-                    <span className="flex items-center">
-                      <ArrowRight className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform" />
-                      Contact Us
-                    </span>
-                  </button>
-                </div>
 
                 {/* Trusted by avatars */}
                 <div className="flex items-center gap-4">
-                  <div className="flex -space-x-3">
+                  {/* <div className="flex -space-x-3">
                     <img src="/images/icon.webp" alt="Client" className="w-10 h-10 rounded-full ring-2 ring-white/10 object-cover" />
                     <img src="/images/naiem.webp" alt="Client" className="w-10 h-10 rounded-full ring-2 ring-white/10 object-cover" />
                     <img src="/images/ezz (2).webp" alt="Client" className="w-10 h-10 rounded-full ring-2 ring-white/10 object-cover" />
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon-purple to-neon-cyan text-white text-xs font-semibold flex items-center justify-center ring-2 ring-white/10">+120</div>
-                  </div>
-                  <span className="text-sm text-gray-300">Trusted by 120+ businesses</span>
+                  </div> */}
+                  {/* <span className="text-sm text-gray-300">Trusted by 120+ businesses</span> */}
                 </div>
               </motion.div>
             </motion.div>
@@ -359,10 +345,12 @@ const ServicesPage: React.FC = () => {
                     </div>
                     
                     {/* CTA Button */}
-                    <button className="group/btn w-full py-4 px-6 bg-gradient-to-r from-neon-purple/10 to-neon-cyan/10 text-neon-purple rounded-xl font-semibold hover:from-neon-purple/20 hover:to-neon-cyan/20 transition-all duration-500 border border-neon-purple/30 hover:border-neon-purple/50 flex items-center justify-center backdrop-blur-sm">
-                      Get Started
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                    </button>
+                    <Link href="/contact">
+                      <button className="group/btn w-full py-4 px-6 bg-gradient-to-r from-neon-purple/10 to-neon-cyan/10 text-neon-purple rounded-xl font-semibold hover:from-neon-purple/20 hover:to-neon-cyan/20 transition-all duration-500 border border-neon-purple/30 hover:border-neon-purple/50 flex items-center justify-center backdrop-blur-sm">
+                        Get Started
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                      </button>
+                    </Link>
                   </div>
                 </motion.div>
               ))}
@@ -393,21 +381,24 @@ const ServicesPage: React.FC = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                <button className="group relative px-10 py-5 bg-gradient-to-r from-neon-purple to-neon-cyan text-white font-bold rounded-2xl shadow-2xl hover:shadow-neon-purple/25 transform hover:-translate-y-2 transition-all duration-500 overflow-hidden">
-                  <span className="relative z-10 flex items-center text-lg">
-                    Start Your Project
-                    <Rocket className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" />
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-neon-cyan to-neon-pink opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </button>
+                <Link href="/contact">
+                  <button className="group relative px-10 py-5 bg-gradient-to-r from-neon-purple to-neon-cyan text-white font-bold rounded-2xl shadow-2xl hover:shadow-neon-purple/25 transform hover:-translate-y-2 transition-all duration-500 overflow-hidden">
+                    <span className="relative z-10 flex items-center text-lg">
+                      Start Your Project
+                      <Rocket className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" />
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-neon-cyan to-neon-pink opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </button>
+                </Link>
                 
-                {/* Removed Link to /contact as per edit hint */}
-                <button className="group px-10 py-5 border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/10 hover:border-white/50 transition-all duration-500 backdrop-blur-sm text-lg">
-                  <span className="flex items-center">
-                    <ArrowRight className="w-5 h-5 mr-3 group-hover:translate-x-1 transition-transform duration-300" />
-                    Contact Us
-                  </span>
-                </button>
+                <Link href="/contact">
+                  <button className="group px-10 py-5 border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/10 hover:border-white/50 transition-all duration-500 backdrop-blur-sm text-lg">
+                    <span className="flex items-center">
+                      <ArrowRight className="w-5 h-5 mr-3 group-hover:translate-x-1 transition-transform duration-300" />
+                      Contact Us
+                    </span>
+                  </button>
+                </Link>
               </div>
             </motion.div>
           </div>

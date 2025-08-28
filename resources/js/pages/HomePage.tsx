@@ -8,6 +8,7 @@ import { Canvas } from '@react-three/fiber'
 import { Environment, Float, OrbitControls, Box, Torus, Sphere, MeshDistortMaterial } from '@react-three/drei'
 import { animationUtils } from '../utils/animations.ts'
 import { useApprovedFeedback } from '../hooks/useApprovedFeedback.tsx'
+import { Link } from 'wouter'
 
 // Premium 3D Scene Component
 const PremiumScene: React.FC = () => {
@@ -272,48 +273,52 @@ const HomePage: React.FC = () => {
                 transition={{ duration: 1, delay: 1.6 }}
                 className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8"
               >
-                <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full overflow-hidden transition-all duration-300"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-purple-600 to-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  />
-                  <span className="relative z-10 flex items-center">
-                    Start Your Project
-                    <motion.svg
-                      className="w-5 h-5 ml-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </motion.svg>
-                  </span>
-                </motion.button>
+                <Link href="/services">
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-full overflow-hidden transition-all duration-300"
+                  >
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-purple-600 to-cyan-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    />
+                    <span className="relative z-10 flex items-center">
+                      Start Your Project
+                      <motion.svg
+                        className="w-5 h-5 ml-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </motion.svg>
+                    </span>
+                  </motion.button>
+                </Link>
 
-                <motion.button
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="group px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-full hover:bg-white/10 transition-all duration-300"
-                >
-                  <span className="flex items-center">
-                    View Our Work
-                    <motion.svg
-                      className="w-5 h-5 ml-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </motion.svg>
-                  </span>
-                </motion.button>
+                <Link href="/about">
+                  <motion.button
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="group px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-full hover:bg-white/10 transition-all duration-300"
+                  >
+                    <span className="flex items-center">
+                      View Our Work
+                      <motion.svg
+                        className="w-5 h-5 ml-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </motion.svg>
+                    </span>
+                  </motion.button>
+                </Link>
               </motion.div>
 
               {/* Stats */}
@@ -548,10 +553,12 @@ const HomePage: React.FC = () => {
                       ))}
                     </ul>
                     
-                    <button className="group/btn w-full py-4 px-6 bg-gradient-to-r from-logo-blue/10 to-logo-indigo/10 text-logo-blue rounded-xl font-semibold hover:from-logo-blue/20 hover:to-logo-indigo/20 transition-all duration-500 border border-logo-blue/30 hover:border-logo-blue/50 flex items-center justify-center backdrop-blur-sm">
-                      Explore
-                      <ChevronRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
-                    </button>
+                    <Link href="/services">
+                      <button className="group/btn w-full py-4 px-6 bg-gradient-to-r from-logo-blue/10 to-logo-indigo/10 text-logo-blue rounded-xl font-semibold hover:from-logo-blue/20 hover:to-logo-indigo/20 transition-all duration-500 border border-logo-blue/30 hover:border-logo-blue/50 flex items-center justify-center backdrop-blur-sm">
+                        Explore
+                        <ChevronRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                      </button>
+                    </Link>
                   </div>
                 </motion.div>
               ))}
@@ -1050,20 +1057,24 @@ const HomePage: React.FC = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                <button className="group relative px-10 py-5 bg-gradient-to-r from-logo-blue to-logo-indigo text-white font-bold rounded-2xl shadow-2xl hover:shadow-logo-blue/25 transform hover:-translate-y-2 transition-all duration-500 overflow-hidden">
-                  <span className="relative z-10 flex items-center text-lg">
-                    Start Your Project
-                    <Rocket className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" />
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-logo-teal to-logo-emerald opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </button>
+                <Link href="/services">
+                  <button className="group relative px-10 py-5 bg-gradient-to-r from-logo-blue to-logo-indigo text-white font-bold rounded-2xl shadow-2xl hover:shadow-logo-blue/25 transform hover:-translate-y-2 transition-all duration-500 overflow-hidden">
+                    <span className="relative z-10 flex items-center text-lg">
+                      Start Your Project
+                      <Rocket className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" />
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-logo-teal to-logo-emerald opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </button>
+                </Link>
                 
-                <button className="group px-10 py-5 border-2 border-logo-blue/30 text-logo-blue font-bold rounded-2xl hover:bg-logo-blue/10 hover:border-logo-blue/50 transition-all duration-500 backdrop-blur-sm text-lg">
-                  <span className="flex items-center">
-                    <Eye className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
-                    View Our Work
-                  </span>
-                </button>
+                <Link href="/about">
+                  <button className="group px-10 py-5 border-2 border-logo-blue/30 text-logo-blue font-bold rounded-2xl hover:bg-logo-blue/10 hover:border-logo-blue/50 transition-all duration-500 backdrop-blur-sm text-lg">
+                    <span className="flex items-center">
+                      <Eye className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
+                      View Our Work
+                    </span>
+                  </button>
+                </Link>
               </div>
             </motion.div>
           </div>

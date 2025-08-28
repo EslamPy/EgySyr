@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { MapPin, Clock, Users, ArrowRight, Star, Award, Coffee, Heart, Globe, Briefcase, GraduationCap, DollarSign, Calendar, Building } from 'lucide-react'
 import PageTransition from '../components/PageTransition.tsx'
@@ -48,6 +48,11 @@ const CareersPage: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const openPositionsRef = useRef<HTMLElement>(null)
+
+  const scrollToOpenPositions = () => {
+    openPositionsRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -182,6 +187,7 @@ const CareersPage: React.FC = () => {
                   className="group relative px-12 py-4 bg-gradient-to-r from-logo-blue via-logo-indigo to-logo-navy text-white font-bold text-lg rounded-full overflow-hidden shadow-2xl"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  onClick={scrollToOpenPositions}
                 >
                   <span className="relative z-10 flex items-center gap-3">
                     View Open Positions
@@ -321,7 +327,7 @@ const CareersPage: React.FC = () => {
         </section>
 
         {/* Job Openings Section */}
-        <section className="py-32 relative overflow-hidden">
+        <section ref={openPositionsRef} className="py-32 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-jet-black via-deep-charcoal/20 to-jet-black" />
 
           <div className="relative max-w-7xl mx-auto px-6">
@@ -438,19 +444,21 @@ const CareersPage: React.FC = () => {
                 Don't see the perfect role? We're always looking for exceptional talent. Send us your resume and let's start a conversation.
               </p>
 
-              <motion.button
-                className="group relative px-12 py-4 bg-gradient-to-r from-logo-blue via-logo-indigo to-logo-navy text-white font-bold text-lg rounded-full overflow-hidden shadow-2xl"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span className="relative z-10 flex items-center gap-3">
-                  Get In Touch
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </span>
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-logo-teal via-logo-emerald to-logo-blue opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                />
-              </motion.button>
+              <Link href="/contact">
+                <motion.button
+                  className="group relative px-12 py-4 bg-gradient-to-r from-logo-blue via-logo-indigo to-logo-navy text-white font-bold text-lg rounded-full overflow-hidden shadow-2xl"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span className="relative z-10 flex items-center gap-3">
+                    Get In Touch
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-logo-teal via-logo-emerald to-logo-blue opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  />
+                </motion.button>
+              </Link>
             </motion.div>
           </div>
         </section>

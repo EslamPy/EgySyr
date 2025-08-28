@@ -48,15 +48,17 @@ const App: React.FC = () => {
     setTimeout(() => {
       try {
         initializeGSAP()
-        const cursorCleanup = initCursor()
+        initScrollAnimations()
         initSmoothScroll()
-        setTimeout(() => { initScrollAnimations() }, 300)
+        initCursor()
+        initSiteTracking()
       } catch (error) {
         console.error('Error initializing features:', error)
       }
     }, 100)
+
+    // Load Google Fonts
     const fonts = [
-      'Space Grotesk:wght@300;400;500;600;700',
       'Inter:wght@300;400;500;600;700',
       'Sora:wght@300;400;500;600;700'
     ]
@@ -68,6 +70,17 @@ const App: React.FC = () => {
     })
     // No cleanup needed for now - variables are scoped locally
   }, [initSmoothScroll, initCursor])
+
+  // Scroll to top when location changes
+  useEffect(() => {
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true })
+    } else {
+      window.scrollTo(0, 0)
+    }
+    // Track page change
+    trackPageChange(location)
+  }, [location, lenis])
 
   console.log('App component about to render JSX...')
 

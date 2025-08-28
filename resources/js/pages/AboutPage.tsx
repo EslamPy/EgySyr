@@ -5,6 +5,7 @@ import PageTransition from '../components/PageTransition.tsx'
 import Footer from '../components/Footer.tsx'
 import { Canvas } from '@react-three/fiber'
 import { Environment, Float, Box, Torus, Sphere, MeshDistortMaterial } from '@react-three/drei'
+import { Link } from 'wouter'
 
 const AboutPage: React.FC = () => {
   const stats = [
@@ -171,22 +172,6 @@ const AboutPage: React.FC = () => {
                   We combine creativity, technical expertise, and business acumen to deliver exceptional results.
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    className="px-8 py-4 bg-gradient-to-r from-neon-purple to-neon-cyan text-white font-semibold rounded-full hover:shadow-xl transition-all duration-300"
-                  >
-                    Our Story
-                  </motion.button>
-                  
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    className="px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-full hover:border-neon-purple hover:bg-white/10 transition-all duration-300 flex items-center"
-                  >
-                    <Play className="w-4 h-4 mr-2" />
-                    Watch Video
-                  </motion.button>
-                </div>
               </motion.div>
             </div>
           </div>
@@ -482,19 +467,23 @@ const AboutPage: React.FC = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  className="px-8 py-4 bg-white text-neon-purple font-semibold rounded-full hover:shadow-xl transition-all duration-300"
-                >
-                  Start Your Project
-                </motion.button>
+                <Link href="/contact">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    className="px-8 py-4 bg-white text-neon-purple font-semibold rounded-full hover:shadow-xl transition-all duration-300"
+                  >
+                    Start Your Project
+                  </motion.button>
+                </Link>
                 
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  className="px-4 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-neon-purple transition-all duration-300"
-                >
-                  Get in Touch
-                </motion.button>
+                <Link href="/contact">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    className="px-4 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-neon-purple transition-all duration-300"
+                  >
+                    Get in Touch
+                  </motion.button>
+                </Link>
               </div>
             </motion.div>
           </div>
