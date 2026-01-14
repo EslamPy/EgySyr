@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
 import {
   Search, Download, Trash2, Eye, User, Mail, Calendar,
-  Briefcase, FileText, ExternalLink, RefreshCw, Filter,
+  Briefcase, FileText, ExternalLink, RefreshCw,
   CheckCircle, XCircle, Clock, Star, Phone, Globe, X
 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -109,7 +109,7 @@ const JobApplications: React.FC = () => {
         }
       })
       if (!response.ok) throw new Error('Failed to fetch stats')
-      
+
       const data = await response.json()
       setStats(data.stats)
     } catch (error) {
@@ -185,25 +185,35 @@ const JobApplications: React.FC = () => {
 
   const downloadCV = async (id: number, applicantName: string) => {
     try {
+      const application = applications.find(a => a.id === id) || selectedApplication
+      const extension = application?.cv_path ? application.cv_path.split('.').pop() : 'pdf'
+
       const response = await fetch(`/api/admin/job-applications/${id}/download-cv`, {
         credentials: 'include',
         headers: {
           'X-Requested-With': 'XMLHttpRequest'
         }
       })
-      if (!response.ok) throw new Error('Failed to download CV')
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to download CV')
+      }
 
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `${applicantName}_CV.pdf`
+      a.download = `${applicantName}_CV.${extension}`
       document.body.appendChild(a)
       a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+      }, 100)
     } catch (error) {
-      toast.error('Failed to download CV')
+      console.error('Download error:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to download CV')
     }
   }
 
@@ -328,11 +338,10 @@ const JobApplications: React.FC = () => {
                   setStatusFilter(status)
                   setCurrentPage(1)
                 }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  statusFilter === status
-                    ? 'bg-neon-purple text-white'
-                    : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === status
+                  ? 'bg-neon-purple text-white'
+                  : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
+                  }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </button>
@@ -486,7 +495,7 @@ const JobApplications: React.FC = () => {
               {Math.min(pagination.current_page * pagination.per_page, pagination.total)} of{' '}
               {pagination.total} applications
             </p>
-            
+
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage(pagination.current_page - 1)}
@@ -495,26 +504,25 @@ const JobApplications: React.FC = () => {
               >
                 Previous
               </button>
-              
+
               {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
                 const page = i + Math.max(1, pagination.current_page - 2)
                 if (page > pagination.last_page) return null
-                
+
                 return (
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-1 rounded text-sm transition-colors ${
-                      page === pagination.current_page
-                        ? 'bg-neon-purple text-white'
-                        : 'bg-white/5 border border-white/10 hover:bg-white/10'
-                    }`}
+                    className={`px-3 py-1 rounded text-sm transition-colors ${page === pagination.current_page
+                      ? 'bg-neon-purple text-white'
+                      : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                      }`}
                   >
                     {page}
                   </button>
                 )
               })}
-              
+
               <button
                 onClick={() => setCurrentPage(pagination.current_page + 1)}
                 disabled={pagination.current_page === pagination.last_page}
@@ -532,6 +540,7 @@ const JobApplications: React.FC = () => {
         <ApplicationDetailsModal
           application={selectedApplication}
           onClose={() => setSelectedApplication(null)}
+          onDownloadCV={() => downloadCV(selectedApplication.id, `${selectedApplication.first_name}_${selectedApplication.last_name}`)}
           onUpdateStatus={(status, notes) => {
             updateApplicationStatus(selectedApplication.id, status, notes)
             setSelectedApplication(null)
@@ -550,9 +559,10 @@ const JobApplications: React.FC = () => {
 const ApplicationDetailsModal: React.FC<{
   application: JobApplication
   onClose: () => void
-  onUpdateStatus: (status: string, notes?: string) => void
+  onDownloadCV: () => void
+  onUpdateStatus: (status: JobApplication['status'], notes?: string) => void
   onDelete: () => void
-}> = ({ application, onClose, onUpdateStatus, onDelete }) => {
+}> = ({ application, onClose, onDownloadCV, onUpdateStatus, onDelete }) => {
   const [newStatus, setNewStatus] = useState(application.status)
   const [adminNotes, setAdminNotes] = useState(application.admin_notes || '')
   const [showStatusUpdate, setShowStatusUpdate] = useState(false)
@@ -707,11 +717,7 @@ const ApplicationDetailsModal: React.FC<{
                   Update Status
                 </button>
                 <button
-                  onClick={() => {
-                    const applicantName = `${application.first_name}_${application.last_name}`
-                    // Download CV logic would go here
-                    toast.success('CV download started')
-                  }}
+                  onClick={onDownloadCV}
                   className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
                 >
                   <FileText className="w-4 h-4" />
@@ -731,7 +737,7 @@ const ApplicationDetailsModal: React.FC<{
                   <label className="block text-sm font-medium text-gray-300 mb-2">Update Status</label>
                   <select
                     value={newStatus}
-                    onChange={(e) => setNewStatus(e.target.value)}
+                    onChange={(e) => setNewStatus(e.target.value as JobApplication['status'])}
                     className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-purple"
                   >
                     <option value="pending">Pending</option>

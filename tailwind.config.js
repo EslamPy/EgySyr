@@ -6,21 +6,26 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        's': {'max': '650px'}, // شاشة صغيرة جدًا
+        'xs': {'max': '527px'}, // شاشة صغيرة جدًا
+        'short': {'raw': '(max-height: 720px)'},
+      },
       colors: {
         'neon-purple': '#8B5CF6',
-        'neon-cyan': '#06B6D4',
+        'neon-cyan': '#FF66B2',
         'neon-pink': '#EC4899',
-        'electric-blue': '#3B82F6',
+        'electric-blue': '#FF2D95',
         'deep-charcoal': '#1A1A1A',
         'jet-black': '#0A0A0A',
         // Logo-inspired professional colors
-        'logo-blue': '#1E40AF',
-        'logo-navy': '#1E3A8A',
-        'logo-teal': '#0F766E',
-        'logo-emerald': '#059669',
-        'logo-indigo': '#4338CA',
+        'logo-blue': '#FF2D95',
+        'logo-navy': '#FF2D95',
+        'logo-teal': '#D946EF',
+        'logo-emerald': '#610596ff',
+        'logo-indigo': '#D946EF',
         'logo-slate': '#475569',
-        'logo-gray': '#6B7280',
+        'logo-gray': '#C0C0C0',
       },
       fontFamily: {
         'space': ['Space Grotesk', 'sans-serif'],
@@ -99,8 +104,8 @@ export default {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'neon-gradient': 'linear-gradient(45deg, #8B5CF6, #06B6D4, #EC4899, #3B82F6)',
-        'logo-gradient': 'linear-gradient(45deg, #1E40AF, #4338CA, #0F766E, #059669)',
+        'neon-gradient': 'linear-gradient(45deg, #000000ff, #d406c3ff, #EC4899, #f03bf6ff)',
+        'logo-gradient': 'linear-gradient(45deg, #df0000ff, #4338CA, #0F766E, #059669)',
         'logo-gradient-subtle': 'linear-gradient(135deg, rgba(30, 64, 175, 0.1), rgba(67, 56, 202, 0.1), rgba(15, 118, 110, 0.1))',
         'creative-pattern': 'radial-gradient(circle at 1px 1px, rgba(139, 92, 246, 0.3) 1px, transparent 0)',
         'hexagonal-pattern': 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%238B5CF6\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',

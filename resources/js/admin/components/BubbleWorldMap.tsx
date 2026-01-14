@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps'
+import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps'
 
 export type CountryDatum = {
   code: string

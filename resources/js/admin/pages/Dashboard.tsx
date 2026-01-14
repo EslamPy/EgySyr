@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
-import { 
+import {
   Users, Eye, Globe, Clock, Mail, Briefcase, User, TrendingUp, RefreshCw,
-  Star, MessageSquare, FileText, UserCheck, Calendar, ArrowUp, ArrowDown,
-  Activity, BarChart3, PieChart, MapPin, AlertCircle, ChevronRight, Info
+  Star, FileText,
+  Activity, BarChart3, AlertCircle, ChevronRight
 } from 'lucide-react'
 import { getCurrentUser } from '../utils/auth'
 import { motion } from 'framer-motion'
@@ -79,13 +79,7 @@ interface JobApplication {
   created_at: string
 }
 
-interface RecentActivity {
-  type: string
-  title: string
-  description: string
-  created_at: string
-  url: string
-}
+
 
 interface WorldMapData {
   country: string
@@ -97,7 +91,6 @@ interface WorldMapData {
 const Dashboard: React.FC = () => {
   const [user, setUser] = useState(getCurrentUser())
   const [stats, setStats] = useState<DashboardStats | null>(null)
-  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([])
   const [worldMapData, setWorldMapData] = useState<WorldMapData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -143,8 +136,8 @@ const Dashboard: React.FC = () => {
       }
 
       if (activityResponse.ok) {
-        const activityData = await activityResponse.json()
-        setRecentActivity(activityData)
+        // const activityData = await activityResponse.json()
+        // setRecentActivity(activityData)
       }
 
       if (mapResponse.ok) {
@@ -377,8 +370,8 @@ const Dashboard: React.FC = () => {
                     <span className="text-sm font-medium text-white">{page.visits}</span>
                   </div>
                 )) || (
-                  <div className="text-center py-4 text-gray-400">No page data available</div>
-                )}
+                    <div className="text-center py-4 text-gray-400">No page data available</div>
+                  )}
               </div>
             </div>
 
@@ -394,8 +387,8 @@ const Dashboard: React.FC = () => {
                     <span className="text-sm font-medium text-white">{browser.visits}</span>
                   </div>
                 )) || (
-                  <div className="text-center py-4 text-gray-400">No browser data available</div>
-                )}
+                    <div className="text-center py-4 text-gray-400">No browser data available</div>
+                  )}
               </div>
             </div>
           </div>
@@ -470,11 +463,11 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Site Visits Stats */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        {/* <div className="bg-white/5 border border-white/10 rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Site Visits</h2>
+            <h2 className="text-xl font-semibold">Site1 Visits</h2>
             <Eye className="w-5 h-5 text-gray-400" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
@@ -498,10 +491,10 @@ const Dashboard: React.FC = () => {
           <a href="/admin/analytics" className="inline-flex items-center gap-1 text-sm text-neon-purple hover:text-neon-purple/80">
             View detailed analytics <ChevronRight className="w-4 h-4" />
           </a>
-        </div>
+        </div> */}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <DashboardQuickActionCard
             title="Pending Users"
             count={stats?.users.pending_approval || 0}
@@ -530,7 +523,7 @@ const Dashboard: React.FC = () => {
             icon={<FileText className="w-5 h-5" />}
             color="green"
           />
-        </div>
+        </div> */}
       </div>
     </AdminLayout>
   )
@@ -580,42 +573,7 @@ const DashboardStatsCard: React.FC<{
   )
 }
 
-// Quick Action Card Component
-const DashboardQuickActionCard: React.FC<{
-  title: string
-  count: number
-  href: string
-  icon: React.ReactNode
-  color: 'blue' | 'green' | 'purple' | 'yellow' | 'orange'
-}> = ({ title, count, href, icon, color }) => {
-  const colorClasses = {
-    blue: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
-    green: 'text-green-400 bg-green-500/10 border-green-500/20',
-    purple: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
-    yellow: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20',
-    orange: 'text-orange-400 bg-orange-500/10 border-orange-500/20',
-  }
 
-  return (
-    <motion.a
-      href={href}
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      whileHover={{ scale: 1.02 }}
-      className="block bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all"
-    >
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-gray-400">{title}</p>
-          <p className="text-2xl font-bold text-white">{count}</p>
-        </div>
-        <div className={`p-2 rounded-lg ${colorClasses[color]}`}>
-          {icon}
-        </div>
-      </div>
-    </motion.a>
-  )
-}
 
 // Modern World Map Component
 const DashboardWorldMap: React.FC<{ data: WorldMapData[] }> = ({ data }) => {
@@ -628,7 +586,7 @@ const DashboardWorldMap: React.FC<{ data: WorldMapData[] }> = ({ data }) => {
         <BubbleWorldMap
           data={data.map(d => ({ code: d.country_code, name: d.country, visits: d.visits }))}
         />
-        
+
         {/* Country Tooltip */}
         {tooltipCountry && (
           <div className="absolute top-0 right-0 bg-black/80 border border-white/20 rounded-lg p-3 shadow-lg z-10">
@@ -656,8 +614,8 @@ const DashboardWorldMap: React.FC<{ data: WorldMapData[] }> = ({ data }) => {
       <div className="space-y-2">
         <h4 className="text-sm font-medium text-gray-400 mb-3">Top Countries</h4>
         {data.slice(0, 8).map((country) => (
-          <div 
-            key={country.country_code} 
+          <div
+            key={country.country_code}
             className="flex items-center justify-between py-2 px-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
             onMouseEnter={() => setTooltipCountry(country)}
             onMouseLeave={() => setTooltipCountry(null)}

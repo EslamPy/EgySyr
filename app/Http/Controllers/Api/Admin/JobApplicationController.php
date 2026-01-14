@@ -19,7 +19,12 @@ class JobApplicationController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = JobApplication::with(['job:id,title,slug', 'reviewer:id,name']);
+        $query = JobApplication::with([
+            'job:id,title,slug',
+            'reviewer' => function ($q) {
+                $q->select('id', 'first_name', 'last_name');
+            }
+        ]);
 
         // Filter by job
         if ($jobId = $request->get('job_id')) {
@@ -54,8 +59,12 @@ class JobApplicationController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $application = JobApplication::with(['job', 'reviewer:id,name'])
-            ->findOrFail($id);
+        $application = JobApplication::with([
+            'job',
+            'reviewer' => function ($q) {
+                $q->select('id', 'first_name', 'last_name');
+            }
+        ])->findOrFail($id);
 
         return response()->json($application);
     }
@@ -82,7 +91,12 @@ class JobApplicationController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Application status updated successfully',
-            'application' => $application->load(['job:id,title', 'reviewer:id,name']),
+            'application' => $application->load([
+                'job:id,title',
+                'reviewer' => function ($q) {
+                    $q->select('id', 'first_name', 'last_name');
+                }
+            ]),
         ]);
     }
 

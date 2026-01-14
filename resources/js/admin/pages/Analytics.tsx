@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
 import { BubbleWorldMap } from '../components/BubbleWorldMap'
+import AnalyticsChart from '../components/AnalyticsChart'
+import ActiveUsersChart from '../components/ActiveUsersChart'
 import {
   BarChart3, PieChart, TrendingUp, Users, Eye, Globe,
   Calendar, RefreshCw, Download, Filter, ArrowUp, ArrowDown,
-  Monitor, Smartphone, Tablet, MapPin
+  Monitor, Smartphone, Tablet, MapPin, Mail, Briefcase,
+  MessageSquare, Activity, MoreVertical
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
@@ -40,22 +43,40 @@ interface AnalyticsData {
   }>
 }
 
+type DropdownKey = 'topPages' | 'activeUsers' | 'devices' | 'countries';
+
 const Analytics: React.FC = () => {
   const [data, setData] = useState<AnalyticsData | null>(null)
   const [worldMapData, setWorldMapData] = useState<WorldMapData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [period, setPeriod] = useState('30') // days
+  const [selectedPeriod, setSelectedPeriod] = useState('optionTwo')
+  const [dropdownStates, setDropdownStates] = useState<Record<DropdownKey, boolean>>({
+    topPages: false,
+    activeUsers: false,
+    devices: false,
+    countries: false,
+  })
+
+  const toggleDropdown = (key: DropdownKey) => {
+    setDropdownStates(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }))
+  }
+
+  const closeDropdown = (key: DropdownKey) => {
+    setDropdownStates(prev => ({
+      ...prev,
+      [key]: false
+    }))
+  }
 
   const fetchAnalytics = async () => {
     try {
       setLoading(true)
       setError(null)
-
-      // Get CSRF token first
-      await fetch('/sanctum/csrf-cookie', {
-        credentials: 'include',
-      })
 
       const response = await fetch(`/api/admin/analytics?period=${period}`, {
         credentials: 'include',
@@ -72,7 +93,6 @@ const Analytics: React.FC = () => {
         setError('Failed to load analytics data')
       }
 
-      // Fetch world map data
       const worldMapResponse = await fetch('/api/admin/dashboard/world-map', {
         credentials: 'include',
         headers: {
@@ -131,11 +151,6 @@ const Analytics: React.FC = () => {
     }
   }
 
-  const getBrowserIcon = (browser: string) => {
-    // Using Globe icon for all browsers since specific browser icons don't exist in lucide-react
-    return <Globe className="w-4 h-4" />
-  }
-
   const getDeviceIcon = (device: string) => {
     switch (device.toLowerCase()) {
       case 'mobile': return <Smartphone className="w-4 h-4" />
@@ -176,6 +191,12 @@ const Analytics: React.FC = () => {
     )
   }
 
+  if (!data) return null
+
+  const totalVisits = data.visits_over_time.reduce((sum, d) => sum + d.visits, 0) || 0
+  const totalUniqueVisitors = data.visits_over_time.reduce((sum, d) => sum + d.unique_visitors, 0) || 0
+  const avgDailyVisits = data.visits_over_time.length ? Math.round(totalVisits / data.visits_over_time.length) : 0
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -188,18 +209,6 @@ const Analytics: React.FC = () => {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            {/* Period Filter */}
-            <select
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-purple"
-            >
-              <option value="7">Last 7 days</option>
-              <option value="30">Last 30 days</option>
-              <option value="90">Last 90 days</option>
-              <option value="365">Last year</option>
-            </select>
-            
             <button
               onClick={exportData}
               className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
@@ -207,7 +216,7 @@ const Analytics: React.FC = () => {
               <Download className="w-4 h-4" />
               Export
             </button>
-            
+
             <button
               onClick={refreshData}
               className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
@@ -218,33 +227,397 @@ const Analytics: React.FC = () => {
           </div>
         </div>
 
-        {/* Visits Over Time Chart */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold">Visits Over Time</h2>
-            <TrendingUp className="w-5 h-5 text-gray-400" />
+        {/* Metric Cards */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 xl:grid-cols-4">
+          {/* Total Visitors */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white/5 border border-white/10 rounded-xl p-5"
+          >
+            <p className="text-sm text-gray-400">Total Visitors</p>
+            <div className="mt-3 flex items-end justify-between">
+              <div>
+                <h4 className="text-2xl font-bold text-white">{totalVisits}</h4>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="flex items-center gap-1 rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+                  <ArrowUp className="w-3 h-3" />
+                  20%
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Unique Visitors */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white/5 border border-white/10 rounded-xl p-5"
+          >
+            <p className="text-sm text-gray-400">Unique Visitors</p>
+            <div className="mt-3 flex items-end justify-between">
+              <div>
+                <h4 className="text-2xl font-bold text-white">{totalUniqueVisitors}</h4>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="flex items-center gap-1 rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+                  <ArrowUp className="w-3 h-3" />
+                  15%
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Average Daily */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white/5 border border-white/10 rounded-xl p-5"
+          >
+            <p className="text-sm text-gray-400">Avg. Daily Visits</p>
+            <div className="mt-3 flex items-end justify-between">
+              <div>
+                <h4 className="text-2xl font-bold text-white">{avgDailyVisits}</h4>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="flex items-center gap-1 rounded-full bg-red-500/20 px-2 py-0.5 text-xs font-medium text-red-400">
+                  <ArrowDown className="w-3 h-3" />
+                  2%
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Job Applications */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white/5 border border-white/10 rounded-xl p-5"
+          >
+            <p className="text-sm text-gray-400">Job Applications</p>
+            <div className="mt-3 flex items-end justify-between">
+              <div>
+                <h4 className="text-2xl font-bold text-white">{worldMapData.length}</h4>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="flex items-center gap-1 rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+                  <ArrowUp className="w-3 h-3" />
+                  7%
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Analytics Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white/5 border border-white/10 rounded-xl px-5 pt-5 sm:px-6 sm:pt-6"
+        >
+          <div className="flex flex-wrap items-start justify-between gap-5">
+            <div>
+              <h3 className="mb-1 text-lg font-semibold text-white">Site Analytics Overview</h3>
+              <span className="block text-sm text-gray-400">Visitor analytics over time</span>
+            </div>
+
+            <div className="flex items-center gap-0.5 rounded-lg bg-white/5 p-0.5">
+              <button
+                onClick={() => { setSelectedPeriod('optionOne'); setPeriod('365') }}
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${selectedPeriod === 'optionOne'
+                  ? 'bg-white/10 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+                  }`}
+              >
+                12 months
+              </button>
+              <button
+                onClick={() => { setSelectedPeriod('optionTwo'); setPeriod('30') }}
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${selectedPeriod === 'optionTwo'
+                  ? 'bg-white/10 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+                  }`}
+              >
+                30 days
+              </button>
+              <button
+                onClick={() => { setSelectedPeriod('optionThree'); setPeriod('7') }}
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${selectedPeriod === 'optionThree'
+                  ? 'bg-white/10 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+                  }`}
+              >
+                7 days
+              </button>
+              <button
+                onClick={() => { setSelectedPeriod('optionFour'); setPeriod('1') }}
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${selectedPeriod === 'optionFour'
+                  ? 'bg-white/10 text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+                  }`}
+              >
+                24 hours
+              </button>
+            </div>
           </div>
-          <VisitsChart data={data?.visits_over_time || []} />
+          <AnalyticsChart selectedPeriod={selectedPeriod} />
+        </motion.div>
+
+        {/* Top Pages & Device Stats */}
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-7">
+          {/* Top Pages Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="xl:col-span-4 bg-white/5 border border-white/10 rounded-xl p-5 md:p-6"
+          >
+            <div className="flex items-start justify-between">
+              <h3 className="text-lg font-semibold text-white">Top Pages</h3>
+              <div className="relative">
+                <button
+                  onClick={() => toggleDropdown('topPages')}
+                  className={dropdownStates.topPages ? 'text-white' : 'text-gray-400 hover:text-white'}
+                >
+                  <MoreVertical className="w-5 h-5" />
+                </button>
+                {dropdownStates.topPages && (
+                  <div
+                    onClick={() => closeDropdown('topPages')}
+                    className="absolute right-0 top-full z-40 w-40 space-y-1 rounded-xl border border-white/10 bg-deep-charcoal p-2 shadow-lg"
+                  >
+                    <button className="flex w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-gray-400 hover:bg-white/5 hover:text-gray-300">View All Pages</button>
+                    <button className="flex w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-gray-400 hover:bg-white/5 hover:text-gray-300">Export Data</button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="my-6">
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <span className="text-xs text-gray-400">Page</span>
+                <span className="text-right text-xs text-gray-400">Visits</span>
+              </div>
+              {data?.top_pages.slice(0, 6).map((page, idx) => (
+                <div key={idx} className="flex items-center justify-between border-b border-white/10 py-3">
+                  <span className="text-sm text-gray-300 truncate max-w-[200px]">{page.page}</span>
+                  <span className="text-right text-sm text-white font-medium">{page.visits}</span>
+                </div>
+              ))}
+            </div>
+
+            <a href="#" className="flex justify-center gap-2 rounded-lg border border-white/10 bg-white/5 p-2.5 text-sm font-medium text-gray-300 hover:bg-white/10 hover:text-white">
+              View All Pages
+              <ArrowUp className="w-4 h-4 rotate-45" />
+            </a>
+          </motion.div>
+
+          {/* Active Users */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="xl:col-span-3 bg-white/5 border border-white/10 rounded-xl p-5 md:p-6"
+          >
+            <div className="flex items-start justify-between">
+              <h3 className="text-lg font-semibold text-white">Activity Overview</h3>
+              <Activity className="w-5 h-5 text-gray-400" />
+            </div>
+
+            <div className="mt-6 flex items-end gap-1.5">
+              <div className="flex items-center gap-2.5">
+                <span className="relative inline-block w-5 h-5">
+                  <span className="absolute w-2 h-2 transform -translate-x-1/2 -translate-y-1/2 rounded-full bg-green-500 top-1/2 left-1/2">
+                    <span className="absolute inline-flex w-4 h-4 rounded-full opacity-75 bg-green-400 -top-1 -left-1 animate-ping"></span>
+                  </span>
+                </span>
+                <span className="font-semibold text-white text-title-sm">{avgDailyVisits}</span>
+              </div>
+              <span className="block mb-1 text-gray-400 text-sm">Average daily visits</span>
+            </div>
+
+            <div className="my-5 min-h-[120px] rounded-xl bg-white/5 flex items-center justify-center">
+              <ActiveUsersChart />
+            </div>
+
+            <div className="flex items-center justify-center gap-6">
+              <div>
+                <p className="text-lg font-semibold text-center text-white">{totalVisits}</p>
+                <p className="text-xs mt-0.5 text-center text-gray-400">Total</p>
+              </div>
+
+              <div className="w-px bg-white/10 h-11"></div>
+
+              <div>
+                <p className="text-lg font-semibold text-center text-white">{totalUniqueVisitors}</p>
+                <p className="text-xs mt-0.5 text-center text-gray-400">Unique</p>
+              </div>
+
+              <div className="w-px bg-white/10 h-11"></div>
+
+              <div>
+                <p className="text-lg font-semibold text-center text-white">{avgDailyVisits}</p>
+                <p className="text-xs mt-0.5 text-center text-gray-400">Avg. Daily</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Devices & Countries */}
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          {/* Device Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8 }}
+            className="bg-white/5 border border-white/10 rounded-xl p-5 sm:p-6"
+          >
+            <div className="flex justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-white">Devices & Browsers</h3>
+                <p className="mt-1 text-sm text-gray-400">Traffic breakdown by device type</p>
+              </div>
+              <div className="relative h-fit">
+                <button
+                  onClick={() => toggleDropdown('devices')}
+                  className={dropdownStates.devices ? 'text-white' : 'text-gray-400 hover:text-white'}
+                >
+                  <MoreVertical className="w-5 h-5" />
+                </button>
+                {dropdownStates.devices && (
+                  <div
+                    onClick={() => closeDropdown('devices')}
+                    className="absolute right-0 top-full z-40 w-40 space-y-1 rounded-xl border border-white/10 bg-deep-charcoal p-2 shadow-lg"
+                  >
+                    <button className="flex w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-gray-400 hover:bg-white/5 hover:text-gray-300">View Details</button>
+                    <button className="flex w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-gray-400 hover:bg-white/5 hover:text-gray-300">Export</button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6 space-y-4">
+              {data.device_stats.map((device, index) => {
+                const total = data.device_stats.reduce((sum, d) => sum + d.visits, 0)
+                const percentage = total > 0 ? Math.round((device.visits / total) * 100) : 0
+                return (
+                  <div key={index}>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-white/5 rounded-lg">
+                          {getDeviceIcon(device.device)}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-white text-sm">{device.device}</p>
+                          <span className="block text-gray-400 text-xs">{device.visits} Visitors</span>
+                        </div>
+                      </div>
+                      <p className="font-medium text-white text-sm">{percentage}%</p>
+                    </div>
+                    <div className="relative block h-2 w-full rounded-sm bg-white/5">
+                      <div
+                        className="absolute left-0 top-0 h-full rounded-sm bg-neon-purple"
+                        style={{ width: `${percentage}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </motion.div>
+
+          {/* Top Countries */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="bg-white/5 border border-white/10 rounded-xl p-5 sm:p-6"
+          >
+            <div className="flex justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-white">Top Countries</h3>
+                <p className="mt-1 text-sm text-gray-400">Visitors by location</p>
+              </div>
+              <div className="relative h-fit">
+                <button
+                  onClick={() => toggleDropdown('countries')}
+                  className={dropdownStates.countries ? 'text-white' : 'text-gray-400 hover:text-white'}
+                >
+                  <MoreVertical className="w-5 h-5" />
+                </button>
+                {dropdownStates.countries && (
+                  <div
+                    onClick={() => closeDropdown('countries')}
+                    className="absolute right-0 top-full z-40 w-40 space-y-1 rounded-xl border border-white/10 bg-deep-charcoal p-2 shadow-lg"
+                  >
+                    <button className="flex w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-gray-400 hover:bg-white/5 hover:text-gray-300">View Map</button>
+                    <button className="flex w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-gray-400 hover:bg-white/5 hover:text-gray-300">Export</button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6 space-y-5">
+              {data.top_countries.slice(0, 5).map((country, index) => {
+                const total = data.top_countries.reduce((sum, c) => sum + c.visits, 0)
+                const percentage = total > 0 ? Math.round((country.visits / total) * 100) : 0
+                return (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white/5">
+                        <Globe className="w-5 h-5 text-gray-400" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-white text-sm">{country.country}</p>
+                        <span className="block text-gray-400 text-xs">{country.visits} Visitors</span>
+                      </div>
+                    </div>
+
+                    <div className="flex w-full max-w-[140px] items-center gap-3">
+                      <div className="relative block h-2 w-full max-w-[100px] rounded-sm bg-white/5">
+                        <div
+                          className="absolute left-0 top-0 h-full rounded-sm bg-neon-cyan"
+                          style={{ width: `${percentage}%` }}
+                        ></div>
+                      </div>
+                      <p className="font-medium text-white text-sm">{percentage}%</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </motion.div>
         </div>
 
         {/* World Map Analytics */}
-        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-semibold">Global Visitor Analytics</h2>
-              <p className="text-gray-400 text-sm mt-1">
-                Hover over countries to see visitor counts and statistics
-              </p>
+        {worldMapData.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+            className="bg-white/5 border border-white/10 rounded-xl p-6"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-xl font-semibold">Global Visitor Analytics</h2>
+                <p className="text-gray-400 text-sm mt-1">
+                  Interactive map showing visitor distribution worldwide
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-gray-400" />
+                <span className="text-sm text-gray-400">
+                  {worldMapData.length} countries reached
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-gray-400" />
-              <span className="text-sm text-gray-400">
-                {worldMapData.length} countries reached
-              </span>
-            </div>
-          </div>
 
-          {worldMapData.length > 0 ? (
             <div className="space-y-6">
               <BubbleWorldMap
                 data={worldMapData.map(d => ({
@@ -254,7 +627,6 @@ const Analytics: React.FC = () => {
                 }))}
               />
 
-              {/* World Map Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white/5 border border-white/10 rounded-lg p-4">
                   <div className="text-xs text-gray-400 mb-1">Total Countries</div>
@@ -280,195 +652,16 @@ const Analytics: React.FC = () => {
                 </div>
               </div>
             </div>
-          ) : (
-            <div className="h-64 flex items-center justify-center">
-              <div className="text-center">
-                <Globe className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-                <p className="text-gray-400">No geographic data available</p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Top Pages */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h3 className="text-lg font-semibold mb-4">Top Pages</h3>
-            <div className="space-y-3">
-              {data?.top_pages.slice(0, 5).map((page, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-300 truncate flex-1 mr-2">
-                    {page.page}
-                  </span>
-                  <span className="text-sm font-medium text-white">
-                    {page.visits}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Browser Stats */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h3 className="text-lg font-semibold mb-4">Browsers</h3>
-            <div className="space-y-3">
-              {data?.browser_stats.map((browser, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {getBrowserIcon(browser.browser)}
-                    <span className="text-sm text-gray-300">
-                      {browser.browser}
-                    </span>
-                  </div>
-                  <span className="text-sm font-medium text-white">
-                    {browser.visits}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Device Stats */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h3 className="text-lg font-semibold mb-4">Devices</h3>
-            <div className="space-y-3">
-              {data?.device_stats.map((device, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {getDeviceIcon(device.device)}
-                    <span className="text-sm text-gray-300">
-                      {device.device}
-                    </span>
-                  </div>
-                  <span className="text-sm font-medium text-white">
-                    {device.visits}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Top Countries */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h3 className="text-lg font-semibold mb-4">Top Countries</h3>
-            <div className="space-y-3">
-              {data?.top_countries.slice(0, 5).map((country, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-300">
-                    {country.country}
-                  </span>
-                  <span className="text-sm font-medium text-white">
-                    {country.visits}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+          </motion.div>
+        )}
       </div>
     </AdminLayout>
   )
 }
 
-// Visits Chart Component
-const VisitsChart: React.FC<{
-  data: Array<{ date: string; visits: number; unique_visitors: number }>
-}> = ({ data }) => {
-  if (!data || data.length === 0) {
-    return (
-      <div className="h-64 flex items-center justify-center">
-        <div className="text-center">
-          <BarChart3 className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-          <p className="text-gray-400">No data available</p>
-        </div>
-      </div>
-    )
-  }
 
-  const maxVisits = Math.max(...data.map(d => d.visits), 1)
-  const maxUniqueVisitors = Math.max(...data.map(d => d.unique_visitors), 1)
 
-  return (
-    <div className="h-64">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-neon-purple rounded-full"></div>
-            <span className="text-sm text-gray-400">Total Visits</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-neon-cyan rounded-full"></div>
-            <span className="text-sm text-gray-400">Unique Visitors</span>
-          </div>
-        </div>
-      </div>
 
-      <div className="relative h-48">
-        <svg viewBox="0 0 100 100" className="w-full h-full">
-          {/* Grid lines */}
-          {[0, 25, 50, 75, 100].map(y => (
-            <line
-              key={y}
-              x1="0"
-              y1={y}
-              x2="100"
-              y2={y}
-              stroke="rgba(255,255,255,0.1)"
-              strokeWidth="0.5"
-            />
-          ))}
 
-          {/* Visits line */}
-          <polyline
-            points={data.map((d, i) =>
-              `${(i / (data.length - 1)) * 100},${100 - (d.visits / maxVisits) * 100}`
-            ).join(' ')}
-            fill="none"
-            stroke="#8B5CF6"
-            strokeWidth="2"
-          />
-
-          {/* Unique visitors line */}
-          <polyline
-            points={data.map((d, i) =>
-              `${(i / (data.length - 1)) * 100},${100 - (d.unique_visitors / maxUniqueVisitors) * 100}`
-            ).join(' ')}
-            fill="none"
-            stroke="#06B6D4"
-            strokeWidth="2"
-          />
-
-          {/* Data points */}
-          {data.map((d, i) => (
-            <g key={i}>
-              <circle
-                cx={(i / (data.length - 1)) * 100}
-                cy={100 - (d.visits / maxVisits) * 100}
-                r="2"
-                fill="#8B5CF6"
-              />
-              <circle
-                cx={(i / (data.length - 1)) * 100}
-                cy={100 - (d.unique_visitors / maxUniqueVisitors) * 100}
-                r="2"
-                fill="#06B6D4"
-              />
-            </g>
-          ))}
-        </svg>
-
-        {/* X-axis labels */}
-        <div className="flex justify-between mt-2 text-xs text-gray-500">
-          {data.filter((_, i) => i % Math.ceil(data.length / 5) === 0).map((d, i) => (
-            <span key={i}>
-              {new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export default Analytics

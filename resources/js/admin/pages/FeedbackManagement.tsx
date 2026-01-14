@@ -24,7 +24,7 @@ interface FeedbackItem {
   status: 'pending' | 'approved' | 'denied'
   submitted_at?: string
   reviewed_at?: string
-  reviewer?: { name: string }
+  reviewer?: { first_name: string; last_name: string }
   created_at: string
 }
 
@@ -52,10 +52,24 @@ const FeedbackManagement: React.FC = () => {
       if (activeTab !== 'all') params.append('status', activeTab)
       if (searchTerm) params.append('search', searchTerm)
 
+      console.log('Fetching feedback with params:', params.toString())
       const response = await fetch(`/api/admin/feedback?${params}`, { credentials: 'include', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+      console.log('Response status:', response.status)
+      console.log('Response ok:', response.ok)
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Response error:', errorText)
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
       const data = await response.json()
+      console.log('Feedback API Response:', data)
+      console.log('Feedback data array:', data.data)
+      console.log('Feedback data length:', data.data?.length)
       setFeedback(data.data || [])
     } catch (error) {
+      console.error('Feedback fetch error:', error)
       toast.error('Failed to load feedback')
     }
   }
@@ -211,11 +225,10 @@ const FeedbackManagement: React.FC = () => {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`w-4 h-4 ${
-              star <= rating
-                ? 'text-yellow-400 fill-yellow-400'
-                : 'text-gray-400'
-            }`}
+            className={`w-4 h-4 ${star <= rating
+              ? 'text-yellow-400 fill-yellow-400'
+              : 'text-gray-400'
+              }`}
           />
         ))}
       </div>
@@ -282,11 +295,10 @@ const FeedbackManagement: React.FC = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  activeTab === tab
-                    ? 'bg-neon-purple text-white'
-                    : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab
+                  ? 'bg-neon-purple text-white'
+                  : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
+                  }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
@@ -359,25 +371,24 @@ const FeedbackManagement: React.FC = () => {
                         )}
                         <div className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
-                          {item.submitted_at 
+                          {item.submitted_at
                             ? new Date(item.submitted_at).toLocaleDateString()
                             : 'Not submitted'
                           }
                         </div>
                         {item.reviewer && (
-                          <span>Reviewed by {item.reviewer.name}</span>
+                          <span>Reviewed by {item.reviewer.first_name} {item.reviewer.last_name}</span>
                         )}
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        item.status === 'approved' 
-                          ? 'bg-green-500/20 text-green-400'
-                          : item.status === 'denied'
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.status === 'approved'
+                        ? 'bg-green-500/20 text-green-400'
+                        : item.status === 'denied'
                           ? 'bg-red-500/20 text-red-400'
                           : 'bg-yellow-500/20 text-yellow-400'
-                      }`}>
+                        }`}>
                         {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                       </span>
 
@@ -489,7 +500,7 @@ const GenerateLinkModal: React.FC<{
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-deep-charcoal border border-white/10 rounded-xl p-6 w-full max-w-md">
         <h3 className="text-xl font-semibold mb-4">Generate Feedback Link</h3>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -555,11 +566,10 @@ const FeedbackDetailsModal: React.FC<{
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`w-5 h-5 ${
-              star <= rating
-                ? 'text-yellow-400 fill-yellow-400'
-                : 'text-gray-400'
-            }`}
+            className={`w-5 h-5 ${star <= rating
+              ? 'text-yellow-400 fill-yellow-400'
+              : 'text-gray-400'
+              }`}
           />
         ))}
       </div>
@@ -619,20 +629,19 @@ const FeedbackDetailsModal: React.FC<{
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-1">Status</label>
-              <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                feedback.status === 'approved' 
-                  ? 'bg-green-500/20 text-green-400'
-                  : feedback.status === 'denied'
+              <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${feedback.status === 'approved'
+                ? 'bg-green-500/20 text-green-400'
+                : feedback.status === 'denied'
                   ? 'bg-red-500/20 text-red-400'
                   : 'bg-yellow-500/20 text-yellow-400'
-              }`}>
+                }`}>
                 {feedback.status.charAt(0).toUpperCase() + feedback.status.slice(1)}
               </span>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-1">Submitted</label>
               <p className="text-white">
-                {feedback.submitted_at 
+                {feedback.submitted_at
                   ? new Date(feedback.submitted_at).toLocaleString()
                   : 'Not submitted yet'
                 }

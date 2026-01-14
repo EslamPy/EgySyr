@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { ChevronRight, ArrowRight, Play, Star, CheckCircle, Users, Zap, Shield, Globe, Sparkles, Code, Smartphone, Server, Eye, TrendingUp, Rocket, Brain, Palette } from 'lucide-react'
+import { ChevronRight, ArrowRight, Play, Star, CheckCircle, Users, Zap, Shield, Globe, Sparkles, Code, Smartphone, Server, Eye, TrendingUp, Rocket, Brain, Palette, Sliders } from 'lucide-react'
 import PageTransition from '../components/PageTransition.tsx'
 import AnimatedCounter from '../components/AnimatedCounter.tsx'
 import Footer from '../components/Footer.tsx'
+import RotatingText from '../components/RotatingText.tsx'
 import { Canvas } from '@react-three/fiber'
 import { Environment, Float, OrbitControls, Box, Torus, Sphere, MeshDistortMaterial } from '@react-three/drei'
 import { animationUtils } from '../utils/animations.ts'
@@ -79,10 +80,10 @@ const PremiumScene: React.FC = () => {
             (Math.random() - 0.5) * 10,
             (Math.random() - 0.5) * 10
           ]}>
-            <meshStandardMaterial 
-              color={['#8B5CF6', '#06B6D4', '#EC4899', '#3B82F6', '#1E40AF'][Math.floor(Math.random() * 5)]} 
-              metalness={0.8} 
-              roughness={0.2} 
+            <meshStandardMaterial
+              color={['#8B5CF6', '#06B6D4', '#EC4899', '#3B82F6', '#1E40AF'][Math.floor(Math.random() * 5)]}
+              metalness={0.8}
+              roughness={0.2}
               emissive={['#8B5CF6', '#06B6D4', '#EC4899', '#3B82F6', '#1E40AF'][Math.floor(Math.random() * 5)]}
               emissiveIntensity={0.2}
             />
@@ -150,7 +151,7 @@ const HomePage: React.FC = () => {
               <item.icon className={`w-32 h-32 ${item.color} opacity-20 blur-sm`} />
             </motion.div>
           ))}
-          
+
           {/* Animated Grid Pattern */}
           <div className="absolute inset-0 opacity-5">
             <div className="absolute inset-0" style={{
@@ -233,27 +234,25 @@ const HomePage: React.FC = () => {
               </motion.div>
 
               {/* Main Heading */}
-              <motion.h1
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.2, delay: 0.8 }}
-                className="text-6xl md:text-7xl lg:text-8xl font-black text-white leading-tight"
-              >
-                We Build
-                <motion.span
-                  className="block bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 bg-clip-text text-transparent"
-                  animate={{
-                    backgroundPosition: ['0% center', '100% center', '0% center']
-                  }}
-                  transition={{
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "linear"
-                  }}
-                >
-                  Digital Dreams
-                </motion.span>
-              </motion.h1>
+              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6 animate-fade-in-heading">
+                <span className="text-white">Elevate your</span>
+                <br />
+                <span className="inline-flex items-center justify-center flex-wrap gap-2 mt-4 sm:mt-6 md:mt-8">
+                  <span className="text-white">Business</span>
+                  <RotatingText
+                    texts={["Growth", "Innovation", "Efficiency", "Success", "Performance"]}
+                    mainClassName="px-2 sm:px-2 md:px-3 bg-white text-black overflow-hidden py-1 sm:py-1 md:py-2 justify-center rounded-lg shadow-lg"
+                    staggerFrom={"last"}
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    exit={{ y: "-120%" }}
+                    staggerDuration={0.025}
+                    splitLevelClassName="overflow-hidden pb-1 sm:pb-1 md:pb-1"
+                    transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                    rotationInterval={2000}
+                  />
+                </span>
+              </h1>
 
               {/* Subtitle */}
               <motion.p
@@ -424,17 +423,17 @@ const HomePage: React.FC = () => {
                         backgroundSize: '60px 60px'
                       }} />
                     </div>
-                    
+
                     <div className={`w-20 h-20 bg-gradient-to-r ${stat.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
                       <stat.icon className="w-10 h-10 text-white" />
                     </div>
-                    
+
                     <div className="text-4xl lg:text-5xl font-bold text-white mb-3 text-center">
                       <AnimatedCounter target={parseInt(stat.number)} suffix={stat.number.includes('+') ? '+' : ''} />
                     </div>
-                    
+
                     <p className="text-gray-300 font-medium text-center text-lg">{stat.label}</p>
-                    
+
                     {/* Hover Effect Line */}
                     <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-gradient-to-r from-neon-purple to-neon-cyan group-hover:w-1/2 transition-all duration-500 rounded-full" />
                   </div>
@@ -495,37 +494,37 @@ const HomePage: React.FC = () => {
                   delay: 0.1
                 },
                 {
-                  title: 'AI & Machine Learning',
+                  title: 'Administrative systems',
                   description: 'Intelligent solutions that learn, adapt, and evolve with your business needs.',
-                  icon: Brain,
+                  icon: Sliders,
                   gradient: 'from-neon-pink to-electric-blue',
                   features: ['Predictive Analytics', 'Natural Language', 'Computer Vision', 'Automation'],
                   delay: 0.2
                 },
-                {
-                  title: 'Cloud Infrastructure',
-                  description: 'Scalable cloud solutions that grow with your business and ensure reliability.',
-                  icon: Server,
-                  gradient: 'from-electric-blue to-neon-purple',
-                  features: ['AWS & Azure', 'Auto-scaling', '99.9% Uptime', 'Security First'],
-                  delay: 0.3
-                },
-                {
-                  title: 'Digital Marketing',
-                  description: 'Data-driven marketing strategies that convert visitors into loyal customers.',
-                  icon: TrendingUp,
-                  gradient: 'from-neon-purple to-neon-cyan',
-                  features: ['SEO & SEM', 'Social Media', 'Content Strategy', 'Analytics'],
-                  delay: 0.4
-                },
-                {
-                  title: 'UI/UX Design',
-                  description: 'Beautiful, intuitive interfaces that users love and businesses trust.',
-                  icon: Palette,
-                  gradient: 'from-neon-cyan to-neon-pink',
-                  features: ['User Research', 'Wireframing', 'Prototyping', 'User Testing'],
-                  delay: 0.5
-                }
+                // {
+                //   title: 'Cloud Infrastructure',
+                //   description: 'Scalable cloud solutions that grow with your business and ensure reliability.',
+                //   icon: Server,
+                //   gradient: 'from-electric-blue to-neon-purple',
+                //   features: ['AWS & Azure', 'Auto-scaling', '99.9% Uptime', 'Security First'],
+                //   delay: 0.3
+                // },
+                // {
+                //   title: 'Digital Marketing',
+                //   description: 'Data-driven marketing strategies that convert visitors into loyal customers.',
+                //   icon: TrendingUp,
+                //   gradient: 'from-neon-purple to-neon-cyan',
+                //   features: ['SEO & SEM', 'Social Media', 'Content Strategy', 'Analytics'],
+                //   delay: 0.4
+                // },
+                // {
+                //   title: 'UI/UX Design',
+                //   description: 'Beautiful, intuitive interfaces that users love and businesses trust.',
+                //   icon: Palette,
+                //   gradient: 'from-neon-cyan to-neon-pink',
+                //   features: ['User Research', 'Wireframing', 'Prototyping', 'User Testing'],
+                //   delay: 0.5
+                // }
               ].map((service, index) => (
                 <motion.div
                   key={index}
@@ -536,14 +535,14 @@ const HomePage: React.FC = () => {
                   <div className="relative bg-gradient-to-br from-deep-charcoal to-jet-black rounded-3xl p-8 border border-white/10 backdrop-blur-sm hover:border-neon-purple/50 transition-all duration-700 transform hover:-translate-y-4 hover:rotate-y-12 preserve-3d">
                     {/* 3D Hover Effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/5 to-neon-cyan/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    
+
                     <div className={`w-20 h-20 bg-gradient-to-r ${service.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
                       <service.icon className="w-10 h-10 text-white" />
                     </div>
-                    
+
                     <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-neon-purple transition-colors duration-500">{service.title}</h3>
                     <p className="text-gray-400 mb-6 leading-relaxed">{service.description}</p>
-                    
+
                     <ul className="space-y-3 mb-8">
                       {service.features.map((feature, idx) => (
                         <li key={idx} className="flex items-center text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
@@ -552,7 +551,7 @@ const HomePage: React.FC = () => {
                         </li>
                       ))}
                     </ul>
-                    
+
                     <Link href="/services">
                       <button className="group/btn w-full py-4 px-6 bg-gradient-to-r from-logo-blue/10 to-logo-indigo/10 text-logo-blue rounded-xl font-semibold hover:from-logo-blue/20 hover:to-logo-indigo/20 transition-all duration-500 border border-logo-blue/30 hover:border-logo-blue/50 flex items-center justify-center backdrop-blur-sm">
                         Explore
@@ -610,7 +609,7 @@ const HomePage: React.FC = () => {
                 >
                   <div className="relative w-24 h-24 bg-gradient-to-br from-deep-charcoal to-jet-black rounded-3xl shadow-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-neon-purple/25 transition-all duration-500 border border-white/10 group-hover:border-neon-purple/50 backdrop-blur-sm">
                     <img src={tech.logo} alt={tech.name} className="w-14 h-14 filter brightness-0 invert group-hover:filter-none transition-all duration-500" />
-                    
+
                     {/* Hover Glow Effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/20 to-neon-cyan/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
@@ -745,165 +744,165 @@ const HomePage: React.FC = () => {
                     'from-neon-pink to-electric-blue'
                   ]
                   const gradient = gradients[index % gradients.length]
-                  
+
                   // Use the avatar from feedback data or fallback to default
                   const avatar = item.avatar || '/images/icon.png'
-                  
+
                   return (
-                <motion.div
-                  key={index}
-                  className="group relative"
-                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{
-                    duration: 0.8,
-                    delay: index * 0.2,
-                    type: "spring",
-                    stiffness: 100
-                  }}
-                  viewport={{ once: true }}
-                  whileHover={{ y: -12, scale: 1.02 }}
-                >
-                  <div className="relative p-8 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-700 overflow-hidden">
-                    {/* Animated Background Gradient */}
                     <motion.div
-                      className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-700`}
-                      animate={{
-                        background: [
-                          `linear-gradient(135deg, ${gradient.split(' ')[1]}, ${gradient.split(' ')[3]})`,
-                          `linear-gradient(225deg, ${gradient.split(' ')[3]}, ${gradient.split(' ')[1]})`,
-                          `linear-gradient(135deg, ${gradient.split(' ')[1]}, ${gradient.split(' ')[3]})`
-                        ]
+                      key={index}
+                      className="group relative"
+                      initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{
+                        duration: 0.8,
+                        delay: index * 0.2,
+                        type: "spring",
+                        stiffness: 100
                       }}
-                      transition={{ duration: 8, repeat: Infinity }}
-                    />
-
-                    {/* Quote Icon */}
-                    <motion.div
-                      className="absolute top-6 right-6 w-12 h-12 opacity-10 group-hover:opacity-20 transition-opacity duration-500"
-                      whileHover={{ rotate: 360, scale: 1.2 }}
-                      transition={{ duration: 0.8 }}
+                      viewport={{ once: true }}
+                      whileHover={{ y: -12, scale: 1.02 }}
                     >
-                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full text-white">
-                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
-                      </svg>
-                    </motion.div>
-
-                    {/* Animated Rating Stars */}
-                    <div className="flex items-center mb-6 space-x-1">
-                      {[...Array(item.rating)].map((_, i) => (
+                      <div className="relative p-8 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-700 overflow-hidden">
+                        {/* Animated Background Gradient */}
                         <motion.div
-                          key={i}
-                          initial={{ opacity: 0, scale: 0 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          transition={{
-                            duration: 0.5,
-                            delay: index * 0.2 + i * 0.1,
-                            type: "spring",
-                            stiffness: 200
+                          className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-700`}
+                          animate={{
+                            background: [
+                              `linear-gradient(135deg, ${gradient.split(' ')[1]}, ${gradient.split(' ')[3]})`,
+                              `linear-gradient(225deg, ${gradient.split(' ')[3]}, ${gradient.split(' ')[1]})`,
+                              `linear-gradient(135deg, ${gradient.split(' ')[1]}, ${gradient.split(' ')[3]})`
+                            ]
                           }}
-                          viewport={{ once: true }}
-                          whileHover={{ scale: 1.3, rotate: 360 }}
+                          transition={{ duration: 8, repeat: Infinity }}
+                        />
+
+                        {/* Quote Icon */}
+                        <motion.div
+                          className="absolute top-6 right-6 w-12 h-12 opacity-10 group-hover:opacity-20 transition-opacity duration-500"
+                          whileHover={{ rotate: 360, scale: 1.2 }}
+                          transition={{ duration: 0.8 }}
                         >
-                          <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                          <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full text-white">
+                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                          </svg>
                         </motion.div>
-                      ))}
-                    </div>
 
-                    {/* Testimonial Content */}
-                    <motion.blockquote
-                      className="text-gray-300 mb-8 leading-relaxed text-lg group-hover:text-gray-200 transition-colors duration-500 relative z-10"
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      transition={{ duration: 1, delay: index * 0.2 + 0.3 }}
-                      viewport={{ once: true }}
-                    >
-                      "{item.feedback_text}"
-                    </motion.blockquote>
-
-                    {/* Enhanced Client Info */}
-                    <motion.div
-                      className="flex items-center space-x-4 relative z-10"
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.8, delay: index * 0.2 + 0.5 }}
-                      viewport={{ once: true }}
-                    >
-                      <motion.div
-                        className="relative"
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
-                        <div className={`w-16 h-16 rounded-2xl overflow-hidden border-2 border-gradient-to-r ${gradient} p-0.5`}>
-                          <div className="w-full h-full rounded-2xl rounded-2xl overflow-hidden">
-                            <img
-                              src={avatar}
-                              alt={item.client_name}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
+                        {/* Animated Rating Stars */}
+                        <div className="flex items-center mb-6 space-x-1">
+                          {[...Array(item.rating)].map((_, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, scale: 0 }}
+                              whileInView={{ opacity: 1, scale: 1 }}
+                              transition={{
+                                duration: 0.5,
+                                delay: index * 0.2 + i * 0.1,
+                                type: "spring",
+                                stiffness: 200
+                              }}
+                              viewport={{ once: true }}
+                              whileHover={{ scale: 1.3, rotate: 360 }}
+                            >
+                              <Star className="w-5 h-5 text-yellow-400 fill-current" />
+                            </motion.div>
+                          ))}
                         </div>
 
-                        {/* Animated Ring */}
-                        <motion.div
-                          className={`absolute inset-0 rounded-2xl border-2 border-gradient-to-r ${gradient} opacity-0 group-hover:opacity-100`}
-                          animate={{ rotate: [0, 360] }}
-                          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                        />
-                      </motion.div>
-
-                      <div>
-                        <motion.h4
-                          className="font-bold text-white text-lg group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-neon-pink group-hover:to-neon-cyan group-hover:bg-clip-text transition-all duration-300"
-                          whileHover={{ scale: 1.05 }}
+                        {/* Testimonial Content */}
+                        <motion.blockquote
+                          className="text-gray-300 mb-8 leading-relaxed text-lg group-hover:text-gray-200 transition-colors duration-500 relative z-10"
+                          initial={{ opacity: 0 }}
+                          whileInView={{ opacity: 1 }}
+                          transition={{ duration: 1, delay: index * 0.2 + 0.3 }}
+                          viewport={{ once: true }}
                         >
-                          {item.client_name}
-                        </motion.h4>
-                        <p className="text-gray-400 text-sm font-medium group-hover:text-gray-300 transition-colors duration-300">
-                          {item.company_name || 'Client'}
-                        </p>
-                        <p className={`text-xs font-semibold bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}>
-                          {item.company_name || 'Client'}
-                        </p>
+                          "{item.feedback_text}"
+                        </motion.blockquote>
+
+                        {/* Enhanced Client Info */}
+                        <motion.div
+                          className="flex items-center space-x-4 relative z-10"
+                          initial={{ opacity: 0, x: -20 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.8, delay: index * 0.2 + 0.5 }}
+                          viewport={{ once: true }}
+                        >
+                          <motion.div
+                            className="relative"
+                            whileHover={{ scale: 1.1 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                          >
+                            <div className={`w-16 h-16 rounded-2xl overflow-hidden border-2 border-gradient-to-r ${gradient} p-0.5`}>
+                              <div className="w-full h-full rounded-2xl rounded-2xl overflow-hidden">
+                                <img
+                                  src={avatar}
+                                  alt={item.client_name}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Animated Ring */}
+                            <motion.div
+                              className={`absolute inset-0 rounded-2xl border-2 border-gradient-to-r ${gradient} opacity-0 group-hover:opacity-100`}
+                              animate={{ rotate: [0, 360] }}
+                              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                            />
+                          </motion.div>
+
+                          <div>
+                            <motion.h4
+                              className="font-bold text-white text-lg group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-neon-pink group-hover:to-neon-cyan group-hover:bg-clip-text transition-all duration-300"
+                              whileHover={{ scale: 1.05 }}
+                            >
+                              {item.client_name}
+                            </motion.h4>
+                            <p className="text-gray-400 text-sm font-medium group-hover:text-gray-300 transition-colors duration-300">
+                              {item.company_name || 'Client'}
+                            </p>
+                            <p className={`text-xs font-semibold bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}>
+                              {item.company_name || 'Client'}
+                            </p>
+                          </div>
+                        </motion.div>
+
+                        {/* Floating Particles */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                          {Array.from({ length: 6 }).map((_, i) => (
+                            <motion.div
+                              key={i}
+                              className={`absolute w-1 h-1 bg-gradient-to-r ${gradient} rounded-full opacity-0 group-hover:opacity-60`}
+                              style={{
+                                left: `${Math.random() * 100}%`,
+                                top: `${Math.random() * 100}%`,
+                              }}
+                              animate={{
+                                y: [0, -50, 0],
+                                x: [0, Math.random() * 30 - 15, 0],
+                                opacity: [0, 0.6, 0],
+                                scale: [0, 1, 0],
+                              }}
+                              transition={{
+                                duration: 4,
+                                repeat: Infinity,
+                                delay: i * 0.5,
+                                ease: "easeInOut"
+                              }}
+                            />
+                          ))}
+                        </div>
+
+                        {/* Bottom Glow Line */}
+                        <motion.div
+                          className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r ${gradient} rounded-full transition-all duration-700 group-hover:w-full`}
+                          initial={{ width: 0 }}
+                          whileInView={{ width: '30%' }}
+                          transition={{ duration: 1, delay: index * 0.2 + 0.8 }}
+                          viewport={{ once: true }}
+                        />
                       </div>
                     </motion.div>
-
-                    {/* Floating Particles */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className={`absolute w-1 h-1 bg-gradient-to-r ${gradient} rounded-full opacity-0 group-hover:opacity-60`}
-                          style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                          }}
-                          animate={{
-                            y: [0, -50, 0],
-                            x: [0, Math.random() * 30 - 15, 0],
-                            opacity: [0, 0.6, 0],
-                            scale: [0, 1, 0],
-                          }}
-                          transition={{
-                            duration: 4,
-                            repeat: Infinity,
-                            delay: i * 0.5,
-                            ease: "easeInOut"
-                          }}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Bottom Glow Line */}
-                    <motion.div
-                      className={`absolute bottom-0 left-0 h-1 bg-gradient-to-r ${gradient} rounded-full transition-all duration-700 group-hover:w-full`}
-                      initial={{ width: 0 }}
-                      whileInView={{ width: '30%' }}
-                      transition={{ duration: 1, delay: index * 0.2 + 0.8 }}
-                      viewport={{ once: true }}
-                    />
-                  </div>
-                </motion.div>
                   )
                 })
               )}
@@ -921,7 +920,7 @@ const HomePage: React.FC = () => {
               backgroundSize: '60px 60px'
             }} />
           </div>
-          
+
           <div className="relative z-10 max-w-7xl mx-auto px-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -955,7 +954,7 @@ const HomePage: React.FC = () => {
             >
               {/* Timeline Line */}
               <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-logo-blue via-logo-indigo to-logo-teal opacity-50 shadow-lg shadow-logo-blue/25" />
-              
+
               {[
                 {
                   step: '01',
@@ -994,9 +993,8 @@ const HomePage: React.FC = () => {
                   key={index}
                   variants={fadeInUp}
                   transition={{ delay: process.delay }}
-                  className={`relative flex items-center mb-16 ${
-                    index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
-                  }`}
+                  className={`relative flex items-center mb-16 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
+                    }`}
                 >
                   {/* Process Card */}
                   <div className={`w-1/2 ${index % 2 === 0 ? 'pr-12' : 'pl-12'}`}>
@@ -1005,17 +1003,17 @@ const HomePage: React.FC = () => {
                       <div className={`absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r ${process.color} rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
                         {process.step}
                       </div>
-                      
+
                       {/* Process Icon */}
                       <div className={`w-16 h-16 bg-gradient-to-r ${process.color} rounded-2xl flex items-center justify-center mb-6 ml-8 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
                         <process.icon className="w-8 h-8 text-white" />
                       </div>
-                      
+
                       <h3 className="text-2xl font-bold text-white mb-4">{process.title}</h3>
                       <p className="text-gray-400 leading-relaxed">{process.description}</p>
                     </div>
                   </div>
-                  
+
                   {/* Timeline Dot */}
                   <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-r from-logo-blue to-logo-indigo rounded-full border-4 border-jet-black shadow-lg" />
                 </motion.div>
@@ -1027,7 +1025,7 @@ const HomePage: React.FC = () => {
         {/* Creative CTA Section - Parallax Effect */}
         <section className="py-32 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-logo-blue/20 via-logo-indigo/20 to-logo-teal/20" />
-          
+
           {/* Animated Background Elements */}
           <motion.div
             animate={{ rotate: 360 }}
@@ -1038,7 +1036,7 @@ const HomePage: React.FC = () => {
             <div className="absolute bottom-20 right-20 w-96 h-96 bg-logo-indigo rounded-full blur-3xl" />
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-logo-teal rounded-full blur-3xl" />
           </motion.div>
-          
+
           <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -1055,7 +1053,7 @@ const HomePage: React.FC = () => {
               <p className="text-xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
                 Let's turn your vision into reality. Our team of innovators is ready to craft digital experiences that will set your business apart from the competition.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                 <Link href="/services">
                   <button className="group relative px-10 py-5 bg-gradient-to-r from-logo-blue to-logo-indigo text-white font-bold rounded-2xl shadow-2xl hover:shadow-logo-blue/25 transform hover:-translate-y-2 transition-all duration-500 overflow-hidden">
@@ -1066,7 +1064,7 @@ const HomePage: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-r from-logo-teal to-logo-emerald opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </button>
                 </Link>
-                
+
                 <Link href="/about">
                   <button className="group px-10 py-5 border-2 border-logo-blue/30 text-logo-blue font-bold rounded-2xl hover:bg-logo-blue/10 hover:border-logo-blue/50 transition-all duration-500 backdrop-blur-sm text-lg">
                     <span className="flex items-center">

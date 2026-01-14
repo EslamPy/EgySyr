@@ -16,9 +16,14 @@ class JobController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Job::with(['creator:id,name', 'applications' => function($q) {
-            $q->selectRaw('job_id, COUNT(*) as count')->groupBy('job_id');
-        }]);
+        $query = Job::with([
+            'creator' => function ($q) {
+                $q->select('id', 'first_name', 'last_name');
+            },
+            'applications' => function($q) {
+                $q->selectRaw('job_id, COUNT(*) as count')->groupBy('job_id');
+            }
+        ]);
 
         // Filter by status
         if ($request->has('active')) {
@@ -80,7 +85,9 @@ class JobController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Job created successfully',
-            'job' => $job->load('creator:id,name'),
+            'job' => $job->load(['creator' => function ($q) {
+                $q->select('id', 'first_name', 'last_name');
+            }]),
         ], 201);
     }
 
@@ -89,8 +96,12 @@ class JobController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $job = Job::with(['creator:id,name', 'applications'])
-            ->findOrFail($id);
+        $job = Job::with([
+            'creator' => function ($q) {
+                $q->select('id', 'first_name', 'last_name');
+            },
+            'applications'
+        ])->findOrFail($id);
 
         return response()->json($job);
     }
@@ -135,7 +146,9 @@ class JobController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Job updated successfully',
-            'job' => $job->load('creator:id,name'),
+            'job' => $job->load(['creator' => function ($q) {
+                $q->select('id', 'first_name', 'last_name');
+            }]),
         ]);
     }
 

@@ -17,7 +17,9 @@ class JobController extends Controller
     public function index(): JsonResponse
     {
         $jobs = Job::active()
-            ->with('creator:id,name')
+            ->with(['creator' => function ($q) {
+                $q->select('id', 'first_name', 'last_name');
+            }])
             ->select([
                 'id', 'title', 'slug', 'description', 'requirements',
                 'location', 'type', 'department', 'salary_min', 'salary_max',
@@ -35,7 +37,9 @@ class JobController extends Controller
     public function show(string $slug): JsonResponse
     {
         $job = Job::active()
-            ->with('creator:id,name')
+            ->with(['creator' => function ($q) {
+                $q->select('id', 'first_name', 'last_name');
+            }])
             ->where('slug', $slug)
             ->firstOrFail();
 
@@ -50,7 +54,7 @@ class JobController extends Controller
         $job = Job::active()->where('slug', $slug)->firstOrFail();
 
         // Check if application deadline has passed
-        if ($job->application_deadline && $job->application_deadline->isPast()) {
+        if ($job->application_deadline && $job->application_deadline->endOfDay()->isPast()) {
             return response()->json([
                 'error' => 'Application deadline has passed'
             ], 400);

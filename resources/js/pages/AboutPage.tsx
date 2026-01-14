@@ -45,17 +45,17 @@ const AboutPage: React.FC = () => {
   const team = [
     {
       name: 'Ahmed Ezz',
-      role: 'CEO & Founder',
+      role: 'COB & Founder',
       image: 'images/Ahmed.png', 
-      bio: 'Visionary leader with 10+ years in software development and business strategy.',
-      social: { linkedin: '#', twitter: '#', github: '#' }
+      bio: 'Founder & COB, EgySyr Ahmed Ezz is an expert in programming and website design. As Chairman of EgySyr, he combines technical skills and strategy to deliver innovative solutions that drive growth and client satisfaction.',
+      social: { linkedin: 'https://www.linkedin.com/in/ahmed-ezz-65071a348/' }
     },
     {
       name: 'Naiem',
-      role: 'CTO',
+      role: 'CEO',
       image: 'images/Naiem.png',
-      bio: 'Technology expert specializing in scalable architectures and emerging technologies.',
-      social: { linkedin: '#', twitter: '#', github: '#' }
+      bio: 'Entrepreneur and business growth expert with strategic vision and experience in leading projects and creating tech solutions. As Founder and CEO of EgySyr, Naiem drives innovation through smart strategies that help startups and SMEs succeed.',
+      social: { linkedin: 'https://www.linkedin.com/in/naiem-shamyeh/' }
     },
   ]
 
@@ -105,7 +105,7 @@ const AboutPage: React.FC = () => {
     }
   }
 
-  const featuredMembers = team.filter(m => /(ceo|cto)/i.test(m.role))
+  const featuredMembers = team.filter(m => /(cob|ceo)/i.test(m.role))
   const otherMembers = team.filter(m => !featuredMembers.includes(m))
 
   return (

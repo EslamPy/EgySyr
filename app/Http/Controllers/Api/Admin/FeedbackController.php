@@ -15,7 +15,9 @@ class FeedbackController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Feedback::with('reviewer:id,name');
+        $query = Feedback::with(['reviewer' => function ($q) {
+            $q->select('id', 'first_name', 'last_name');
+        }]);
 
         // Filter by status - but handle unsubmitted links differently
         if ($status = $request->get('status')) {
@@ -33,6 +35,9 @@ class FeedbackController extends Controller
                 $query->where('status', $status)
                       ->whereNotNull('submitted_at');
             }
+        } else {
+            // For "All" tab, show only submitted feedback (all statuses)
+            $query->whereNotNull('submitted_at');
         }
 
         // Search functionality
@@ -45,8 +50,10 @@ class FeedbackController extends Controller
             });
         }
 
-        $feedback = $query->orderByRaw('COALESCE(submitted_at, created_at) DESC')
-            ->paginate(20);
+        // Ensuring submitted items come first, then order by the most recent activity
+        $feedback = $query->orderByRaw('submitted_at IS NULL ASC')
+            ->orderByRaw('COALESCE(submitted_at, created_at) DESC')
+            ->paginate(50);
 
         return response()->json($feedback);
     }

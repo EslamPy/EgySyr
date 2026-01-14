@@ -40,12 +40,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(45deg, #8B5CF6, #06B6D4);
+  background: linear-gradient(45deg, #f65cf6, #d406a0);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(45deg, #EC4899, #3B82F6);
+  background: linear-gradient(45deg, #d406a0, #f65cf6,);
 }
 
 /* Custom selection */
@@ -255,7 +255,7 @@ a:active,
   font-weight: 700;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+  background: linear-gradient(135deg, #8b5cf6, #d406c3ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -693,7 +693,7 @@ header,
     position: absolute;
     inset: 0;
     padding: 2px;
-    background: linear-gradient(45deg, #8B5CF6, #06B6D4, #EC4899);
+    background: linear-gradient(45deg, #8B5CF6, #d406c3ff, #EC4899);
     border-radius: inherit;
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
@@ -712,7 +712,7 @@ header,
   }
   
   .border-gradient {
-    border-image: linear-gradient(45deg, #8B5CF6, #06B6D4, #EC4899) 1;
+    border-image: linear-gradient(45deg, #8B5CF6, #d406c3ff, #EC4899) 1;
   }
 
   /* Creative text effects */
@@ -813,7 +813,7 @@ header,
 }
 
 .animate-text-shimmer {
-  background: linear-gradient(90deg, #8B5CF6, #06B6D4, #EC4899, #8B5CF6);
+  background: linear-gradient(90deg, #8B5CF6, #d406c3ff, #EC4899, #8B5CF6);
   background-size: 200% 100%;
   animation: text-shimmer 3s ease infinite;
   -webkit-background-clip: text;
@@ -927,7 +927,7 @@ header,
 
 /* Enhanced Typography */
 .text-gradient-enhanced {
-  background: linear-gradient(135deg, #8B5CF6, #06B6D4, #EC4899, #3B82F6);
+  background: linear-gradient(135deg, #8B5CF6, #d406c3ff, #EC4899, #3B82F6);
   background-size: 300% 300%;
   animation: gradient-shift-enhanced 4s ease infinite;
   -webkit-background-clip: text;

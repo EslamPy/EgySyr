@@ -1,9 +1,10 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, CheckCircle, Smartphone, Monitor, Server, Camera, Palette, TrendingUp, Sparkles, Brain, Rocket } from 'lucide-react'
+import { ArrowRight, CheckCircle, Sliders, Smartphone, Monitor, Server, Camera, Palette, TrendingUp, Sparkles, Brain, Rocket } from 'lucide-react'
 import PageTransition from '../components/PageTransition.tsx'
 import Footer from '../components/Footer.tsx'
 import { Link } from 'wouter'
+
 
 const ServicesPage: React.FC = () => {
   const services = [
@@ -28,55 +29,55 @@ const ServicesPage: React.FC = () => {
       price: 'Starting from EGP 5,000'
     },
     {
-      title: 'AI & Machine Learning',
-      description: 'Intelligent solutions that learn, adapt, and evolve with your business needs',
-      category: 'Enterprise',
-      gradient: 'from-neon-pink to-electric-blue',
-      icon: Brain,
-      features: ['Predictive Analytics', 'Natural Language', 'Computer Vision', 'Automation'],
-      technologies: ['Python', 'TensorFlow', 'PyTorch', 'OpenAI'],
-      price: 'Starting from EGP 8,000'
-    },
-    {
-      title: 'Cloud Infrastructure',
-      description: 'Scalable cloud solutions that grow with your business and ensure reliability',
-      category: 'Infrastructure',
-      gradient: 'from-electric-blue to-neon-purple',
-      icon: Server,
-      features: ['AWS & Azure', 'Auto-scaling', '99.9% Uptime', 'Security First'],
-      technologies: ['AWS', 'Azure', 'Docker', 'Kubernetes'],
-      price: 'Starting from EGP 15/month'
-    },
-    {
-      title: 'Surveillance Systems',
-      description: 'Professional security camera systems and monitoring solutions for businesses',
-      category: 'Security',
+      title: 'Administrative systems',
+      description: 'We provide smart, tailor-made administrative systems that enhance productivity, automate processes, and save time and effort',
+      category: 'Development',
       gradient: 'from-neon-purple to-neon-cyan',
-      icon: Camera,
-      features: ['HD Cameras', 'Remote Monitoring', 'Motion Detection', 'Cloud Storage'],
-      technologies: ['IP Cameras', 'NVR Systems', 'Mobile Apps', 'Cloud Platform'],
-      price: 'Starting from EGP 1,500'
+      icon: Sliders,
+      features: ['ERP', 'POS', 'HR', 'Custom system'],
+      technologies: ['React Native', 'Flutter', 'Swift', 'Kotlin'],
+      price: 'Starting from EGP 5,000'
     },
-    {
-      title: 'UI/UX Design',
-      description: 'Beautiful, intuitive interfaces that users love and businesses trust',
-      category: 'Creative',
-      gradient: 'from-neon-cyan to-neon-pink',
-      icon: Palette,
-      features: ['User Research', 'Wireframing', 'Prototyping', 'User Testing'],
-      technologies: ['Figma', 'Adobe XD', 'Sketch', 'InVision'],
-      price: 'Starting from EGP 500'
-    },
-    {
-      title: 'Digital Marketing',
-      description: 'Data-driven marketing strategies that convert visitors into loyal customers',
-      category: 'Marketing',
-      gradient: 'from-neon-pink to-electric-blue',
-      icon: TrendingUp,
-      features: ['SEO & SEM', 'Social Media', 'Content Strategy', 'Analytics'],
-      technologies: ['Google Ads', 'Facebook Ads', 'Google Analytics', 'HubSpot'],
-      price: 'Starting from EGP 1,000/month'
-    }
+    // {
+    //   title: 'AI & Machine Learning',
+    //   description: 'Intelligent solutions that learn, adapt, and evolve with your business needs',
+    //   category: 'Enterprise',
+    //   gradient: 'from-neon-pink to-electric-blue',
+    //   icon: Brain,
+    //   features: ['Predictive Analytics', 'Natural Language', 'Computer Vision', 'Automation'],
+    //   technologies: ['Python', 'TensorFlow', 'PyTorch', 'OpenAI'],
+    //   price: 'Starting from EGP 8,000'
+    // },
+    // {
+    //   title: 'Cloud Infrastructure',
+    //   description: 'Scalable cloud solutions that grow with your business and ensure reliability',
+    //   category: 'Infrastructure',
+    //   gradient: 'from-electric-blue to-neon-purple',
+    //   icon: Server,
+    //   features: ['AWS & Azure', 'Auto-scaling', '99.9% Uptime', 'Security First'],
+    //   technologies: ['AWS', 'Azure', 'Docker', 'Kubernetes'],
+    //   price: 'Starting from EGP 15/month'
+    // },
+    // {
+    //   title: 'UI/UX Design',
+    //   description: 'Beautiful, intuitive interfaces that users love and businesses trust',
+    //   category: 'Creative',
+    //   gradient: 'from-neon-cyan to-neon-pink',
+    //   icon: Palette,
+    //   features: ['User Research', 'Wireframing', 'Prototyping', 'User Testing'],
+    //   technologies: ['Figma', 'Adobe XD', 'Sketch', 'InVision'],
+    //   price: 'Starting from EGP 500'
+    // },
+    // {
+    //   title: 'Digital Marketing',
+    //   description: 'Data-driven marketing strategies that convert visitors into loyal customers',
+    //   category: 'Marketing',
+    //   gradient: 'from-neon-pink to-electric-blue',
+    //   icon: TrendingUp,
+    //   features: ['SEO & SEM', 'Social Media', 'Content Strategy', 'Analytics'],
+    //   technologies: ['Google Ads', 'Facebook Ads', 'Google Analytics', 'HubSpot'],
+    //   price: 'Starting from EGP 1,000/month'
+    // }
   ]
 
   const filteredServices = services

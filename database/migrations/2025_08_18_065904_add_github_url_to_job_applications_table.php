@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('job_applications', function (Blueprint $table) {
-            $table->string('github_url')->nullable()->after('portfolio_url');
-        });
+        if (!Schema::hasColumn('job_applications', 'github_url')) {
+            Schema::table('job_applications', function (Blueprint $table) {
+                $table->string('github_url')->nullable()->after('portfolio_url');
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('job_applications', function (Blueprint $table) {
-            $table->dropColumn('github_url');
-        });
+        if (Schema::hasColumn('job_applications', 'github_url')) {
+            Schema::table('job_applications', function (Blueprint $table) {
+                $table->dropColumn('github_url');
+            });
+        }
     }
 };
