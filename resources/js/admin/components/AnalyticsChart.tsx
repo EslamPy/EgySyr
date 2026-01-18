@@ -3,45 +3,14 @@ import ReactApexChart from 'react-apexcharts'
 
 interface AnalyticsChartProps {
     selectedPeriod: string
+    data: Array<{
+        date: string
+        visits: number
+        unique_visitors: number
+    }>
 }
 
-export default function AnalyticsChart({ selectedPeriod }: AnalyticsChartProps) {
-    // Chart data based on selected period
-    const chartDataMap: Record<string, { categories: string[]; data: number[] }> = {
-        optionOne: {
-            // 12 months
-            categories: [
-                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-            ],
-            data: [120, 150, 180, 140, 200, 170, 220, 210, 190, 230, 250, 270],
-        },
-
-        optionTwo: {
-            // 30 days
-            categories: Array.from({ length: 30 }, (_, i) => `${i + 1}`),
-            data: [
-                165, 385, 200, 295, 185, 195, 290, 110, 215, 390,
-                280, 110, 125, 210, 270, 190, 310, 115, 90, 380,
-                110, 225, 295, 170, 290, 110, 115, 290, 385, 315
-            ],
-        },
-
-        optionThree: {
-            // 7 days
-            categories: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-            data: [80, 120, 150, 110, 170, 140, 160],
-        },
-
-        optionFour: {
-            // 24 hours
-            categories: Array.from({ length: 24 }, (_, i) => `${i}:00`),
-            data: Array.from({ length: 24 }, () =>
-                Math.floor(Math.random() * 100) + 20
-            ),
-        },
-    }
-
+export default function AnalyticsChart({ selectedPeriod, data }: AnalyticsChartProps) {
     // ApexCharts options with dark theme
     const options: ApexOptions = {
         chart: {
@@ -69,7 +38,19 @@ export default function AnalyticsChart({ selectedPeriod }: AnalyticsChartProps) 
             colors: ['transparent']
         },
         xaxis: {
-            categories: chartDataMap[selectedPeriod].categories,
+            categories: data.map(d => {
+                const date = new Date(d.date);
+                if (selectedPeriod === 'optionFour') {
+                    return date.getHours() + ':00';
+                }
+                if (selectedPeriod === 'optionThree') {
+                    return date.toLocaleDateString('en-US', { weekday: 'short' });
+                }
+                if (selectedPeriod === 'optionOne') {
+                    return date.toLocaleDateString('en-US', { month: 'short' });
+                }
+                return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+            }),
             axisBorder: {
                 show: false,
             },
@@ -85,8 +66,6 @@ export default function AnalyticsChart({ selectedPeriod }: AnalyticsChartProps) 
         },
         yaxis: {
             min: 0,
-            max: 400,
-            tickAmount: 4,
             labels: {
                 style: {
                     fontSize: '12px',
@@ -141,7 +120,7 @@ export default function AnalyticsChart({ selectedPeriod }: AnalyticsChartProps) 
     const series = [
         {
             name: 'Visits',
-            data: chartDataMap[selectedPeriod].data,
+            data: data.map(d => d.visits),
         },
     ]
 

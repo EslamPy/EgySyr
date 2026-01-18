@@ -20,6 +20,7 @@ interface DashboardStats {
     this_month: number
     unique_today?: number
     avg_session_seconds_today?: number
+    active_now?: number
   }
   contact_messages: {
     total: number
@@ -207,7 +208,7 @@ const Dashboard: React.FC = () => {
     )
   }
 
-  const username = user?.username || user?.name || 'Admin'
+  const fullName = user?.name || user?.username || 'Admin'
 
   return (
     <AdminLayout>
@@ -216,10 +217,10 @@ const Dashboard: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/10 flex items-center justify-center">
-              {user?.profile_image_url || user?.profile_image_path ? (
+              {user?.profile_image_url ? (
                 <img
-                  src={user.profile_image_url || `/storage/${user.profile_image_path}`}
-                  alt={username}
+                  src={user.profile_image_url}
+                  alt={fullName}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -227,7 +228,7 @@ const Dashboard: React.FC = () => {
               )}
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Welcome back, {username}</h1>
+              <h1 className="text-3xl font-bold">Welcome back, {fullName}</h1>
               <p className="text-gray-400 mt-1">Here's what's happening with your platform today.</p>
             </div>
           </div>
@@ -348,11 +349,11 @@ const Dashboard: React.FC = () => {
 
             <div className="bg-white/5 border border-white/10 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Globe className="w-4 h-4 text-cyan-400" />
-                <span className="text-xs text-gray-400">Countries</span>
+                <Activity className="w-4 h-4 text-green-400" />
+                <span className="text-xs text-gray-400">Active Now</span>
               </div>
-              <div className="text-2xl font-bold text-white">{worldMapData.length}</div>
-              <div className="text-xs text-gray-400">Reached</div>
+              <div className="text-2xl font-bold text-white">{stats?.site_visits.active_now || 0}</div>
+              <div className="text-xs text-gray-400">Visitors in last 5m</div>
             </div>
           </div>
 

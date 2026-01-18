@@ -20,6 +20,7 @@ interface User {
   role: 'owner' | 'admin'
   status: 'pending' | 'approved' | 'denied'
   profile_image_path?: string
+  profile_image_url?: string
   denial_reason?: string
   created_at: string
   permissions?: UserPermission[]
@@ -249,11 +250,10 @@ const UserManagement: React.FC = () => {
                   setStatusFilter(status)
                   setCurrentPage(1)
                 }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  statusFilter === status
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${statusFilter === status
                     ? 'bg-neon-purple text-white'
                     : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10'
-                }`}
+                  }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </button>
@@ -294,9 +294,9 @@ const UserManagement: React.FC = () => {
                     <div className="flex items-start gap-4">
                       {/* Profile Image */}
                       <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
-                        {user.profile_image_path ? (
-                          <img 
-                            src={`/storage/${user.profile_image_path}`} 
+                        {user.profile_image_url ? (
+                          <img
+                            src={user.profile_image_url}
                             alt={user.name}
                             className="w-full h-full object-cover"
                           />
@@ -411,7 +411,7 @@ const UserManagement: React.FC = () => {
               {Math.min(pagination.current_page * pagination.per_page, pagination.total)} of{' '}
               {pagination.total} users
             </p>
-            
+
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage(pagination.current_page - 1)}
@@ -420,26 +420,25 @@ const UserManagement: React.FC = () => {
               >
                 Previous
               </button>
-              
+
               {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
                 const page = i + Math.max(1, pagination.current_page - 2)
                 if (page > pagination.last_page) return null
-                
+
                 return (
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-1 rounded text-sm transition-colors ${
-                      page === pagination.current_page
+                    className={`px-3 py-1 rounded text-sm transition-colors ${page === pagination.current_page
                         ? 'bg-neon-purple text-white'
                         : 'bg-white/5 border border-white/10 hover:bg-white/10'
-                    }`}
+                      }`}
                   >
                     {page}
                   </button>
                 )
               })}
-              
+
               <button
                 onClick={() => setCurrentPage(pagination.current_page + 1)}
                 disabled={pagination.current_page === pagination.last_page}
@@ -526,9 +525,9 @@ const UserDetailsModal: React.FC<{
           {/* Profile Section */}
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
-              {user.profile_image_path ? (
+              {user.profile_image_url ? (
                 <img
-                  src={`/storage/${user.profile_image_path}`}
+                  src={user.profile_image_url}
                   alt={user.name}
                   className="w-full h-full object-cover"
                 />

@@ -41,6 +41,10 @@ interface AnalyticsData {
     country: string
     visits: number
   }>
+  active_users_history: Array<{
+    time: string
+    count: number
+  }>
 }
 
 type DropdownKey = 'topPages' | 'activeUsers' | 'devices' | 'countries';
@@ -366,7 +370,10 @@ const Analytics: React.FC = () => {
               </button>
             </div>
           </div>
-          <AnalyticsChart selectedPeriod={selectedPeriod} />
+          <AnalyticsChart
+            selectedPeriod={selectedPeriod}
+            data={data.visits_over_time}
+          />
         </motion.div>
 
         {/* Top Pages & Device Stats */}
@@ -443,7 +450,7 @@ const Analytics: React.FC = () => {
             </div>
 
             <div className="my-5 min-h-[120px] rounded-xl bg-white/5 flex items-center justify-center">
-              <ActiveUsersChart />
+              <ActiveUsersChart data={data.active_users_history} />
             </div>
 
             <div className="flex items-center justify-center gap-6">

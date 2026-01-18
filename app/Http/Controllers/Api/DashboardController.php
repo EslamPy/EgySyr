@@ -32,6 +32,7 @@ class DashboardController extends Controller
                 'this_month' => SiteVisit::where('created_at', '>=', $thisMonth)->count(),
                 'unique_today' => SiteVisit::whereDate('created_at', $today)->where('is_unique_visitor', true)->count(),
                 'avg_session_seconds_today' => (int) round((float) SiteVisit::whereDate('created_at', $today)->avg('session_duration')),
+                'active_now' => SiteVisit::where('created_at', '>=', Carbon::now()->subMinutes(5))->distinct('visitor_id')->count(),
             ],
             'contact_messages' => [
                 'total' => ContactMessage::count(),
@@ -141,14 +142,14 @@ class DashboardController extends Controller
                 return [
                     'type' => 'job_application',
                     'title' => "New application from {$application->first_name} {$application->last_name}",
-                    'description' => "Applied for: " . ($application->job->title ?? 'Unknown Position'),
+                    'description' => "Applied for: " . ($application->job?->title ?? 'Unknown Position'),
                     'created_at' => $application->created_at,
                     'url' => '/admin/job-applications',
                 ];
             });
 
         // Recent user registrations
-        $recentUsers = User::select('id', 'name', 'email', 'status', 'created_at')
+        $recentUsers = User::select('id', 'first_name', 'last_name', 'email', 'status', 'created_at')
             ->where('role', 'admin')
             ->orderBy('created_at', 'desc')
             ->limit(3)
@@ -156,7 +157,7 @@ class DashboardController extends Controller
             ->map(function ($user) {
                 return [
                     'type' => 'user_registration',
-                    'title' => "New admin registration: {$user->name}",
+                    'title' => "New admin registration: {$user->first_name} {$user->last_name}",
                     'description' => "Email: {$user->email} - Status: {$user->status}",
                     'created_at' => $user->created_at,
                     'url' => '/admin/users',
@@ -262,6 +263,15 @@ class DashboardController extends Controller
                 ->groupBy('country')
                 ->orderBy('visits', 'desc')
                 ->limit(10)
+                ->get(),
+
+            'active_users_history' => SiteVisit::select(
+                DB::raw('DATE_FORMAT(created_at, "%H:%i") as time'),
+                DB::raw('count(distinct visitor_id) as count')
+            )
+                ->where('created_at', '>=', Carbon::now()->subMinutes(60))
+                ->groupBy('time')
+                ->orderBy('time')
                 ->get(),
         ];
 

@@ -708,43 +708,6 @@ const PreferencesTab: React.FC<{
         </div>
       </div>
 
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h2 className="text-xl font-semibold mb-6">Appearance</h2>
-
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Theme
-            </label>
-            <select
-              value={preferences.theme}
-              onChange={(e) => setPreferences({ ...preferences, theme: e.target.value })}
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-purple"
-            >
-              <option value="dark">Dark</option>
-              <option value="light">Light</option>
-              <option value="auto">Auto</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Language
-            </label>
-            <select
-              value={preferences.language}
-              onChange={(e) => setPreferences({ ...preferences, language: e.target.value })}
-              className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-neon-purple"
-            >
-              <option value="en">English</option>
-              <option value="ar">العربية</option>
-              <option value="fr">Français</option>
-              <option value="es">Español</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
       <div className="flex justify-end">
         <button
           onClick={savePreferences}

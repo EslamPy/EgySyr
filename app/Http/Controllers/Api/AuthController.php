@@ -157,7 +157,7 @@ class AuthController extends Controller
                     'status' => $user->status,
                     'profile_image_path' => $user->profile_image_path,
                     'profile_image_url' => $user->profile_image_path
-                        ? Storage::url($user->profile_image_path)
+                        ? asset('storage/' . $user->profile_image_path)
                         : null,
                 ],
                 'token' => 'session-based', // For compatibility with frontend
@@ -218,7 +218,7 @@ class AuthController extends Controller
                     'status' => $user->status,
                     'profile_image_path' => $user->profile_image_path,
                     'profile_image_url' => $user->profile_image_path
-                        ? Storage::url($user->profile_image_path)
+                        ? asset('storage/' . $user->profile_image_path)
                         : null,
                 ]
             ]);

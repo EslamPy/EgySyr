@@ -1,44 +1,28 @@
 import { ApexOptions } from 'apexcharts'
-import React, { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import ReactApexChart from 'react-apexcharts'
 
-export default function ActiveUsersChart() {
-    // Initial data to populate the chart
-    const initialData = [40, 55, 85, 75, 60, 50, 45, 42, 40, 55, 75, 60, 45, 50, 65, 70, 85, 80, 65, 55, 50]
+interface ActiveUsersChartProps {
+    data: Array<{
+        time: string
+        count: number
+    }>
+}
+
+export default function ActiveUsersChart({ data }: ActiveUsersChartProps) {
     const [series, setSeries] = useState([
         {
             name: 'Active Users',
-            data: initialData,
+            data: data.map(d => d.count),
         },
     ])
 
-    // Use a ref to keep track of data without triggering re-renders for logic
-    const dataRef = useRef(initialData)
-
     useEffect(() => {
-        const interval = setInterval(() => {
-            const currentData = [...dataRef.current]
-            const lastVal = currentData[currentData.length - 1]
-
-            // Simulate organic fluctuation (slight up/down)
-            // Range: -7 to +7, keeping values between 30 and 95 for visual consistency
-            let newVal = lastVal + (Math.floor(Math.random() * 15) - 7)
-            newVal = Math.max(30, Math.min(95, newVal))
-
-            // Sliding window logic: remove first, add new to end
-            currentData.shift()
-            currentData.push(newVal)
-
-            dataRef.current = currentData
-
-            setSeries([{
-                name: 'Active Users',
-                data: currentData
-            }])
-        }, 2000) // Update every 2 seconds for a smooth, non-jittery flow
-
-        return () => clearInterval(interval)
-    }, [])
+        setSeries([{
+            name: 'Active Users',
+            data: data.map(d => d.count)
+        }])
+    }, [data])
 
     const options: ApexOptions = {
         chart: {
