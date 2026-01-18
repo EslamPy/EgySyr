@@ -57,32 +57,6 @@ const Navigation: React.FC = () => {
     return () => clearTimeout(timer)
   }, [])
 
-  const scrollToSection = (href: string) => {
-    if (href.startsWith('/') && href !== '/') {
-      return
-    }
-
-    if (href === '/') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      setIsOpen(false)
-      return
-    }
-
-    const element = document.querySelector(href)
-    if (element) {
-      const rect = element.getBoundingClientRect()
-      const currentScrollY = window.pageYOffset || document.documentElement.scrollTop
-      const elementAbsoluteTop = rect.top + currentScrollY
-      const navbarHeight = 100
-      const targetPosition = Math.max(0, elementAbsoluteTop - navbarHeight)
-
-      window.scrollTo({
-        top: targetPosition,
-        behavior: 'smooth',
-      })
-    }
-    setIsOpen(false)
-  }
 
   const isActive = (href: string) => location === href
 

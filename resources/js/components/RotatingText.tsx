@@ -4,7 +4,6 @@ import { motion, AnimatePresence, Transition } from 'framer-motion'
 interface RotatingTextProps {
     texts: string[]
     mainClassName?: string
-    staggerFrom?: 'first' | 'last' | 'center' | number
     initial?: any
     animate?: any
     exit?: any
@@ -17,7 +16,6 @@ interface RotatingTextProps {
 const RotatingText: React.FC<RotatingTextProps> = ({
     texts,
     mainClassName = '',
-    staggerFrom = 'first',
     initial = { y: '100%' },
     animate = { y: 0 },
     exit = { y: '-120%' },

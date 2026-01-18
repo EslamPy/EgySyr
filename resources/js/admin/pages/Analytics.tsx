@@ -4,10 +4,10 @@ import { BubbleWorldMap } from '../components/BubbleWorldMap'
 import AnalyticsChart from '../components/AnalyticsChart'
 import ActiveUsersChart from '../components/ActiveUsersChart'
 import {
-  BarChart3, PieChart, TrendingUp, Users, Eye, Globe,
-  Calendar, RefreshCw, Download, Filter, ArrowUp, ArrowDown,
-  Monitor, Smartphone, Tablet, MapPin, Mail, Briefcase,
-  MessageSquare, Activity, MoreVertical
+  BarChart3, Globe,
+  RefreshCw, Download, ArrowUp, ArrowDown,
+  Monitor, Smartphone, Tablet, MapPin,
+  Activity, MoreVertical
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'

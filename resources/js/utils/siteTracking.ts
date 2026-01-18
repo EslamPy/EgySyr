@@ -86,7 +86,7 @@ class SiteTracker {
     if (this.isTracking) return
 
     const sessionDuration = Math.floor((Date.now() - this.sessionStart) / 1000)
-    
+
     if (sessionDuration < 5) return // Ignore very short sessions
 
     try {
@@ -118,7 +118,7 @@ class SiteTracker {
     }
   }
 
-  public trackCustomEvent(eventData: Partial<TrackingData>) {
+  public trackCustomEvent(_eventData: Partial<TrackingData>) {
     this.trackPageView()
   }
 

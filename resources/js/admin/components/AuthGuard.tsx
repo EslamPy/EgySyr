@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'wouter'
-import { getCurrentUser, isAuthenticated, isApproved } from '../utils/auth'
-import { RefreshCw, AlertCircle, Lock } from 'lucide-react'
+import { isAuthenticated } from '../utils/auth'
+import { RefreshCw, AlertCircle } from 'lucide-react'
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -9,10 +9,10 @@ interface AuthGuardProps {
   requireApproval?: boolean
 }
 
-const AuthGuard: React.FC<AuthGuardProps> = ({ 
-  children, 
-  requireAuth = true, 
-  requireApproval = true 
+const AuthGuard: React.FC<AuthGuardProps> = ({
+  children,
+  requireAuth = true,
+  requireApproval = true
 }) => {
   const [, setLocation] = useLocation()
   const [loading, setLoading] = useState(true)
@@ -66,8 +66,8 @@ const AuthGuard: React.FC<AuthGuardProps> = ({
 
         // Check approval status if required
         if (requireApproval && user.status !== 'approved') {
-          const message = user.status === 'pending' 
-            ? 'Your account is pending approval' 
+          const message = user.status === 'pending'
+            ? 'Your account is pending approval'
             : 'Your account has been denied access'
           setError(message)
           return

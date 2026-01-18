@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
 import {
-  User, Mail, Lock, Camera, Save, Eye, EyeOff,
-  Shield, Bell, Globe, Palette, RefreshCw, Check,
-  AlertCircle, Upload, X, LogOut
+  User, Lock, Camera, Save, Eye, EyeOff,
+  Shield, Bell, RefreshCw, Check,
+  AlertCircle, LogOut
 } from 'lucide-react'
-import { getCurrentUser, setCurrentUser, logout } from '../utils/auth'
+import { setCurrentUser, logout } from '../utils/auth'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 
@@ -28,7 +28,6 @@ interface UserProfile {
 }
 
 const Settings: React.FC = () => {
-  const currentUser = getCurrentUser()
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'preferences' | 'account'>('profile')
   const [loading, setLoading] = useState(false)
   const [profile, setProfile] = useState<UserProfile | null>(null)
@@ -129,7 +128,7 @@ const Settings: React.FC = () => {
       }
 
       setProfileImage(file)
-      
+
       // Create preview
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -295,11 +294,10 @@ const Settings: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === tab.id
-                    ? 'border-neon-purple text-neon-purple'
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
-                }`}
+                className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === tab.id
+                  ? 'border-neon-purple text-neon-purple'
+                  : 'border-transparent text-gray-400 hover:text-gray-300'
+                  }`}
               >
                 {tab.icon}
                 {tab.label}
@@ -425,9 +423,8 @@ const ProfileTab: React.FC<{
                 type="text"
                 value={profileForm.name}
                 onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                className={`w-full px-3 py-2 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${
-                  errors.name ? 'border-red-500' : 'border-white/10'
-                }`}
+                className={`w-full px-3 py-2 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${errors.name ? 'border-red-500' : 'border-white/10'
+                  }`}
                 placeholder="Enter your full name"
               />
               {errors.name && (
@@ -443,9 +440,8 @@ const ProfileTab: React.FC<{
                 type="text"
                 value={profileForm.username}
                 onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
-                className={`w-full px-3 py-2 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${
-                  errors.username ? 'border-red-500' : 'border-white/10'
-                }`}
+                className={`w-full px-3 py-2 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${errors.username ? 'border-red-500' : 'border-white/10'
+                  }`}
                 placeholder="Enter your username"
               />
               {errors.username && (
@@ -462,9 +458,8 @@ const ProfileTab: React.FC<{
               type="email"
               value={profileForm.email}
               onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
-              className={`w-full px-3 py-2 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${
-                errors.email ? 'border-red-500' : 'border-white/10'
-              }`}
+              className={`w-full px-3 py-2 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${errors.email ? 'border-red-500' : 'border-white/10'
+                }`}
               placeholder="Enter your email address"
             />
             {errors.email && (
@@ -521,9 +516,8 @@ const SecurityTab: React.FC<{
                 type={showPasswords.current ? 'text' : 'password'}
                 value={securityForm.current_password}
                 onChange={(e) => setSecurityForm({ ...securityForm, current_password: e.target.value })}
-                className={`w-full px-3 py-2 pr-10 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${
-                  errors.current_password ? 'border-red-500' : 'border-white/10'
-                }`}
+                className={`w-full px-3 py-2 pr-10 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${errors.current_password ? 'border-red-500' : 'border-white/10'
+                  }`}
                 placeholder="Enter your current password"
               />
               <button
@@ -548,9 +542,8 @@ const SecurityTab: React.FC<{
                 type={showPasswords.new ? 'text' : 'password'}
                 value={securityForm.new_password}
                 onChange={(e) => setSecurityForm({ ...securityForm, new_password: e.target.value })}
-                className={`w-full px-3 py-2 pr-10 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${
-                  errors.new_password ? 'border-red-500' : 'border-white/10'
-                }`}
+                className={`w-full px-3 py-2 pr-10 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${errors.new_password ? 'border-red-500' : 'border-white/10'
+                  }`}
                 placeholder="Enter your new password"
               />
               <button
@@ -575,9 +568,8 @@ const SecurityTab: React.FC<{
                 type={showPasswords.confirm ? 'text' : 'password'}
                 value={securityForm.confirm_password}
                 onChange={(e) => setSecurityForm({ ...securityForm, confirm_password: e.target.value })}
-                className={`w-full px-3 py-2 pr-10 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${
-                  errors.confirm_password ? 'border-red-500' : 'border-white/10'
-                }`}
+                className={`w-full px-3 py-2 pr-10 bg-white/5 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple ${errors.confirm_password ? 'border-red-500' : 'border-white/10'
+                  }`}
                 placeholder="Confirm your new password"
               />
               <button

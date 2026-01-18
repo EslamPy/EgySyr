@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, useLocation } from 'wouter'
 import {
   LayoutDashboard, Users, MessageSquare, Briefcase, Star,
-  FileText, Settings, UserCheck, Eye
+  FileText, Settings, Eye
 } from 'lucide-react'
 
 export const AdminSidebar: React.FC = () => {
@@ -46,4 +46,4 @@ export const AdminSidebar: React.FC = () => {
       </nav>
     </aside>
   )
-} 
+}

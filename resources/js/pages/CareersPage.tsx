@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Clock, Users, ArrowRight, Star, Award, Coffee, Heart, Globe, Briefcase, GraduationCap, DollarSign, Calendar, Building } from 'lucide-react'
+import { MapPin, Clock, Users, ArrowRight, Award, Coffee, Heart, Globe, Briefcase, GraduationCap, Calendar, Building } from 'lucide-react'
 import PageTransition from '../components/PageTransition.tsx'
 import Footer from '../components/Footer.tsx'
 import { Link } from 'wouter'
@@ -34,15 +34,6 @@ const formatSalary = (job: Job) => {
   return `${currency} ${job.salary_max?.toLocaleString()}`
 }
 
-const getTypeColor = (type: string) => {
-  switch (type) {
-    case 'full-time': return 'bg-green-500/20 text-green-400 border-green-500/30'
-    case 'part-time': return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-    case 'contract': return 'bg-orange-500/20 text-orange-400 border-orange-500/30'
-    case 'internship': return 'bg-purple-500/20 text-purple-400 border-purple-500/30'
-    default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
-  }
-}
 
 const CareersPage: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([])
@@ -205,7 +196,7 @@ const CareersPage: React.FC = () => {
         {/* Company Values Section */}
         <section className="py-32 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-jet-black via-deep-charcoal/20 to-jet-black" />
-          
+
           <div className="relative max-w-7xl mx-auto px-6">
             <motion.div
               className="text-center mb-20"
@@ -240,11 +231,11 @@ const CareersPage: React.FC = () => {
                     <motion.div
                       className={`absolute inset-0 bg-gradient-to-br ${value.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
                     />
-                    
+
                     <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 group-hover:bg-clip-text transition-all duration-300">
                       {value.title}
                     </h3>
-                    
+
                     <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
                       {value.description}
                     </p>
@@ -373,49 +364,49 @@ const CareersPage: React.FC = () => {
                 </div>
               ) : (
                 jobs.map((job, index) => (
-                <motion.div key={job.slug ?? index} className="group relative" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: index * 0.1 }} viewport={{ once: true }} whileHover={{ y: -4 }}>
-                  <div className="relative p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-500 overflow-hidden">
-                    <motion.div className="absolute inset-0 bg-gradient-to-r from-neon-purple/5 via-neon-pink/5 to-neon-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <motion.div key={job.slug ?? index} className="group relative" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: index * 0.1 }} viewport={{ once: true }} whileHover={{ y: -4 }}>
+                    <div className="relative p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-500 overflow-hidden">
+                      <motion.div className="absolute inset-0 bg-gradient-to-r from-neon-purple/5 via-neon-pink/5 to-neon-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                    <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                      <div className="flex-1">
-                        <div className="flex flex-wrap items-center gap-4 mb-4">
-                          <h3 className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-neon-pink group-hover:to-neon-cyan group-hover:bg-clip-text transition-all duration-300">
-                            {job.title}
-                          </h3>
-                          <span className="px-3 py-1 bg-neon-purple/20 text-neon-purple text-sm font-medium rounded-full border border-neon-purple/30">
-                            {job.department}
-                          </span>
+                      <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                        <div className="flex-1">
+                          <div className="flex flex-wrap items-center gap-4 mb-4">
+                            <h3 className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-neon-pink group-hover:to-neon-cyan group-hover:bg-clip-text transition-all duration-300">
+                              {job.title}
+                            </h3>
+                            <span className="px-3 py-1 bg-neon-purple/20 text-neon-purple text-sm font-medium rounded-full border border-neon-purple/30">
+                              {job.department}
+                            </span>
+                          </div>
+
+                          <p className="text-gray-400 mb-4 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+                            {job.description}
+                          </p>
+
+                          <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+                            <div className="flex items-center gap-2"><MapPin className="w-4 h-4" />{job.location}</div>
+                            <div className="flex items-center gap-2"><Clock className="w-4 h-4" />{job.type.replace('-', ' ')}</div>
+                            {job.department && (
+                              <div className="flex items-center gap-2"><Building className="w-4 h-4" />{job.department}</div>
+                            )}
+                            {job.application_deadline && (
+                              <div className="flex items-center gap-2"><Calendar className="w-4 h-4" />Apply by {new Date(job.application_deadline).toLocaleDateString()}</div>
+                            )}
+                          </div>
+
+                          {formatSalary(job) && (
+                            <div className="text-neon-cyan font-semibold mb-4">{formatSalary(job)}</div>
+                          )}
                         </div>
 
-                        <p className="text-gray-400 mb-4 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
-                          {job.description}
-                        </p>
-
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
-                          <div className="flex items-center gap-2"><MapPin className="w-4 h-4" />{job.location}</div>
-                          <div className="flex items-center gap-2"><Clock className="w-4 h-4" />{job.type.replace('-', ' ')}</div>
-                          {job.department && (
-                            <div className="flex items-center gap-2"><Building className="w-4 h-4" />{job.department}</div>
-                          )}
-                          {job.application_deadline && (
-                            <div className="flex items-center gap-2"><Calendar className="w-4 h-4" />Apply by {new Date(job.application_deadline).toLocaleDateString()}</div>
-                          )}
-                        </div>
-
-                        {formatSalary(job) && (
-                          <div className="text-neon-cyan font-semibold mb-4">{formatSalary(job)}</div>
-                        )}
+                        <Link href={`/careers/${job.slug}`}>
+                          <a className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink text-white font-semibold no-underline shadow-lg hover:shadow-neon-purple/25 transition-transform duration-200 hover:scale-[1.02] focus:outline-none">
+                            <span className="flex items-center gap-2">Apply Now<ArrowRight className="w-4 h-4 transition-transform" /></span>
+                          </a>
+                        </Link>
                       </div>
-
-                      <Link href={`/careers/${job.slug}`}>
-                        <a className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink text-white font-semibold no-underline shadow-lg hover:shadow-neon-purple/25 transition-transform duration-200 hover:scale-[1.02] focus:outline-none">
-                          <span className="flex items-center gap-2">Apply Now<ArrowRight className="w-4 h-4 transition-transform" /></span>
-                        </a>
-                      </Link>
                     </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
                 ))
               )}
             </div>

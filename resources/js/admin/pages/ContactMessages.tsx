@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
-import { 
-  Search, Download, Trash2, Mail, Calendar, User, 
+import {
+  Search, Download, Trash2, Mail, User,
   MessageSquare, RefreshCw, Eye, Filter, X, ChevronDown,
   Clock, CheckCircle, AlertCircle
 } from 'lucide-react'
@@ -202,10 +202,10 @@ const ContactMessages: React.FC = () => {
               </button>
             )}
           </form>
-          
+
           <div className="flex gap-3">
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setFilterOpen(!filterOpen)}
                 className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors"
               >
@@ -213,10 +213,10 @@ const ContactMessages: React.FC = () => {
                 Filters
                 <ChevronDown className={`w-4 h-4 transition-transform ${filterOpen ? 'rotate-180' : ''}`} />
               </button>
-              
+
               <AnimatePresence>
                 {filterOpen && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
@@ -240,7 +240,7 @@ const ContactMessages: React.FC = () => {
                           <option value="month">This month</option>
                         </select>
                       </div>
-                      
+
                       <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
                         <select
@@ -256,7 +256,7 @@ const ContactMessages: React.FC = () => {
                           <option value="unread">Unread</option>
                         </select>
                       </div>
-                      
+
                       <div className="pt-2 border-t border-white/10">
                         <button
                           onClick={() => {
@@ -289,16 +289,16 @@ const ContactMessages: React.FC = () => {
             <div className="col-span-full p-8 text-center bg-white/5 border border-white/10 rounded-xl">
               <MessageSquare className="w-12 h-12 mx-auto text-gray-400 mb-4" />
               <p className="text-gray-400">
-                {searchTerm || dateFilter !== 'all' || readFilter !== 'all' 
-                  ? 'No messages found matching your filters' 
+                {searchTerm || dateFilter !== 'all' || readFilter !== 'all'
+                  ? 'No messages found matching your filters'
                   : 'No messages yet'}
               </p>
             </div>
           ) : (
             <>
               {messages.map((message) => (
-                <motion.div 
-                  key={message.id} 
+                <motion.div
+                  key={message.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
@@ -321,10 +321,10 @@ const ContactMessages: React.FC = () => {
                         )}
                       </div>
                     </div>
-                    
+
                     <h4 className="font-medium text-white mb-2 truncate">{message.subject}</h4>
                     <p className="text-gray-300 text-sm line-clamp-2 mb-4">{message.message}</p>
-                    
+
                     <div className="flex items-center justify-between text-xs text-gray-400 pt-3 border-t border-white/10">
                       <div className="flex items-center gap-1">
                         <Mail className="w-3 h-3" />
@@ -336,7 +336,7 @@ const ContactMessages: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={(e) => {
@@ -373,7 +373,7 @@ const ContactMessages: React.FC = () => {
               {Math.min(pagination.current_page * pagination.per_page, pagination.total)} of{' '}
               {pagination.total} messages
             </p>
-            
+
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage(pagination.current_page - 1)}
@@ -382,26 +382,25 @@ const ContactMessages: React.FC = () => {
               >
                 Previous
               </button>
-              
+
               {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
                 const page = i + Math.max(1, pagination.current_page - 2)
                 if (page > pagination.last_page) return null
-                
+
                 return (
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-1 rounded text-sm transition-colors ${
-                      page === pagination.current_page
+                    className={`px-3 py-1 rounded text-sm transition-colors ${page === pagination.current_page
                         ? 'bg-neon-purple text-white'
                         : 'bg-white/5 border border-white/10 hover:bg-white/10'
-                    }`}
+                      }`}
                   >
                     {page}
                   </button>
                 )
               })}
-              
+
               <button
                 onClick={() => setCurrentPage(pagination.current_page + 1)}
                 disabled={pagination.current_page === pagination.last_page}
@@ -455,7 +454,7 @@ const MessageDetailsModal: React.FC<{
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}

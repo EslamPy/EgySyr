@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
-import { 
+import {
   Plus, Search, Edit, Trash2, Eye, ToggleLeft, ToggleRight,
   Briefcase, MapPin, Clock, DollarSign, Calendar, Users,
   RefreshCw, Filter, X, Building, ChevronDown, CheckCircle,
-  AlertCircle, FileText, ChevronRight, Link, Clipboard, ExternalLink,
+  AlertCircle, FileText, ChevronRight,
   Loader2
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -77,7 +77,7 @@ const JobsManagement: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
   const [editingJob, setEditingJob] = useState<Job | null>(null)
-  
+
   // Filter states
   const [filterOpen, setFilterOpen] = useState(false)
   const [typeFilter, setTypeFilter] = useState<string>('all')
@@ -101,14 +101,14 @@ const JobsManagement: React.FC = () => {
         params.append('department', departmentFilter)
       }
 
-      const response = await fetch(`/api/admin/jobs?${params}`, { 
-        credentials: 'include', 
-        headers: { 
+      const response = await fetch(`/api/admin/jobs?${params}`, {
+        credentials: 'include',
+        headers: {
           'X-Requested-With': 'XMLHttpRequest',
           'Accept': 'application/json'
-        } 
+        }
       })
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => null)
         throw new Error(errorData?.message || 'Failed to fetch jobs')
@@ -122,7 +122,7 @@ const JobsManagement: React.FC = () => {
         per_page: data.per_page,
         total: data.total,
       })
-      
+
       // Extract unique departments for filter options
       const uniqueDepartments = Array.from(
         new Set(
@@ -226,7 +226,7 @@ const JobsManagement: React.FC = () => {
   // Format salary display
   const formatSalary = (job: Job) => {
     if (!job.salary_min && !job.salary_max) return 'Not specified'
-    
+
     const currency = job.salary_currency || 'USD'
     if (job.salary_min && job.salary_max) {
       return `${currency} ${job.salary_min.toLocaleString()} - ${job.salary_max.toLocaleString()}`
@@ -309,7 +309,7 @@ const JobsManagement: React.FC = () => {
                   className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all"
                 />
               </div>
-              
+
               <button
                 onClick={() => setFilterOpen(!filterOpen)}
                 className="px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-2"
@@ -323,7 +323,7 @@ const JobsManagement: React.FC = () => {
 
           <AnimatePresence>
             {filterOpen && (
-              <motion.div 
+              <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
@@ -348,7 +348,7 @@ const JobsManagement: React.FC = () => {
                       <option value="internship">Internship</option>
                     </select>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">Department</label>
                     <select
@@ -366,7 +366,7 @@ const JobsManagement: React.FC = () => {
                     </select>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-end mt-4">
                   <button
                     onClick={() => {
@@ -426,10 +426,10 @@ const JobsManagement: React.FC = () => {
           ) : (
             <div className="divide-y divide-white/10">
               {jobs.map((job) => (
-                <motion.div 
-                  key={job.id} 
-                  className="p-6 hover:bg-white/5 transition-colors" 
-                  initial={{ opacity: 0, y: 10 }} 
+                <motion.div
+                  key={job.id}
+                  className="p-6 hover:bg-white/5 transition-colors"
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                 >
@@ -489,8 +489,8 @@ const JobsManagement: React.FC = () => {
                       <div className="flex flex-wrap gap-2 justify-start sm:justify-end">
                         <button
                           onClick={() => toggleJobStatus(job.id)}
-                          className={`p-2 rounded-lg transition-colors ${job.is_active 
-                            ? 'bg-green-900/20 text-green-400 hover:bg-green-900/30 border border-green-500/30' 
+                          className={`p-2 rounded-lg transition-colors ${job.is_active
+                            ? 'bg-green-900/20 text-green-400 hover:bg-green-900/30 border border-green-500/30'
                             : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border border-gray-700'}`}
                           title={job.is_active ? 'Deactivate job' : 'Activate job'}
                         >
@@ -521,9 +521,9 @@ const JobsManagement: React.FC = () => {
                           <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
-                      
+
                       <div className="mt-2 pt-2 border-t border-white/5 w-full sm:text-right">
-                        <button 
+                        <button
                           onClick={() => setSelectedJob(job)}
                           className="text-sm text-blue-400 hover:text-blue-300 flex items-center transition-colors sm:inline-flex sm:ml-auto"
                         >
@@ -546,7 +546,7 @@ const JobsManagement: React.FC = () => {
             <div className="text-sm text-gray-400">
               Showing <span className="text-white font-medium">{((pagination.current_page - 1) * pagination.per_page) + 1}-{Math.min(pagination.current_page * pagination.per_page, pagination.total)}</span> of <span className="text-white font-medium">{pagination.total}</span> jobs
             </div>
-            
+
             <div className="flex space-x-1">
               <button
                 onClick={() => setCurrentPage(pagination.current_page - 1)}
@@ -558,7 +558,7 @@ const JobsManagement: React.FC = () => {
                 </svg>
                 Previous
               </button>
-              
+
               <div className="hidden md:flex space-x-1">
                 {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map((page) => {
                   // Show first page, last page, current page, and pages around current page
@@ -586,13 +586,13 @@ const JobsManagement: React.FC = () => {
                   return null
                 })}
               </div>
-              
+
               <div className="md:hidden flex items-center px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-gray-300">
                 <span className="text-white font-medium">{pagination.current_page}</span>
                 <span className="mx-1">of</span>
                 <span className="text-white font-medium">{pagination.last_page}</span>
               </div>
-              
+
               <button
                 onClick={() => setCurrentPage(pagination.current_page + 1)}
                 disabled={pagination.current_page === pagination.last_page}
@@ -729,9 +729,9 @@ const JobFormModal: React.FC<{
     application_deadline: job?.application_deadline ? job.application_deadline.split('T')[0] : '',
     is_active: job?.is_active ?? true,
   })
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({}) 
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -767,8 +767,8 @@ const JobFormModal: React.FC<{
               {job ? 'Edit Job' : 'Create New Job'}
             </h3>
           </div>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             disabled={isSubmitting}
             className="p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label="Close"
@@ -784,7 +784,7 @@ const JobFormModal: React.FC<{
               <FileText className="w-5 h-5 text-blue-400" />
               Basic Information
             </h4>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-300 mb-2">Job Title *</label>
@@ -939,7 +939,7 @@ const JobFormModal: React.FC<{
               <FileText className="w-5 h-5 text-blue-400" />
               Job Description
             </h4>
-            
+
             <div className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
@@ -985,7 +985,7 @@ const JobFormModal: React.FC<{
                   htmlFor="is_active"
                   className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 rounded-full transition-all duration-300 ${formData.is_active ? 'bg-gradient-to-r from-blue-600 to-indigo-600' : 'bg-gray-700'}`}
                 >
-                  <span 
+                  <span
                     className={`absolute left-1 bottom-1 bg-white w-4 h-4 rounded-full transition-all duration-300 ${formData.is_active ? 'transform translate-x-6' : ''}`}
                   />
                 </label>

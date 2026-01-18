@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Users, Award, Heart, CheckCircle, Star, Play, Globe, Zap, Shield, Linkedin, Twitter, Github } from 'lucide-react'
+import { Users, Award, Heart, CheckCircle, Star, Globe, Zap, Shield, Linkedin, Twitter, Github } from 'lucide-react'
 import PageTransition from '../components/PageTransition.tsx'
 import Footer from '../components/Footer.tsx'
 import { Canvas } from '@react-three/fiber'
@@ -46,7 +46,7 @@ const AboutPage: React.FC = () => {
     {
       name: 'Ahmed Ezz',
       role: 'COB & Founder',
-      image: 'images/Ahmed.png', 
+      image: 'images/Ahmed.png',
       bio: 'Founder & COB, EgySyr Ahmed Ezz is an expert in programming and website design. As Chairman of EgySyr, he combines technical skills and strategy to deliver innovative solutions that drive growth and client satisfaction.',
       social: { linkedin: 'https://www.linkedin.com/in/ahmed-ezz-65071a348/' }
     },
@@ -145,7 +145,7 @@ const AboutPage: React.FC = () => {
           <div className="absolute inset-0 z-0 bg-gradient-to-b from-jet-black via-deep-charcoal/30 to-jet-black" />
           <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.12),transparent_50%)]" />
           <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_70%_80%,rgba(6,182,212,0.12),transparent_50%)]" />
-          
+
           {/* Floating Elements */}
           <div className="absolute top-20 left-10 w-32 h-32 bg-neon-purple/10 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-20 right-10 w-40 h-40 bg-neon-cyan/10 rounded-full blur-3xl animate-pulse animation-delay-2000" />
@@ -161,14 +161,14 @@ const AboutPage: React.FC = () => {
                   <Users className="w-4 h-4 mr-2" />
                   About Us
                 </div>
-                
+
                 <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
                   We Build
                   <span className="bg-gradient-to-r from-neon-purple to-neon-cyan bg-clip-text text-transparent"> Digital Dreams</span>
                 </h1>
-                
+
                 <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-                  EgySyr is a forward-thinking technology company dedicated to transforming businesses through innovative digital solutions. 
+                  EgySyr is a forward-thinking technology company dedicated to transforming businesses through innovative digital solutions.
                   We combine creativity, technical expertise, and business acumen to deliver exceptional results.
                 </p>
 
@@ -239,7 +239,7 @@ const AboutPage: React.FC = () => {
                   <div className={`w-16 h-16 bg-gradient-to-r ${value.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                     <value.icon className="w-8 h-8 text-white" />
                   </div>
-                  
+
                   <h3 className="text-2xl font-bold text-white mb-4">{value.title}</h3>
                   <p className="text-gray-300 leading-relaxed">{value.description}</p>
                 </motion.div>
@@ -360,19 +360,19 @@ const AboutPage: React.FC = () => {
                         <h4 className="text-lg font-semibold text-gray-900">{member.name}</h4>
                         <p className="text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">{member.role}</p>
                       </div>
-                  </div>
-                  
+                    </div>
+
                     <p className="text-gray-600 text-sm leading-relaxed mb-5">{member.bio}</p>
-                  
+
                     <div className="flex items-center gap-3">
-                    {Object.entries(member.social).map(([platform, url]) => (
-                      <a
-                        key={platform}
-                        href={url}
+                      {Object.entries(member.social).map(([platform, url]) => (
+                        <a
+                          key={platform}
+                          href={url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-200 text-gray-600 hover:border-blue-500 hover:text-blue-600 hover:shadow-sm transition-colors"
-                      >
+                        >
                           {platform === 'linkedin' ? (
                             <Linkedin className="w-4.5 h-4.5" />
                           ) : platform === 'twitter' ? (
@@ -380,8 +380,8 @@ const AboutPage: React.FC = () => {
                           ) : (
                             <Github className="w-4.5 h-4.5" />
                           )}
-                      </a>
-                    ))}
+                        </a>
+                      ))}
                     </div>
                   </div>
                 </motion.div>
@@ -411,7 +411,7 @@ const AboutPage: React.FC = () => {
             <div className="relative">
               {/* Timeline line */}
               <div className="absolute left-1/2 transform -translate-x-px w-0.5 h-full bg-gradient-to-b from-blue-600 to-purple-600" />
-              
+
               <motion.div
                 variants={staggerContainer}
                 initial="initial"
@@ -423,13 +423,12 @@ const AboutPage: React.FC = () => {
                   <motion.div
                     key={item.year}
                     variants={fadeInUp}
-                    className={`relative flex items-center ${
-                      timeline.indexOf(item) % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
-                    }`}
+                    className={`relative flex items-center ${timeline.indexOf(item) % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
+                      }`}
                   >
                     {/* Timeline dot */}
                     <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border-4 border-white shadow-lg" />
-                    
+
                     {/* Content */}
                     <div className={`w-5/12 ${timeline.indexOf(item) % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
                       <div className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/10">
@@ -450,7 +449,7 @@ const AboutPage: React.FC = () => {
           {/* Background Elements */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(255,255,255,0.1),transparent_50%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.1),transparent_50%)]" />
-          
+
           <div className="relative max-w-4xl mx-auto px-6 text-center text-white">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -461,11 +460,11 @@ const AboutPage: React.FC = () => {
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 Ready to Work Together?
               </h2>
-              
+
               <p className="text-xl text-white/90 mb-8 leading-relaxed">
                 Let's discuss your project and explore how we can help bring your vision to life.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/contact">
                   <motion.button
@@ -475,7 +474,7 @@ const AboutPage: React.FC = () => {
                     Start Your Project
                   </motion.button>
                 </Link>
-                
+
                 <Link href="/contact">
                   <motion.button
                     whileHover={{ scale: 1.05 }}

@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, CheckCircle, Sliders, Smartphone, Monitor, Server, Camera, Palette, TrendingUp, Sparkles, Brain, Rocket } from 'lucide-react'
+import { ArrowRight, CheckCircle, Sliders, Smartphone, Monitor, Sparkles, Rocket } from 'lucide-react'
 import PageTransition from '../components/PageTransition.tsx'
 import Footer from '../components/Footer.tsx'
 import { Link } from 'wouter'
@@ -101,7 +101,7 @@ const ServicesPage: React.FC = () => {
         {/* Hero Section */}
         <section className="relative pt-32 pb-12 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 via-neon-cyan/10 to-neon-pink/10" />
-          
+
           {/* Animated Background Elements */}
           <motion.div
             animate={{ rotate: 360 }}
@@ -111,7 +111,7 @@ const ServicesPage: React.FC = () => {
             <div className="absolute top-20 left-20 w-96 h-96 bg-neon-purple rounded-full blur-3xl" />
             <div className="absolute bottom-20 right-20 w-96 h-96 bg-neon-cyan rounded-full blur-3xl" />
           </motion.div>
-          
+
           <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -122,14 +122,14 @@ const ServicesPage: React.FC = () => {
                 <Sparkles className="w-4 h-4 mr-2" />
                 Our Services
               </div>
-              
+
               <h1 className="text-5xl lg:text-7xl font-bold mb-8">
                 <span className="text-white">Services That</span>{' '}
                 <span className="bg-gradient-to-r from-neon-purple via-neon-cyan to-neon-pink bg-clip-text text-transparent">
                   Transform
                 </span>
               </h1>
-              
+
               <p className="text-xl lg:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
                 From concept to reality, we craft digital experiences that leave lasting impressions and drive real business results.
               </p>
@@ -212,7 +212,7 @@ const ServicesPage: React.FC = () => {
           </div>
         </section>
 
-    {/* See if Ahmed Likes it or not */}
+        {/* See if Ahmed Likes it or not */}
         {/* Pricing Plans
         <section className="pt-4 pb-12 relative">
           <div className="max-w-7xl mx-auto px-6">
@@ -281,7 +281,7 @@ const ServicesPage: React.FC = () => {
               ))}
             </motion.div>
           </div>
-        </section> */} 
+        </section> */}
 
         {/* Services Grid */}
         <section className="py-32 relative">
@@ -303,21 +303,21 @@ const ServicesPage: React.FC = () => {
                   <div className="relative bg-gradient-to-br from-deep-charcoal to-jet-black rounded-3xl p-8 border border-white/10 backdrop-blur-sm hover:border-neon-purple/50 transition-all duration-700 transform hover:-translate-y-4 hover:rotate-y-12 preserve-3d">
                     {/* 3D Hover Effect */}
                     <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/5 to-neon-cyan/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    
+
                     {/* Category Badge */}
                     <div className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-neon-purple/20 to-neon-cyan/20 border border-neon-purple/30 rounded-full text-neon-purple text-xs font-medium mb-6 backdrop-blur-sm">
                       {service.category}
                     </div>
-                    
+
                     {/* Service Icon */}
                     <div className={`w-20 h-20 bg-gradient-to-r ${service.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
                       <service.icon className="w-10 h-10 text-white" />
                     </div>
-                    
+
                     {/* Service Content */}
                     <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-neon-purple transition-colors duration-500">{service.title}</h3>
                     <p className="text-gray-400 mb-6 leading-relaxed">{service.description}</p>
-                    
+
                     {/* Features List */}
                     <ul className="space-y-3 mb-6">
                       {service.features.map((feature, idx) => (
@@ -327,7 +327,7 @@ const ServicesPage: React.FC = () => {
                         </li>
                       ))}
                     </ul>
-                    
+
                     {/* Technologies */}
                     <div className="mb-6">
                       <p className="text-sm text-gray-500 mb-3 font-medium">Technologies:</p>
@@ -339,12 +339,12 @@ const ServicesPage: React.FC = () => {
                         ))}
                       </div>
                     </div>
-                    
+
                     {/* Price */}
                     <div className="mb-8">
                       <p className="text-2xl font-bold text-neon-purple">{service.price}</p>
                     </div>
-                    
+
                     {/* CTA Button */}
                     <Link href="/contact">
                       <button className="group/btn w-full py-4 px-6 bg-gradient-to-r from-neon-purple/10 to-neon-cyan/10 text-neon-purple rounded-xl font-semibold hover:from-neon-purple/20 hover:to-neon-cyan/20 transition-all duration-500 border border-neon-purple/30 hover:border-neon-purple/50 flex items-center justify-center backdrop-blur-sm">
@@ -362,7 +362,7 @@ const ServicesPage: React.FC = () => {
         {/* CTA Section */}
         <section className="py-32 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/20 via-neon-cyan/20 to-neon-pink/20" />
-          
+
           <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -376,11 +376,11 @@ const ServicesPage: React.FC = () => {
                   Digital Journey?
                 </span>
               </h2>
-              
+
               <p className="text-xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
                 Let's discuss your project requirements and create a custom solution that perfectly fits your business needs.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                 <Link href="/contact">
                   <button className="group relative px-10 py-5 bg-gradient-to-r from-neon-purple to-neon-cyan text-white font-bold rounded-2xl shadow-2xl hover:shadow-neon-purple/25 transform hover:-translate-y-2 transition-all duration-500 overflow-hidden">
@@ -391,7 +391,7 @@ const ServicesPage: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-r from-neon-cyan to-neon-pink opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </button>
                 </Link>
-                
+
                 <Link href="/contact">
                   <button className="group px-10 py-5 border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/10 hover:border-white/50 transition-all duration-500 backdrop-blur-sm text-lg">
                     <span className="flex items-center">

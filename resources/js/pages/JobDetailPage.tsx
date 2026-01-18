@@ -3,7 +3,7 @@ import { useRoute, useLocation } from 'wouter'
 import { motion } from 'framer-motion'
 import {
   MapPin, Clock, Building, DollarSign, Calendar, ArrowLeft,
-  User, Mail, Phone, Upload, FileText, ExternalLink,
+  User, Upload, FileText, ExternalLink,
   CheckCircle, AlertCircle, Loader, X, Briefcase
 } from 'lucide-react'
 import PageTransition from '../components/PageTransition'
@@ -694,9 +694,8 @@ const ApplicationFormModal: React.FC<{
                       name="first_name"
                       value={formData.first_name}
                       onChange={onInputChange}
-                      className={`w-full px-4 py-3 bg-white/10 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple transition-all duration-200 backdrop-blur-sm ${
-                        formErrors.first_name ? 'border-red-500' : 'border-white/20 hover:border-white/30'
-                      }`}
+                      className={`w-full px-4 py-3 bg-white/10 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple transition-all duration-200 backdrop-blur-sm ${formErrors.first_name ? 'border-red-500' : 'border-white/20 hover:border-white/30'
+                        }`}
                       placeholder="Enter your first name"
                     />
                     {formErrors.first_name && (
@@ -716,9 +715,8 @@ const ApplicationFormModal: React.FC<{
                       name="last_name"
                       value={formData.last_name}
                       onChange={onInputChange}
-                      className={`w-full px-4 py-3 bg-white/10 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple transition-all duration-200 backdrop-blur-sm ${
-                        formErrors.last_name ? 'border-red-500' : 'border-white/20 hover:border-white/30'
-                      }`}
+                      className={`w-full px-4 py-3 bg-white/10 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple transition-all duration-200 backdrop-blur-sm ${formErrors.last_name ? 'border-red-500' : 'border-white/20 hover:border-white/30'
+                        }`}
                       placeholder="Enter your last name"
                     />
                     {formErrors.last_name && (
@@ -738,9 +736,8 @@ const ApplicationFormModal: React.FC<{
                       name="email"
                       value={formData.email}
                       onChange={onInputChange}
-                      className={`w-full px-4 py-3 bg-white/10 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple transition-all duration-200 backdrop-blur-sm ${
-                        formErrors.email ? 'border-red-500' : 'border-white/20 hover:border-white/30'
-                      }`}
+                      className={`w-full px-4 py-3 bg-white/10 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple transition-all duration-200 backdrop-blur-sm ${formErrors.email ? 'border-red-500' : 'border-white/20 hover:border-white/30'
+                        }`}
                       placeholder="your@email.com"
                     />
                     {formErrors.email && (
@@ -760,9 +757,8 @@ const ApplicationFormModal: React.FC<{
                       name="phone"
                       value={formData.phone}
                       onChange={onInputChange}
-                      className={`w-full px-4 py-3 bg-white/10 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple transition-all duration-200 backdrop-blur-sm ${
-                        formErrors.phone ? 'border-red-500' : 'border-white/20 hover:border-white/30'
-                      }`}
+                      className={`w-full px-4 py-3 bg-white/10 border-2 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-neon-purple transition-all duration-200 backdrop-blur-sm ${formErrors.phone ? 'border-red-500' : 'border-white/20 hover:border-white/30'
+                        }`}
                       placeholder="+1 (555) 123-4567"
                     />
                     {formErrors.phone && (
@@ -791,11 +787,10 @@ const ApplicationFormModal: React.FC<{
                   />
                   <label
                     htmlFor="cv-upload"
-                    className={`flex items-center justify-center gap-4 w-full px-6 py-10 border-2 border-dashed rounded-2xl cursor-pointer transition-all duration-300 backdrop-blur-sm ${
-                      formErrors.cv
+                    className={`flex items-center justify-center gap-4 w-full px-6 py-10 border-2 border-dashed rounded-2xl cursor-pointer transition-all duration-300 backdrop-blur-sm ${formErrors.cv
                         ? 'border-red-500 bg-red-500/10'
                         : 'border-white/30 hover:border-neon-cyan/50 hover:bg-white/10'
-                    }`}
+                      }`}
                   >
                     <Upload className="w-8 h-8 text-gray-400" />
                     <div className="text-center">

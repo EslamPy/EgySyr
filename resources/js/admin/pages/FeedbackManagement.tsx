@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { AdminLayout } from '../components/AdminLayout'
 import {
-  Plus, Search, Filter, Download, Eye, Check, X, Trash2,
-  Star, Calendar, User, Mail, Building, MessageSquare,
-  Copy, CheckCircle, ExternalLink, RefreshCw
+  Plus, Search, Eye, Check, X, Trash2,
+  Star, Calendar, User, Building, MessageSquare,
+  Copy, RefreshCw
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 

@@ -1,98 +1,16 @@
 import React, { useEffect, useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { ChevronRight, ArrowRight, Play, Star, CheckCircle, Users, Zap, Shield, Globe, Sparkles, Code, Smartphone, Server, Eye, TrendingUp, Rocket, Brain, Palette, Sliders } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ChevronRight, Star, CheckCircle, Users, Zap, Shield, Globe, Sparkles, Code, Smartphone, Eye, Rocket, Brain, Palette, Sliders } from 'lucide-react'
 import PageTransition from '../components/PageTransition.tsx'
 import AnimatedCounter from '../components/AnimatedCounter.tsx'
 import Footer from '../components/Footer.tsx'
 import RotatingText from '../components/RotatingText.tsx'
-import { Canvas } from '@react-three/fiber'
-import { Environment, Float, OrbitControls, Box, Torus, Sphere, MeshDistortMaterial } from '@react-three/drei'
+
 import { animationUtils } from '../utils/animations.ts'
 import { useApprovedFeedback } from '../hooks/useApprovedFeedback.tsx'
 import { Link } from 'wouter'
 
 // Premium 3D Scene Component
-const PremiumScene: React.FC = () => {
-  return (
-    <>
-      <Environment preset="city" />
-      <ambientLight intensity={0.3} />
-      <directionalLight position={[10, 10, 5]} intensity={1.2} color="#8B5CF6" />
-      <directionalLight position={[-10, -10, -10]} intensity={0.8} color="#06B6D4" />
-      <pointLight position={[0, 0, 5]} color="#EC4899" intensity={0.6} />
-      <pointLight position={[5, 5, -5]} color="#3B82F6" intensity={0.4} />
-
-      {/* Enhanced Floating geometric shapes */}
-      <Float speed={1.2} rotationIntensity={0.8} floatIntensity={1.2}>
-        <Box args={[1.2, 1.2, 1.2]} position={[-4, 3, -1]} rotation={[0.8, 0.8, 0]}>
-          <meshStandardMaterial color="#8B5CF6" metalness={0.9} roughness={0.1} />
-        </Box>
-      </Float>
-
-      <Float speed={1.8} rotationIntensity={0.5} floatIntensity={1.8}>
-        <Torus args={[1.2, 0.4, 20, 100]} position={[4, -2, -3]} rotation={[1.2, 0, 0]}>
-          <meshStandardMaterial color="#06B6D4" metalness={0.95} roughness={0.05} />
-        </Torus>
-      </Float>
-
-      <Float speed={1.0} rotationIntensity={0.9} floatIntensity={1.0}>
-        <Sphere args={[1.0, 80, 80]} position={[0, -3, -2]}>
-          <MeshDistortMaterial
-            color="#EC4899"
-            metalness={0.9}
-            roughness={0.1}
-            distort={0.4}
-            speed={3}
-          />
-        </Sphere>
-      </Float>
-
-      {/* Additional geometric shapes for more visual interest */}
-      <Float speed={0.6} rotationIntensity={1.2} floatIntensity={0.8}>
-        <Box args={[0.8, 0.8, 0.8]} position={[2, 4, 0]} rotation={[0, 0.6, 0.4]}>
-          <meshStandardMaterial color="#3B82F6" metalness={0.8} roughness={0.2} />
-        </Box>
-      </Float>
-
-      <Float speed={1.4} rotationIntensity={0.6} floatIntensity={1.4}>
-        <Torus args={[0.8, 0.2, 16, 80]} position={[-3, -1, 1]} rotation={[0, 1, 0.5]}>
-          <meshStandardMaterial color="#1E40AF" metalness={0.9} roughness={0.1} />
-        </Torus>
-      </Float>
-
-      <Float speed={0.9} rotationIntensity={1.1} floatIntensity={0.9}>
-        <Sphere args={[0.6, 64, 64]} position={[3, 2, 2]}>
-          <MeshDistortMaterial
-            color="#0F766E"
-            metalness={0.85}
-            roughness={0.15}
-            distort={0.3}
-            speed={2.5}
-          />
-        </Sphere>
-      </Float>
-
-      {/* Floating particles for ambient effect */}
-      {Array.from({ length: 15 }).map((_, i) => (
-        <Float key={i} speed={0.5 + Math.random()} rotationIntensity={0.3} floatIntensity={0.5 + Math.random()}>
-          <Sphere args={[0.1, 16, 16]} position={[
-            (Math.random() - 0.5) * 10,
-            (Math.random() - 0.5) * 10,
-            (Math.random() - 0.5) * 10
-          ]}>
-            <meshStandardMaterial
-              color={['#8B5CF6', '#06B6D4', '#EC4899', '#3B82F6', '#1E40AF'][Math.floor(Math.random() * 5)]}
-              metalness={0.8}
-              roughness={0.2}
-              emissive={['#8B5CF6', '#06B6D4', '#EC4899', '#3B82F6', '#1E40AF'][Math.floor(Math.random() * 5)]}
-              emissiveIntensity={0.2}
-            />
-          </Sphere>
-        </Float>
-      ))}
-    </>
-  )
-}
 
 const HomePage: React.FC = () => {
   console.log('HomePage component rendering...')
@@ -100,11 +18,9 @@ const HomePage: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll()
   const { feedback, loading: feedbackLoading, error: feedbackError } = useApprovedFeedback()
 
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+
 
   useEffect(() => {
     if (titleRef.current) {
@@ -242,7 +158,6 @@ const HomePage: React.FC = () => {
                   <RotatingText
                     texts={["Growth", "Innovation", "Efficiency", "Success", "Performance"]}
                     mainClassName="px-2 sm:px-2 md:px-3 bg-white text-black overflow-hidden py-1 sm:py-1 md:py-2 justify-center rounded-lg shadow-lg"
-                    staggerFrom={"last"}
                     initial={{ y: "100%" }}
                     animate={{ y: 0 }}
                     exit={{ y: "-120%" }}

@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react'
+import { Component, ErrorInfo, ReactNode } from 'react'
 
 interface Props {
   children: ReactNode
@@ -34,14 +34,14 @@ class ErrorBoundary extends Component<Props, State> {
             <p className="text-xl text-gray-300 mb-6">
               The application encountered an error and couldn't render properly.
             </p>
-            
+
             {this.state.error && (
               <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4 mb-6 text-left">
                 <h3 className="text-lg font-semibold text-red-400 mb-2">Error Details:</h3>
                 <pre className="text-sm text-gray-300 whitespace-pre-wrap overflow-auto">
                   {this.state.error.toString()}
                 </pre>
-                
+
                 {this.state.errorInfo && (
                   <details className="mt-4">
                     <summary className="cursor-pointer text-red-400 hover:text-red-300">
@@ -54,7 +54,7 @@ class ErrorBoundary extends Component<Props, State> {
                 )}
               </div>
             )}
-            
+
             <button
               onClick={() => window.location.reload()}
               className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
