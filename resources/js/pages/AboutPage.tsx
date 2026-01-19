@@ -206,8 +206,8 @@ const AboutPage: React.FC = () => {
         </section>
 
         {/* Values Section */}
-        <section className="py-20 bg-white/5 border-t border-white/10">
-          <div className="max-w-7xl mx-auto px-6">
+        <section className="py-24 bg-white/5 border-t border-white/10 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -219,32 +219,30 @@ const AboutPage: React.FC = () => {
                 Our Core Values
               </h2>
               <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                The principles that guide everything we do and shape our company culture.
+                The principles that guide everything we do at EgySyr.
               </p>
             </motion.div>
 
-            <motion.div
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-8"
-            >
-              {values.map((value) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {values.map((value, index) => (
                 <motion.div
                   key={value.title}
-                  variants={fadeInUp}
-                  className="group bg-white/5 rounded-3xl p-8 hover:bg-white/10 hover:shadow-xl transition-all duration-300 border border-white/10 backdrop-blur-sm"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="group p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-white/20 transition-all duration-300"
                 >
-                  <div className={`w-16 h-16 bg-gradient-to-r ${value.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                    <value.icon className="w-8 h-8 text-white" />
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${value.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                    <value.icon className="w-7 h-7 text-white" />
                   </div>
-
                   <h3 className="text-2xl font-bold text-white mb-4">{value.title}</h3>
-                  <p className="text-gray-300 leading-relaxed">{value.description}</p>
+                  <p className="text-gray-400 leading-relaxed">
+                    {value.description}
+                  </p>
                 </motion.div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </section>
 
@@ -410,7 +408,7 @@ const AboutPage: React.FC = () => {
 
             <div className="relative">
               {/* Timeline line */}
-              <div className="absolute left-1/2 transform -translate-x-px w-0.5 h-full bg-gradient-to-b from-blue-600 to-purple-600" />
+              <div className="absolute left-1/2 transform -translate-x-px w-0.5 h-full bg-gradient-to-b from-blue-600 to-purple-600 xs:hidden" />
 
               <motion.div
                 variants={staggerContainer}
@@ -427,10 +425,10 @@ const AboutPage: React.FC = () => {
                       }`}
                   >
                     {/* Timeline dot */}
-                    <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border-4 border-white shadow-lg" />
+                    <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full border-4 border-white shadow-lg xs:hidden" />
 
                     {/* Content */}
-                    <div className={`w-5/12 ${timeline.indexOf(item) % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
+                    <div className={`w-5/12 xs:mx-auto xs:w-[90%] ${timeline.indexOf(item) % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
                       <div className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/10">
                         <div className="text-2xl font-bold text-neon-purple mb-2">{item.year}</div>
                         <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
