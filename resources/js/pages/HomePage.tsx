@@ -826,7 +826,7 @@ const HomePage: React.FC = () => {
         </section>
 
         {/* Our Process Section - Creative Timeline */}
-        <section className="py-32 relative">
+           <section className="py-32 relative">
           {/* Background Pattern */}
           <div className="absolute inset-0 bg-gradient-to-br from-logo-blue/5 via-logo-indigo/5 to-logo-teal/5" />
           <div className="absolute inset-0 opacity-30">
@@ -835,7 +835,7 @@ const HomePage: React.FC = () => {
               backgroundSize: '60px 60px'
             }} />
           </div>
-
+          
           <div className="relative z-10 max-w-7xl mx-auto px-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -868,8 +868,8 @@ const HomePage: React.FC = () => {
               className="relative"
             >
               {/* Timeline Line */}
-              <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-logo-blue via-logo-indigo to-logo-teal opacity-50 shadow-lg shadow-logo-blue/25" />
-
+              <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-logo-blue via-logo-indigo to-logo-teal opacity-50 shadow-lg shadow-logo-blue/25 xs:hidden" />
+              
               {[
                 {
                   step: '01',
@@ -908,29 +908,30 @@ const HomePage: React.FC = () => {
                   key={index}
                   variants={fadeInUp}
                   transition={{ delay: process.delay }}
-                  className={`relative flex items-center mb-16 ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
-                    }`}
+                  className={`relative flex items-center mb-16 ${
+                    index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
+                  }`}
                 >
                   {/* Process Card */}
-                  <div className={`w-1/2 ${index % 2 === 0 ? 'pr-12' : 'pl-12'}`}>
+                  <div className={`w-1/2 xs:w-[90%]  ${index % 2 === 0 ? 'pr-12' : 'pl-12'}`}>
                     <div className="relative bg-gradient-to-br from-deep-charcoal to-jet-black rounded-3xl p-8 border-2 border-white/20 backdrop-blur-sm hover:border-logo-blue/50 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-logo-blue/25 shadow-lg">
                       {/* Step Number */}
                       <div className={`absolute -top-4 -left-4 w-12 h-12 bg-gradient-to-r ${process.color} rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
                         {process.step}
                       </div>
-
+                      
                       {/* Process Icon */}
                       <div className={`w-16 h-16 bg-gradient-to-r ${process.color} rounded-2xl flex items-center justify-center mb-6 ml-8 group-hover:scale-110 transition-transform duration-500 shadow-lg`}>
                         <process.icon className="w-8 h-8 text-white" />
                       </div>
-
+                      
                       <h3 className="text-2xl font-bold text-white mb-4">{process.title}</h3>
                       <p className="text-gray-400 leading-relaxed">{process.description}</p>
                     </div>
                   </div>
-
+                  
                   {/* Timeline Dot */}
-                  <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-r from-logo-blue to-logo-indigo rounded-full border-4 border-jet-black shadow-lg" />
+                  <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-gradient-to-r from-logo-blue to-logo-indigo rounded-full border-4 border-jet-black shadow-lg xs:hidden" />
                 </motion.div>
               ))}
             </motion.div>
